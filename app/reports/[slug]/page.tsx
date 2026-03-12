@@ -286,9 +286,12 @@ export default async function ReportDetailPage({
             </h2>
             <ul className="mt-4 space-y-2">
               {report.assumptions.map((a, i) => (
-                <li key={i} className="flex gap-3 text-sm leading-relaxed text-(--tm-color-neutral-900)">
-                  <span className="mt-1 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded bg-(--tm-color-neutral-100) text-[10px] font-bold text-(--tm-color-neutral-600)">
-                    A
+                <li
+                  key={i}
+                  className="flex gap-3 text-sm leading-relaxed text-(--tm-color-neutral-900)"
+                >
+                  <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded bg-(--tm-color-neutral-100) text-[10px] font-bold text-(--tm-color-neutral-600)">
+                    {String.fromCharCode(65 + i)}
                   </span>
                   {a}
                 </li>
@@ -307,7 +310,7 @@ export default async function ReportDetailPage({
             <ul className="mt-4 space-y-2">
               {report.alternativeExplanations.map((alt, i) => (
                 <li key={i} className="flex gap-3 text-sm leading-relaxed text-(--tm-color-neutral-900)">
-                  <span className="mt-0.5 text-(--tm-color-neutral-300)">
+                  <span className="text-(--tm-color-neutral-300)">
                     {i + 1}.
                   </span>
                   {alt}

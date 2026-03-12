@@ -12,7 +12,7 @@ export const REPORTS: Report[] = [
     geography: "European Union",
     tags: ["technology", "antitrust", "trade", "digital policy"],
     publishedAt: "2026-03-10T14:00:00Z",
-    featured: true,
+    featured: false,
     stakeholders: [
       {
         name: "European Commission (DG Competition)",
@@ -343,86 +343,118 @@ export const REPORTS: Report[] = [
     ],
   },
   {
-    slug: "uk-post-brexit-financial-regulation",
-    title: "London's regulatory divergence from the EU: Deregulation or competitive desperation?",
+    slug: "indonesia-fuel-subsidy-reform",
+    title: "Indonesia's fuel subsidy reform: Fiscal responsibility or political risk management?",
     summary:
-      "An investigation into whether the UK's post-Brexit financial regulatory reforms are strategic industry policy or an attempt to stem the tide of financial services relocating to EU hubs.",
+      "An investigation into why the Indonesian government is moving to cut and retarget fuel subsidies, and how fiscal pressures, infrastructure ambitions, and electoral politics shape the timing and design of the reform.",
     executiveSummary:
-      "The UK's sweeping financial regulatory reforms since Brexit are framed as modernization and innovation-friendly policy. However, the evidence suggests the primary driver is competitive anxiety: London has lost significant market share in derivatives clearing, euro-denominated trading, and fund management to Amsterdam, Paris, and Frankfurt. The reforms appear designed to (1) prevent further migration of financial services jobs and tax revenue, (2) signal to global financial institutions that London remains the preferred European hub, and (3) create political wins for a government under pressure on economic performance.",
-    category: "regulation",
-    geography: "United Kingdom",
-    tags: ["financial-regulation", "Brexit", "trade", "banking"],
-    publishedAt: "2026-03-01T12:00:00Z",
-    featured: false,
+      "Indonesia's gradual rollback and retargeting of fuel subsidies is framed as a move toward 'more just and productive' spending. The evidence suggests three intertwined motivations that matter directly for Indonesian citizens: (1) freeing up budget space for infrastructure, health, and education without significantly raising overall debt levels, (2) protecting macroeconomic stability amid rupiah volatility and rising global energy prices, and (3) managing political backlash from middle-class urban drivers and fuel-intensive small businesses ahead of national and local elections. While social assistance programs are expanded to cushion low-income households, implementation capacity and public trust remain key constraints that will determine whether the reform is perceived as fairness or sacrifice.",
+    category: "policy",
+    geography: "Indonesia",
+    tags: ["energy", "subsidies", "inflation", "elections"],
+    publishedAt: "2026-03-02T12:00:00Z",
+    featured: true,
     stakeholders: [
       {
-        name: "UK Treasury and Financial Conduct Authority",
-        role: "Regulators implementing the Edinburgh Reforms",
+        name: "Ministry of Finance of Indonesia",
+        role: "Designs and defends the subsidy reform in the state budget",
         incentives: [
-          "Maintain London's position as a global financial center",
-          "Protect tax revenue from financial services",
-          "Demonstrate post-Brexit regulatory independence",
+          "Reduce fiscal pressure from volatile energy subsidy spending",
+          "Protect Indonesia's investment-grade credit rating",
+          "Create room for priority infrastructure and social spending",
         ],
         confidence: "high",
       },
       {
-        name: "Major global banks with London operations",
-        role: "Primary beneficiaries and lobbyists for reform",
+        name: "Pertamina and downstream fuel distributors",
+        role: "State-owned and private actors implementing price and quota changes",
         incentives: [
-          "Reduce compliance costs in London operations",
-          "Maintain optionality between London and EU hubs",
-          "Avoid costly full relocation to EU jurisdiction",
+          "Ensure cost recovery and predictable margins",
+          "Avoid supply disruptions during transition periods",
+          "Maintain political favor by avoiding visible shortages or long queues",
+        ],
+        confidence: "medium",
+      },
+      {
+        name: "Urban middle-class motorists and ride-hailing drivers",
+        role: "Highly vocal and politically sensitive group affected by price hikes",
+        incentives: [
+          "Keep daily commuting and operating costs manageable",
+          "Avoid sudden price shocks that reduce disposable income",
+          "Leverage social media and protests to pressure policymakers",
         ],
         confidence: "high",
+      },
+      {
+        name: "Low-income households receiving targeted assistance",
+        role: "Intended beneficiaries of compensatory social programs",
+        incentives: [
+          "Ensure subsidy savings translate into real and timely cash transfers",
+          "Maintain purchasing power for basic necessities amid inflation",
+          "Avoid being crowded out by better-connected groups in program targeting",
+        ],
+        confidence: "medium",
       },
     ],
     motivations: [
       {
-        title: "Stemming financial services migration",
+        title: "Reallocating budget from subsidies to development",
         summary:
-          "The reforms directly address specific regulatory areas where EU equivalence has been denied, aiming to make London attractive enough to prevent further relocation.",
+          "Fuel subsidies crowd out long-term investments in transport, health, and education; cutting them creates fiscal room to fund projects that matter visibly to voters and investors.",
         confidence: "high",
         supportingEvidence: [
-          "Reform areas map precisely to sectors experiencing the largest outflows",
-          "FCA consultation papers reference competitive benchmarking against EU hubs",
+          "Budget documents show energy subsidies approaching or exceeding capital expenditure in some years",
+          "Government communications highlight trade-offs between subsidies and infrastructure projects like MRT expansions and new toll roads",
         ],
       },
       {
-        title: "Political signaling on Brexit dividends",
+        title: "Protecting macroeconomic stability and the rupiah",
         summary:
-          "Regulatory divergence serves as tangible evidence that Brexit enables policy autonomy, satisfying political constituencies who supported leaving the EU.",
+          "Linking domestic fuel prices more closely to international markets reduces the risk that global oil price spikes will suddenly blow up the budget or force emergency borrowing.",
         confidence: "medium",
         supportingEvidence: [
-          "Government communications frame reforms as 'Brexit freedoms'",
-          "Timing correlates with declining public approval of Brexit outcomes",
+          "Past episodes of rupiah weakness coincided with high subsidy bills and market concerns about fiscal discipline",
+          "Ratings agencies have repeatedly cited subsidy reform as positive for Indonesia's credit profile",
+        ],
+      },
+      {
+        title: "Managing electoral risk through gradualism and compensation",
+        summary:
+          "By phasing in increases, using targeted cash transfers, and timing announcements away from peak political moments, the government aims to minimize street protests and opposition mobilization.",
+        confidence: "medium",
+        supportingEvidence: [
+          "Previous sharp fuel price hikes triggered large demonstrations and political instability",
+          "Recent price adjustments have been smaller and accompanied by expansions in social assistance coverage",
         ],
       },
     ],
     evidence: [
       {
-        claim: "Euro-denominated derivatives clearing in London fell 25% between 2021 and 2025.",
-        source: "Bank of England Financial Stability Report",
-        sourceUrl: "https://example.com/boe-clearing-data",
-        confidence: "high",
+        claim:
+          "Energy subsidy allocations have, in some years, rivaled or exceeded central government capital expenditure, limiting space for new infrastructure projects.",
+        source: "Indonesian state budget (APBN) and Ministry of Finance reports",
+        sourceUrl: "https://example.com/indonesia-apbn-subsidies",
+        confidence: "medium",
       },
       {
-        claim: "Over 7,000 financial services jobs relocated from London to EU cities by end of 2025.",
-        source: "EY Financial Services Brexit Tracker",
-        sourceUrl: "https://example.com/ey-brexit-tracker",
-        confidence: "high",
+        claim:
+          "Ratings agencies and multilateral institutions have repeatedly framed subsidy reform as supportive of Indonesia's macroeconomic stability and investment climate.",
+        source: "Credit rating agency reports and IMF Article IV consultations",
+        sourceUrl: "https://example.com/indonesia-subsidy-reform-assessments",
+        confidence: "medium",
       },
     ],
     assumptions: [
-      "Job relocation figures are not double-counted across surveys and trackers.",
-      "Regulatory reform proposals will be implemented as drafted.",
+      "Budget and subsidy data are reported accurately and not significantly revised after publication.",
+      "Targeted cash transfer programs reach the majority of intended low-income beneficiaries with limited leakage.",
     ],
     limitations: [
-      "The counterfactual — what would have happened without regulatory divergence — cannot be tested.",
-      "Some reforms may have been planned regardless of Brexit for modernization purposes.",
+      "The analysis does not model detailed distributional impacts across income deciles or regions.",
+      "Political dynamics within coalition parties and parliament are only partially observable from public sources.",
     ],
     alternativeExplanations: [
-      "The reforms genuinely reflect better regulatory thinking unconstrained by EU consensus requirements.",
-      "Financial services migration has plateaued, and reforms are forward-looking rather than reactive.",
+      "Subsidy reform is primarily driven by ideological preferences for smaller government rather than fiscal constraints.",
+      "The timing is dictated by technical implementation readiness of new targeting systems rather than political calculations.",
     ],
   },
   {
@@ -620,6 +652,7 @@ export const GEOGRAPHIES = [
   "United States",
   "India",
   "United Kingdom",
+  "Indonesia",
   "Brazil",
   "Japan",
 ] as const;
