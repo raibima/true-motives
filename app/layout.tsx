@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Inter, Source_Serif_4 } from "next/font/google";
+import { isRTL } from "react-aria-components";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { ClientProviders } from "./provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const sourceSerif = Source_Serif_4({
@@ -17,15 +20,22 @@ export const metadata: Metadata = {
     "AI-powered deep research into the hidden motivations behind public policies, government decisions, and corporate actions. Grounded in transparent reasoning and sourced evidence.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const acceptLanguage = (await headers()).get("accept-language");
+  const lang = acceptLanguage?.split(/[,;]/)[0] || "en-US";
+
   return (
-    <html lang="en" className={cn(inter.variable, sourceSerif.variable)}>
+    <html
+      lang={lang}
+      dir={isRTL(lang) ? "rtl" : "ltr"}
+      className={cn(inter.variable, sourceSerif.variable)}
+    >
       <body className="font-sans antialiased bg-background text-foreground">
-        {children}
+        <ClientProviders lang={lang}>{children}</ClientProviders>
       </body>
     </html>
   );
