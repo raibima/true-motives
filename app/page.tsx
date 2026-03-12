@@ -1,65 +1,204 @@
-import Image from "next/image";
+import Link from "next/link";
+import { SiteHeader } from "@/components/SiteHeader";
+import { ReportCard } from "@/components/ReportCard";
+import { getFeaturedReports } from "@/lib/mock-data";
 
 export default function Home() {
+  const featured = getFeaturedReports();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="grain-overlay min-h-screen">
+      <SiteHeader />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-(--tm-color-primary-900)">
+        <div className="absolute inset-0 opacity-[0.07]">
+          <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern
+                id="grid"
+                width="40"
+                height="40"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="M 40 0 L 0 0 0 40"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="0.5"
+                />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-6 py-24 sm:py-32">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-3 text-sm font-medium text-(--tm-color-accent-400) animate-fade-in-up stagger-1">
+              <span className="inline-block h-px w-8 bg-(--tm-color-accent-500)" />
+              AI-powered investigative analysis
+            </div>
+
+            <h1 className="mt-6 font-serif text-4xl font-bold leading-[1.15] tracking-tight text-white sm:text-5xl animate-fade-in-up stagger-2 text-balance">
+              Uncover the real motivations behind major decisions
+            </h1>
+
+            <p className="mt-6 text-lg leading-relaxed text-(--tm-color-neutral-300) animate-fade-in-up stagger-3 max-w-xl">
+              TrueMotives uses structured AI analysis to map stakeholders,
+              incentives, and power dynamics — with transparent reasoning and
+              sourced evidence, not opaque guesses.
+            </p>
+
+            <div className="mt-10 flex flex-wrap gap-4 animate-fade-in-up stagger-4">
+              <Link
+                href="/reports"
+                className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-(--tm-color-primary-900) shadow-sm transition-all hover:bg-(--tm-color-neutral-50) hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--tm-color-accent-400)"
+              >
+                Browse reports
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+                  />
+                </svg>
+              </Link>
+              <span className="inline-flex items-center rounded-lg border border-white/20 px-5 py-2.5 text-sm font-medium text-white/70 cursor-default">
+                For journalists — coming soon
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="h-px bg-linear-to-r from-transparent via-(--tm-color-accent-500)/40 to-transparent" />
+      </section>
+
+      {/* How it works */}
+      <section className="mx-auto max-w-6xl px-6 py-20">
+        <h2 className="font-serif text-2xl font-semibold text-(--tm-color-primary-900) animate-fade-in-up">
+          How TrueMotives works
+        </h2>
+        <div className="mt-10 grid gap-8 sm:grid-cols-3">
+          {[
+            {
+              step: "01",
+              title: "Identify stakeholders",
+              description:
+                "We map every actor with a stake in the decision — governments, corporations, lobbies, and public groups.",
+            },
+            {
+              step: "02",
+              title: "Model incentives",
+              description:
+                "Economic, political, ideological, and institutional incentives are analyzed for each stakeholder.",
+            },
+            {
+              step: "03",
+              title: "Generate hypotheses",
+              description:
+                "Structured motivation analyses with explicit confidence levels, citations, and alternative explanations.",
+            },
+          ].map((item, i) => (
+            <div
+              key={item.step}
+              className={`animate-fade-in-up stagger-${i + 2}`}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              <span className="text-xs font-bold tracking-widest text-(--tm-color-accent-500)">
+                {item.step}
+              </span>
+              <h3 className="mt-2 text-base font-semibold text-(--tm-color-primary-900)">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-(--tm-color-neutral-600)">
+                {item.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="h-px bg-(--tm-color-neutral-100)" />
+      </div>
+
+      {/* Featured reports */}
+      <section className="mx-auto max-w-6xl px-6 py-20">
+        <div className="flex items-end justify-between">
+          <div>
+            <h2 className="font-serif text-2xl font-semibold text-(--tm-color-primary-900)">
+              Featured analyses
+            </h2>
+            <p className="mt-2 text-sm text-(--tm-color-neutral-600)">
+              Recent investigations into the motivations behind major global
+              decisions.
+            </p>
+          </div>
+          <Link
+            href="/reports"
+            className="hidden text-sm font-medium text-(--tm-color-primary-800) underline underline-offset-4 decoration-(--tm-color-neutral-300) hover:decoration-(--tm-color-primary-800) transition-colors sm:block"
+          >
+            View all reports
+          </Link>
+        </div>
+
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {featured.map((report, i) => (
+            <ReportCard
+              key={report.slug}
+              report={report}
+              className={`animate-fade-in-up stagger-${i + 1}`}
+            />
+          ))}
+        </div>
+
+        <div className="mt-8 text-center sm:hidden">
+          <Link
+            href="/reports"
+            className="text-sm font-medium text-(--tm-color-primary-800) underline underline-offset-4"
+          >
+            View all reports
+          </Link>
+        </div>
+      </section>
+
+      {/* CTA band */}
+      <section className="border-t border-(--tm-color-neutral-100) bg-white">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 py-16 text-center">
+          <h2 className="font-serif text-2xl font-semibold text-(--tm-color-primary-900)">
+            Investigate your own topic
+          </h2>
+          <p className="max-w-md text-sm leading-relaxed text-(--tm-color-neutral-600)">
+            Journalists and researchers can generate custom motivation analyses
+            on any public policy, government decision, or corporate action.
+          </p>
+          <span className="inline-flex items-center rounded-lg bg-(--tm-color-primary-800) px-6 py-2.5 text-sm font-semibold text-white cursor-default opacity-75">
+            Coming soon — join the waitlist
+          </span>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-(--tm-color-neutral-100) bg-(--tm-color-neutral-50)">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
+          <div className="flex items-center gap-2">
+            <span className="inline-block h-4 w-0.5 rounded-sm bg-(--tm-color-accent-500)" />
+            <span className="font-serif text-sm font-semibold text-(--tm-color-primary-900)">
+              TrueMotives
+            </span>
+          </div>
+          <p className="text-xs text-(--tm-color-neutral-600)">
+            AI-assisted analysis — not definitive fact. Always verify
+            independently.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </footer>
     </div>
   );
 }
