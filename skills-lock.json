@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "063a0e6448123cd359ad0044cc46b0e490cc7964d45ef4bb9fd842bd2ffbca67"
     },
+    "react-aria": {
+      "source": "react-aria.adobe.com",
+      "sourceType": "well-known",
+      "computedHash": "88f92384476cee8ab0a588b8e6fb7e759bbf952ccdcd5080522a27a12312ed9c"
+    },
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
