@@ -104,25 +104,40 @@ function MotivationCard({ motivation }: { motivation: MotivationHypothesis }) {
 }
 
 function EvidenceRow({ item }: { item: EvidenceItem }) {
+  const confidenceLabel =
+    item.confidence === "high"
+      ? "High"
+      : item.confidence === "medium"
+      ? "Medium"
+      : "Low";
+
+  const confidenceColor =
+    item.confidence === "high"
+      ? "text-(--tm-color-success-500)"
+      : item.confidence === "medium"
+      ? "text-(--tm-color-info-500)"
+      : "text-(--tm-color-danger-500)";
+
   return (
-    <div className="flex gap-4 border-b border-(--tm-color-neutral-100) py-4 last:border-b-0">
-      <ConfidenceBadge level={item.confidence} className="mt-0.5 shrink-0" />
-      <div className="min-w-0 flex-1">
-        <p className="text-sm leading-relaxed text-(--tm-color-neutral-900)">
-          {item.claim}
-        </p>
-        <p className="mt-1 text-xs text-(--tm-color-neutral-600)">
-          Source:{" "}
-          <a
-            href={item.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-(--tm-color-info-500) underline underline-offset-2 hover:text-(--tm-color-info-500)/80 transition-colors"
-          >
-            {item.source}
-          </a>
-        </p>
-      </div>
+    <div className="border-b border-(--tm-color-neutral-100) py-4 last:border-b-0">
+      <p className="text-[11px] font-medium uppercase tracking-wide text-(--tm-color-neutral-600)">
+        <span className={confidenceColor}>{confidenceLabel}</span>{" "}
+        <span className="text-(--tm-color-neutral-400)">confidence</span>
+      </p>
+      <p className="mt-1 text-sm leading-relaxed text-(--tm-color-neutral-900)">
+        {item.claim}
+      </p>
+      <p className="mt-1 text-xs text-(--tm-color-neutral-600)">
+        Source:{" "}
+        <a
+          href={item.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-(--tm-color-info-500) underline underline-offset-2 hover:text-(--tm-color-info-500)/80 transition-colors"
+        >
+          {item.source}
+        </a>
+      </p>
     </div>
   );
 }
@@ -257,7 +272,7 @@ export default async function ReportDetailPage({
               Sourced claims supporting the analysis. Confidence reflects source
               reliability and corroboration.
             </p>
-            <div className="mt-4">
+            <div>
               {report.evidence.map((ev, i) => (
                 <EvidenceRow key={i} item={ev} />
               ))}
