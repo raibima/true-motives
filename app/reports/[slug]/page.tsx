@@ -1,7 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { SiteHeader } from "@/components/SiteHeader";
-import { Footer } from "@/components/Footer";
 import { ConfidenceBadge } from "@/components/ConfidenceBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { getReportBySlug, REPORTS } from "@/lib/mock-data";
@@ -156,9 +154,7 @@ export default async function ReportDetailPage({
   }
 
   return (
-    <div className="grain-overlay min-h-screen">
-      <SiteHeader />
-
+    <>
       {/* Back link */}
       <div className="mx-auto max-w-4xl px-6 pt-6">
         <Link
@@ -362,9 +358,6 @@ export default async function ReportDetailPage({
           </span>
         </div>
       </article>
-
-      {/* Footer */}
-      <Footer className="mt-12 border-t border-(--tm-color-neutral-100) bg-(--tm-color-neutral-50)" />
-    </div>
+    </>
   );
 }

@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { SiteHeader } from "@/components/SiteHeader";
-import { Footer } from "@/components/Footer";
 import { ReportCard } from "@/components/ReportCard";
 import { getFeaturedReports } from "@/lib/mock-data";
 
@@ -8,9 +6,7 @@ export default function Home() {
   const featured = getFeaturedReports();
 
   return (
-    <div className="grain-overlay min-h-screen">
-      <SiteHeader />
-
+    <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-(--tm-color-primary-900)">
         <div className="absolute inset-0 opacity-[0.07]">
@@ -185,8 +181,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <Footer />
-    </div>
+    </>
   );
 }
