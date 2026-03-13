@@ -69,9 +69,12 @@ export function SiteHeader() {
             Browse reports
           </Link>
           <span className="text-sm text-(--tm-color-neutral-300)">|</span>
-          <span className="text-sm text-(--tm-color-neutral-600) cursor-default">
-            For journalists
-          </span>
+          <Link
+            href="/pricing"
+            className="text-sm font-medium text-(--tm-color-neutral-600) transition-colors hover:text-(--tm-color-primary-900)"
+          >
+            Pricing
+          </Link>
         </div>
 
         {/* Mobile hamburger + drawer */}
@@ -114,9 +117,13 @@ export function SiteHeader() {
                         >
                           Browse reports
                         </Link>
-                        <span className="rounded-lg px-3 py-2.5 text-sm text-(--tm-color-neutral-600) cursor-default">
-                          For journalists
-                        </span>
+                        <Link
+                          href="/pricing"
+                          onClick={close}
+                          className="rounded-lg px-3 py-2.5 text-sm font-medium text-(--tm-color-neutral-600) transition-colors hover:bg-(--tm-color-neutral-100) hover:text-(--tm-color-primary-900)"
+                        >
+                          Pricing
+                        </Link>
                       </div>
                     </>
                   )}

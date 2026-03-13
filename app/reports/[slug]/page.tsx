@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ConfidenceBadge } from "@/components/ConfidenceBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
+import { InvestigateCTA } from "@/components/InvestigateCTA";
 import { getReportBySlug, REPORTS } from "@/lib/mock-data";
 import type { Stakeholder, MotivationHypothesis, EvidenceItem } from "@/lib/types";
 
@@ -345,18 +346,7 @@ export default async function ReportDetailPage({
         </div>
 
         {/* CTA */}
-        <div className="mt-8 flex flex-col items-center gap-3 rounded-lg border border-dashed border-(--tm-color-neutral-300) bg-white px-8 py-10 text-center">
-          <h3 className="font-serif text-lg font-semibold text-(--tm-color-primary-900)">
-            Investigate your own topic
-          </h3>
-          <p className="max-w-md text-sm text-(--tm-color-neutral-600)">
-            Generate custom motivation analyses on any public policy, government
-            decision, or corporate action.
-          </p>
-          <span className="mt-2 inline-flex items-center rounded-lg bg-(--tm-color-primary-800) px-5 py-2 text-sm font-semibold text-white cursor-default opacity-75">
-            Coming soon
-          </span>
-        </div>
+        <InvestigateCTA variant="card" className="mt-8" />
       </article>
     </>
   );

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ReportCard } from "@/components/ReportCard";
+import { InvestigateCTA } from "@/components/InvestigateCTA";
 import { getFeaturedReports } from "@/lib/mock-data";
 
 export default function Home() {
@@ -67,9 +68,12 @@ export default function Home() {
                   />
                 </svg>
               </Link>
-              <span className="inline-flex items-center rounded-lg border border-white/20 px-5 py-2.5 text-sm font-medium text-white/70 cursor-default">
-                For journalists — coming soon
-              </span>
+              <Link
+                href="/pricing"
+                className="inline-flex items-center rounded-lg border border-white/20 px-5 py-2.5 text-sm font-medium text-white/80 transition-all hover:border-white/40 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--tm-color-accent-400)"
+              >
+                For journalists — see pricing
+              </Link>
             </div>
           </div>
         </div>
@@ -166,20 +170,7 @@ export default function Home() {
       </section>
 
       {/* CTA band */}
-      <section className="border-t border-(--tm-color-neutral-100) bg-white">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 py-16 text-center">
-          <h2 className="font-serif text-2xl font-semibold text-(--tm-color-primary-900)">
-            Investigate your own topic
-          </h2>
-          <p className="max-w-md text-sm leading-relaxed text-(--tm-color-neutral-600)">
-            Journalists and researchers can generate custom motivation analyses
-            on any public policy, government decision, or corporate action.
-          </p>
-          <span className="inline-flex items-center rounded-lg bg-(--tm-color-primary-800) px-6 py-2.5 text-sm font-semibold text-white cursor-default opacity-75">
-            Coming soon — join the waitlist
-          </span>
-        </div>
-      </section>
+      <InvestigateCTA variant="band" />
 
     </>
   );
