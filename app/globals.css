@@ -216,3 +216,51 @@
 .stagger-4 { animation-delay: 240ms; }
 .stagger-5 { animation-delay: 320ms; }
 .stagger-6 { animation-delay: 400ms; }
+
+@keyframes breathing-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--tm-color-accent-500) 40%, transparent);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.04);
+    box-shadow: 0 0 0 6px color-mix(in oklab, var(--tm-color-accent-500) 0%, transparent);
+  }
+}
+
+.animate-breathing-pulse {
+  animation: breathing-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--tm-color-neutral-100) 25%,
+    var(--tm-color-neutral-50) 50%,
+    var(--tm-color-neutral-100) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes log-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-log-slide-in {
+  animation: log-slide-in 0.25s ease-out both;
+}
