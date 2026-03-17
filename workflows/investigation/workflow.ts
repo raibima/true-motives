@@ -1,8 +1,10 @@
 import type { UIMessageChunk } from "ai";
+import { generateText, Output } from "ai";
 import { z } from "zod";
-import { DurableAgent, Output } from "@workflow/ai/agent";
-import { openai } from "@workflow/ai/openai";
+import { DurableAgent, Output as WorkflowOutput } from "@workflow/ai/agent";
+import { openai as workflowOpenai } from "@workflow/ai/openai";
 import { getWritable } from "workflow";
+import { openai } from "@ai-sdk/openai";
 
 import { reportSchema } from "@/lib/report-schema";
 import type { Report, ReportCategory } from "@/lib/types";
@@ -16,15 +18,16 @@ import {
   newsTopHeadlinesStep,
 } from "@/workflows/investigation/steps/research";
 
-const reportCategorySchema = z.enum([
+export const reportCategorySchema = z.enum([
   "policy",
   "regulation",
   "corporate-decision",
   "government-action",
   "legislation",
+  "culture-and-society",
 ]);
 
-const investigationInputSchema = z.object({
+export const investigationInputSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(""),
   category: reportCategorySchema,
@@ -85,6 +88,59 @@ function finalizeReport(
   };
 }
 
+export async function planInvestigationFromPrompt(
+  prompt: string,
+): Promise<InvestigationWorkflowInput> {
+  const planningSchema = z.object({
+    title: z.string().min(1),
+    description: z.string(),
+    category: reportCategorySchema,
+    geography: z.string(),
+    context: z.string(),
+  });
+
+  const planningOutput = Output.object({
+    schema: planningSchema,
+  });
+
+  const { output } = await generateText({
+    model: openai("gpt-5-mini-2025-08-07"),
+    output: planningOutput,
+    prompt: `
+You are an assistant that turns a freeform investigation idea into a structured investigation input for the TrueMotives investigation workflow.
+
+Transform the user's idea into an object that matches this schema:
+- title: concise, descriptive investigation title
+- description: 1–3 sentence summary of the investigation focus
+- category: one of "policy" | "regulation" | "corporate-decision" | "government-action" | "legislation" | "culture-and-society"
+- geography: string (use "Global" if unclear)
+- context: optional string with additional context, constraints, or guiding questions
+
+Guidelines:
+- Choose the category by mapping the user's description to the closest enum value.
+- Use "Global" as geography when the scope is unclear.
+- Keep the title short but specific.
+- Summarize the core investigative question in the description.
+- Never invent fields outside this schema.
+
+User investigation idea:
+${prompt}
+`.trim(),
+  });
+
+  const planned = planningSchema.parse(output);
+
+  const normalized: InvestigationWorkflowInput = {
+    title: planned.title.trim(),
+    description: planned.description.trim(),
+    category: planned.category,
+    geography: planned.geography.trim() || "Global",
+    context: planned.context.trim() || undefined,
+  };
+
+  return investigationInputSchema.parse(normalized);
+}
+
 export async function investigationWorkflow(
   rawInput: InvestigationWorkflowInput,
 ) {
@@ -93,7 +149,7 @@ export async function investigationWorkflow(
   const input = investigationInputSchema.parse(rawInput);
   const toolCallCounts: Record<string, number> = {};
   const writable = getWritable<UIMessageChunk>();
-  const reportOutput = Output.object({ schema: reportSchema });
+  const reportOutput = WorkflowOutput.object({ schema: reportSchema });
   const reportOutputSpecification = {
     type: "object" as const,
     responseFormat: await reportOutput.responseFormat,
@@ -525,7 +581,7 @@ export async function investigationWorkflow(
   } as const;
 
   const agent = new DurableAgent({
-    model: openai("gpt-5.4"),
+    model: workflowOpenai("gpt-5.4"),
     system: `You are an investigative research analyst for TrueMotives.
 Your primary goal is to uncover the **hidden motivations** and incentive structures behind the topic, going well beyond surface-level explanations.
 

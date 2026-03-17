@@ -41,7 +41,8 @@ export type ReportCategory =
   | "regulation"
   | "corporate-decision"
   | "government-action"
-  | "legislation";
+  | "legislation"
+  | "culture-and-society";
 
 export interface Stakeholder {
   name: string;

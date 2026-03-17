@@ -7,6 +7,7 @@ const categorySchema = z.enum([
   "corporate-decision",
   "government-action",
   "legislation",
+  "culture-and-society",
 ]);
 
 export const reportSchema = z.object({

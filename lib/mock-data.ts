@@ -663,6 +663,10 @@ export const CATEGORIES: { value: string; label: string }[] = [
   { value: "corporate-decision", label: "Corporate decision" },
   { value: "government-action", label: "Government action" },
   { value: "legislation", label: "Legislation" },
+  {
+    value: "culture-and-society",
+    label: "Culture, sports & public narratives",
+  },
 ];
 
 export function getReportBySlug(slug: string): Report | undefined {

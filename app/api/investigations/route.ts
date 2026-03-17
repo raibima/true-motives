@@ -16,6 +16,7 @@ const requestSchema = z.object({
     "corporate-decision",
     "government-action",
     "legislation",
+    "culture-and-society",
   ]) as z.ZodType<ReportCategory>,
   geography: z.string().default("Global"),
   context: z.string().optional(),

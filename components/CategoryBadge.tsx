@@ -7,6 +7,7 @@ const labels: Record<ReportCategory, string> = {
   "corporate-decision": "Corporate decision",
   "government-action": "Government action",
   legislation: "Legislation",
+  "culture-and-society": "Culture, sports & public narratives",
 };
 
 export function CategoryBadge({
@@ -20,7 +21,7 @@ export function CategoryBadge({
     <span
       className={cn(
         "inline-flex items-center rounded-full bg-(--tm-color-neutral-100) px-2.5 py-0.5 text-xs font-medium text-(--tm-color-neutral-600)",
-        className
+        className,
       )}
     >
       {labels[category]}
