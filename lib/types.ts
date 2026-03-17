@@ -1,5 +1,41 @@
 export type ConfidenceLevel = "high" | "medium" | "low";
 
+export type InvestigationStatus = "draft" | "generating" | "completed" | "failed";
+
+export type GenerationPhase =
+  | "gathering-sources"
+  | "identifying-stakeholders"
+  | "analyzing-incentives"
+  | "drafting-report"
+  | "finalizing";
+
+export interface ActivityLogEntry {
+  id: string;
+  timestamp: string;
+  message: string;
+}
+
+export interface InvestigationGenerationProgress {
+  currentPhase: GenerationPhase;
+  completedPhases: GenerationPhase[];
+  percentage: number;
+  estimatedSecondsRemaining?: number;
+  activityLog: ActivityLogEntry[];
+}
+
+export interface Investigation {
+  id: string;
+  title: string;
+  description: string;
+  status: InvestigationStatus;
+  category: ReportCategory;
+  geography: string;
+  createdAt: string;
+  updatedAt: string;
+  report?: Report;
+  generationProgress?: InvestigationGenerationProgress;
+}
+
 export type ReportCategory =
   | "policy"
   | "regulation"

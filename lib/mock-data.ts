@@ -1,4 +1,4 @@
-import type { Report } from "./types";
+import type { Investigation, Report } from "./types";
 
 export const REPORTS: Report[] = [
   {
@@ -699,4 +699,120 @@ export function filterReports(options: {
   }
 
   return results;
+}
+
+export const INVESTIGATIONS: Investigation[] = [
+  {
+    id: "inv-001",
+    title: "US Pharmaceutical Industry Lobbying on Drug Pricing Reform",
+    description:
+      "What are the true motivations behind pharma industry's aggressive lobbying against Medicare drug price negotiation — is this purely about R&D economics or are there deeper structural incentives?",
+    status: "completed",
+    category: "legislation",
+    geography: "United States",
+    createdAt: "2026-03-01T09:15:00Z",
+    updatedAt: "2026-03-01T11:45:00Z",
+    report: REPORTS[0],
+  },
+  {
+    id: "inv-002",
+    title: "EU Artificial Intelligence Act: Who Really Wins?",
+    description:
+      "Analyzing the stakeholders behind the EU AI Act's final text — why certain high-risk categories were included or excluded, and which industry players shaped the outcomes.",
+    status: "completed",
+    category: "regulation",
+    geography: "European Union",
+    createdAt: "2026-02-20T14:00:00Z",
+    updatedAt: "2026-02-22T16:30:00Z",
+    report: REPORTS[1],
+  },
+  {
+    id: "inv-003",
+    title: "Brazil's Amazon Deforestation Moratorium Reversal",
+    description:
+      "Examining the political and economic incentives driving the rollback of Amazon deforestation protections — which agricultural, financial, and political actors stand to benefit?",
+    status: "generating",
+    category: "government-action",
+    geography: "Brazil",
+    createdAt: "2026-03-14T08:00:00Z",
+    updatedAt: "2026-03-14T08:00:00Z",
+    generationProgress: {
+      currentPhase: "analyzing-incentives",
+      completedPhases: ["gathering-sources", "identifying-stakeholders"],
+      percentage: 52,
+      estimatedSecondsRemaining: 67,
+      activityLog: [
+        {
+          id: "log-001",
+          timestamp: "2026-03-14T08:00:12Z",
+          message: "Starting deep research for: Brazil's Amazon Deforestation Moratorium Reversal",
+        },
+        {
+          id: "log-002",
+          timestamp: "2026-03-14T08:00:18Z",
+          message: "Searching IBGE databases and Brazilian agricultural ministry reports...",
+        },
+        {
+          id: "log-003",
+          timestamp: "2026-03-14T08:01:02Z",
+          message: "Found 34 relevant source documents from Brazilian federal sources",
+        },
+        {
+          id: "log-004",
+          timestamp: "2026-03-14T08:01:15Z",
+          message: "Identified key stakeholder: Brazilian Agribusiness Association (CNA)",
+        },
+        {
+          id: "log-005",
+          timestamp: "2026-03-14T08:01:44Z",
+          message: "Identified key stakeholder: Bancada Ruralista (agricultural caucus in Congress)",
+        },
+        {
+          id: "log-006",
+          timestamp: "2026-03-14T08:02:11Z",
+          message: "Cross-referencing campaign finance data with deforestation permit approvals...",
+        },
+        {
+          id: "log-007",
+          timestamp: "2026-03-14T08:03:05Z",
+          message: "Analyzing economic incentive structure for soy and beef export revenues...",
+        },
+        {
+          id: "log-008",
+          timestamp: "2026-03-14T08:03:47Z",
+          message: "Searching EU-Mercosur trade deal timeline for correlation with deforestation policy...",
+        },
+      ],
+    },
+  },
+  {
+    id: "inv-004",
+    title: "US Federal Reserve Interest Rate Decision — March 2026",
+    description:
+      "Beyond the stated inflation targets, what political and financial pressures are influencing the Fed's rate trajectory? Who benefits from higher rates being maintained?",
+    status: "draft",
+    category: "government-action",
+    geography: "United States",
+    createdAt: "2026-03-13T16:20:00Z",
+    updatedAt: "2026-03-13T16:20:00Z",
+  },
+  {
+    id: "inv-005",
+    title: "UK Post-Brexit Financial Services Deregulation",
+    description:
+      "Analyzing whether the UK's 'Edinburgh Reforms' of financial regulation represent genuine competitiveness strategy or primarily benefit City of London institutions at public expense.",
+    status: "failed",
+    category: "regulation",
+    geography: "United Kingdom",
+    createdAt: "2026-03-10T11:00:00Z",
+    updatedAt: "2026-03-10T11:22:00Z",
+  },
+];
+
+export function getInvestigations(): Investigation[] {
+  return INVESTIGATIONS;
+}
+
+export function getInvestigationById(id: string): Investigation | undefined {
+  return INVESTIGATIONS.find((inv) => inv.id === id);
 }

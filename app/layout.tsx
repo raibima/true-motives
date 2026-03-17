@@ -5,8 +5,6 @@ import { isRTL } from "react-aria-components";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ClientProviders } from "./provider";
-import { SiteHeader } from "@/components/SiteHeader";
-import { Footer } from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const sourceSerif = Source_Serif_4({
@@ -37,13 +35,7 @@ export default async function RootLayout({
       className={cn(inter.variable, sourceSerif.variable)}
     >
       <body className="font-sans antialiased bg-background text-foreground">
-        <ClientProviders lang={lang}>
-          <div className="grain-overlay min-h-screen flex flex-col">
-            <SiteHeader />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-        </ClientProviders>
+        <ClientProviders lang={lang}>{children}</ClientProviders>
       </body>
     </html>
   );
