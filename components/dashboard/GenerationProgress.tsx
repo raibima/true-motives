@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import type {
-  Investigation,
-  GenerationPhase,
-  ActivityLogEntry,
-} from "@/lib/types";
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import type { GenerationPhase } from "@/lib/types";
+import { useInvestigationStream } from "@/hooks/use-investigation-stream";
 
 const PHASES: { id: GenerationPhase; label: string; description: string }[] = [
   {
@@ -35,24 +33,9 @@ const PHASES: { id: GenerationPhase; label: string; description: string }[] = [
   },
 ];
 
-const SIMULATED_LOGS: string[] = [
-  "Querying EU transparency register for lobbying disclosures...",
-  "Found 8 additional stakeholder connections via OpenCorporates...",
-  "Cross-referencing campaign finance records with policy votes...",
-  "Analyzing correlation between soy futures and deforestation permits...",
-  "Retrieving World Bank agricultural export data for Brazil 2020–2026...",
-  "Identifying high-confidence incentive cluster: agribusiness export revenue...",
-  "Checking for alternative explanations: environmental compliance narrative...",
-  "Assigning confidence levels to 14 motivation hypotheses...",
-  "Verifying source credibility scores for 22 citations...",
-  "Structuring executive summary with ranked motivations...",
-];
-
 function PhaseIcon({
-  phase,
   state,
 }: {
-  phase: GenerationPhase;
   state: "completed" | "active" | "pending";
 }) {
   if (state === "completed") {
@@ -92,55 +75,58 @@ function formatLogTime(iso: string): string {
 }
 
 export function GenerationProgress({
-  investigation,
+  runId,
 }: {
-  investigation: Investigation;
+  runId: string;
 }) {
-  const progress = investigation.generationProgress!;
+  const router = useRouter();
   const logRef = useRef<HTMLDivElement>(null);
+  const hasRefreshedRef = useRef(false);
+  const {
+    activityLog,
+    currentPhase,
+    percentage,
+    isComplete,
+    error,
+    estimatedSecondsRemaining,
+  } = useInvestigationStream(runId);
 
-  const [liveLog, setLiveLog] = useState<ActivityLogEntry[]>(
-    progress.activityLog
-  );
-  const [displayedPercentage, setDisplayedPercentage] = useState(
-    progress.percentage
-  );
-  const logIndexRef = useRef(0);
-
-  // Simulate live activity log additions
   useEffect(() => {
-    const interval = setInterval(() => {
-      const idx = logIndexRef.current % SIMULATED_LOGS.length;
-      logIndexRef.current += 1;
+    if (!isComplete || hasRefreshedRef.current) return;
+    hasRefreshedRef.current = true;
+    const timeout = setTimeout(() => {
+      if (typeof window !== "undefined") {
+        window.location.reload();
+      } else {
+        router.refresh();
+      }
+    }, 1500);
 
-      const newEntry: ActivityLogEntry = {
-        id: `live-${Date.now()}`,
-        timestamp: new Date().toISOString(),
-        message: SIMULATED_LOGS[idx],
-      };
-
-      setLiveLog((prev) => [...prev.slice(-20), newEntry]);
-
-      // Also slowly increment percentage
-      setDisplayedPercentage((prev) => Math.min(prev + 0.6, 95));
-    }, 3200);
-
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearTimeout(timeout);
+  }, [isComplete, router, runId]);
 
   // Auto-scroll log to bottom
   useEffect(() => {
     if (logRef.current) {
       logRef.current.scrollTop = logRef.current.scrollHeight;
     }
-  }, [liveLog]);
+  }, [activityLog]);
 
-  const currentPhaseIndex = PHASES.findIndex(
-    (p) => p.id === progress.currentPhase
-  );
+  const currentPhaseIndex = PHASES.findIndex((p) => p.id === currentPhase);
+  const safeCurrentPhaseIndex =
+    currentPhaseIndex >= 0 ? currentPhaseIndex : 0;
+  const completedPhases = PHASES.filter(
+    (_, index) => index < safeCurrentPhaseIndex
+  ).map((phase) => phase.id);
+  const displayedPercentage = Math.max(1, Math.min(100, Math.round(percentage)));
 
   return (
     <div className="space-y-6">
+      {error && (
+        <div className="rounded-xl border border-(--tm-color-danger-500)/30 bg-(--tm-color-danger-100)/60 px-4 py-3 text-sm text-(--tm-color-danger-500)">
+          Stream error: {error}
+        </div>
+      )}
       {/* Transparency callout banner */}
       <div className="flex items-start gap-3 rounded-xl border border-(--tm-color-info-500)/30 bg-(--tm-color-info-100)/60 px-4 py-3.5">
         <svg
@@ -175,8 +161,8 @@ export function GenerationProgress({
         </h3>
         <div className="space-y-1">
           {PHASES.map((phase, index) => {
-            const isCompleted = progress.completedPhases.includes(phase.id);
-            const isActive = phase.id === progress.currentPhase;
+            const isCompleted = completedPhases.includes(phase.id) || (isComplete && phase.id === "finalizing");
+            const isActive = phase.id === currentPhase && !isComplete;
             const state: "completed" | "active" | "pending" = isCompleted
               ? "completed"
               : isActive
@@ -197,7 +183,7 @@ export function GenerationProgress({
                         : "bg-(--tm-color-neutral-100) border border-(--tm-color-neutral-100)",
                     ].join(" ")}
                   >
-                    <PhaseIcon phase={phase.id} state={state} />
+                    <PhaseIcon state={state} />
                   </div>
                   {index < PHASES.length - 1 && (
                     <div
@@ -255,9 +241,9 @@ export function GenerationProgress({
             </span>
           </div>
           <div className="flex items-center gap-3">
-            {progress.estimatedSecondsRemaining != null && (
+            {estimatedSecondsRemaining != null && !isComplete && (
               <span className="text-xs text-(--tm-color-neutral-600)">
-                {formatSecondsRemaining(progress.estimatedSecondsRemaining)}
+                {formatSecondsRemaining(estimatedSecondsRemaining)}
               </span>
             )}
             <span className="text-sm font-mono font-semibold text-(--tm-color-accent-700)">
@@ -272,8 +258,8 @@ export function GenerationProgress({
           />
         </div>
         <p className="mt-2 text-xs text-(--tm-color-neutral-300)">
-          Phase {currentPhaseIndex + 1} of {PHASES.length}:{" "}
-          {PHASES[currentPhaseIndex]?.label}
+          Phase {safeCurrentPhaseIndex + 1} of {PHASES.length}:{" "}
+          {isComplete ? "Complete" : PHASES[safeCurrentPhaseIndex]?.label}
         </p>
       </div>
 
@@ -290,14 +276,14 @@ export function GenerationProgress({
             </span>
           </div>
           <span className="text-xs text-white/30 font-mono">
-            {liveLog.length} events
+            {activityLog.length} events
           </span>
         </div>
         <div
           ref={logRef}
           className="h-56 overflow-y-auto px-5 py-4 space-y-2 font-mono text-xs scroll-smooth"
         >
-          {liveLog.map((entry) => (
+          {activityLog.map((entry) => (
             <div
               key={entry.id}
               className="flex items-start gap-3 animate-log-slide-in"
@@ -308,15 +294,16 @@ export function GenerationProgress({
               <span className="text-white/80 leading-relaxed">{entry.message}</span>
             </div>
           ))}
-          {/* Blinking cursor */}
-          <div className="flex items-center gap-3">
-            <span className="flex-shrink-0 text-white/25">
-              {formatLogTime(new Date().toISOString())}
-            </span>
-            <span className="inline-flex">
-              <span className="h-3.5 w-0.5 bg-(--tm-color-accent-500) animate-pulse" />
-            </span>
-          </div>
+          {!isComplete && (
+            <div className="flex items-center gap-3">
+              <span className="flex-shrink-0 text-white/25">
+                {formatLogTime(new Date().toISOString())}
+              </span>
+              <span className="inline-flex">
+                <span className="h-3.5 w-0.5 bg-(--tm-color-accent-500) animate-pulse" />
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-const FIRECRAWL_API_BASE_URL = "https://api.firecrawl.dev/v2";
+const FIRECRAWL_API_BASE_URL = "https://api.firecrawl.dev/v2/";
 
 export class FirecrawlError extends Error {
   status: number;
@@ -295,7 +295,7 @@ export interface FirecrawlSearchResponse {
 }
 
 async function firecrawlRequest<TRequest, TResponse>(
-  path: "/scrape" | "/search",
+  path: "scrape" | "search",
   body: TRequest,
   init?: RequestInit,
 ): Promise<TResponse> {
@@ -378,7 +378,7 @@ export async function firecrawlScrape(
   }
 
   return firecrawlRequest<FirecrawlScrapeRequest, FirecrawlScrapeResponse>(
-    "/scrape",
+    "scrape",
     request,
     init,
   );
@@ -408,7 +408,7 @@ export async function firecrawlSearch(
   }
 
   return firecrawlRequest<FirecrawlSearchRequest, FirecrawlSearchResponse>(
-    "/search",
+    "search",
     request,
     init,
   );

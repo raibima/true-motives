@@ -3,14 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  Form,
-  TextField,
-  TextArea,
-  Label,
-  FieldError,
-  Input,
-} from "react-aria-components";
 
 const CATEGORIES = [
   { value: "policy", label: "Public policy" },
@@ -38,16 +30,50 @@ const GEOGRAPHIES = [
 export default function NewInvestigationPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedGeography, setSelectedGeography] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call — in production this would create the investigation
-    await new Promise((resolve) => setTimeout(resolve, 1800));
-    // Redirect to the generating investigation (using mock inv-003)
-    router.push("/dashboard/investigations/inv-003");
+    setSubmitError(null);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const payload = {
+        title: String(formData.get("title") ?? "").trim(),
+        description: String(formData.get("description") ?? "").trim(),
+        category: String(formData.get("category") ?? "").trim(),
+        geography: String(formData.get("geography") ?? "").trim() || "Global",
+        context: String(formData.get("context") ?? "").trim(),
+      };
+
+      const response = await fetch("/api/investigations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as
+          | { error?: string }
+          | null;
+        throw new Error(body?.error || "Failed to start investigation.");
+      }
+
+      const body = (await response.json()) as { runId: string };
+      router.push(`/dashboard/investigations/${body.runId}`);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Failed to start investigation.",
+      );
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -292,6 +318,9 @@ export default function NewInvestigationPage() {
           Generation takes 60–120 seconds. You can navigate away and return — the
           process continues in the background.
         </p>
+        {submitError && (
+          <p className="text-xs text-(--tm-color-danger-500)">{submitError}</p>
+        )}
       </form>
     </div>
   );

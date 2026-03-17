@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getRun } from "workflow/api";
 import { getInvestigationById } from "@/lib/mock-data";
 import { GenerationProgress } from "@/components/dashboard/GenerationProgress";
-import type { InvestigationStatus, ConfidenceLevel } from "@/lib/types";
+import { reportSchema } from "@/lib/report-schema";
+import type { ConfidenceLevel, Investigation, InvestigationStatus } from "@/lib/types";
 
 const STATUS_CONFIG: Record<
   InvestigationStatus,
@@ -70,7 +72,64 @@ export default async function InvestigationDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const investigation = getInvestigationById(id);
+  const isMockInvestigation = id.startsWith("inv-");
+
+  let investigation: Investigation | null = null;
+
+  if (isMockInvestigation) {
+    investigation = getInvestigationById(id) ?? null;
+    if (!investigation) {
+      notFound();
+    }
+  } else {
+    const run = getRun(id);
+    if (!(await run.exists)) {
+      notFound();
+    }
+
+    const runStatus = await run.status;
+    const createdAt = (await run.createdAt).toISOString();
+    const completedAt = (await run.completedAt)?.toISOString();
+
+    if (runStatus === "completed") {
+      const report = reportSchema.parse(await run.returnValue);
+      investigation = {
+        id,
+        title: report.title,
+        description: report.summary,
+        status: "completed",
+        category: report.category,
+        geography: report.geography,
+        createdAt,
+        updatedAt: completedAt ?? createdAt,
+        report,
+      };
+    } else if (runStatus === "failed" || runStatus === "cancelled") {
+      investigation = {
+        id,
+        title: `Investigation ${id}`,
+        description:
+          "This workflow run did not complete successfully. You can retry with a new investigation.",
+        status: "failed",
+        category: "policy",
+        geography: "Global",
+        createdAt,
+        updatedAt: completedAt ?? createdAt,
+      };
+    } else {
+      investigation = {
+        id,
+        title: `Investigation ${id}`,
+        description:
+          "Deep research is currently running. Live progress will stream below.",
+        status: "generating",
+        category: "policy",
+        geography: "Global",
+        createdAt,
+        updatedAt: createdAt,
+      };
+    }
+  }
 
   if (!investigation) {
     notFound();
@@ -160,9 +219,9 @@ export default async function InvestigationDetailPage({
       </div>
 
       {/* Conditional content based on status */}
-      {investigation.status === "generating" && investigation.generationProgress && (
+      {investigation.status === "generating" && (
         <div className="animate-fade-in-up stagger-2">
-          <GenerationProgress investigation={investigation} />
+          <GenerationProgress runId={id} />
         </div>
       )}
 
