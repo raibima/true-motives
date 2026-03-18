@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/components/ui/Link";
 import { getInvestigations } from "@/lib/mock-data";
 import { InvestigationCard } from "@/components/dashboard/InvestigationCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
@@ -15,9 +15,12 @@ const VALID_STATUSES: (InvestigationStatus | "all")[] = [
 ];
 
 function parseStatus(
-  status: string | string[] | undefined
+  status: string | string[] | undefined,
 ): InvestigationStatus | "all" {
-  if (typeof status === "string" && VALID_STATUSES.includes(status as InvestigationStatus | "all")) {
+  if (
+    typeof status === "string" &&
+    VALID_STATUSES.includes(status as InvestigationStatus | "all")
+  ) {
     return status as InvestigationStatus | "all";
   }
   return "all";
@@ -45,50 +48,17 @@ export default async function DashboardPage({
             Investigations
           </h1>
           <p className="text-sm text-(--tm-color-neutral-600)">
-            {allInvestigations.length} total &mdash;{" "}
-            {allInvestigations.filter((i) => i.status === "generating").length >
-              0 && (
-              <>
-                <span className="text-(--tm-color-accent-700) font-medium">
-                  {
-                    allInvestigations.filter((i) => i.status === "generating")
-                      .length
-                  }{" "}
-                  generating now
-                </span>
-                {` `}&mdash;{` `}
-              </>
-            )}
-            {allInvestigations.filter((i) => i.status === "completed").length}{" "}
-            completed
+            Your recent investigations will appear here.
           </p>
         </div>
-        <Link
-          href="/dashboard/new"
-          className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) px-4 py-2 text-sm font-semibold text-white transition-colors shadow-sm"
-        >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
+        <Link href="/dashboard/new" variant="button">
+          <PlusIcon />
           New investigation
         </Link>
       </div>
 
       {/* Status filter tabs */}
-      <StatusTabs
-        investigations={allInvestigations}
-        selectedKey={statusFilter}
-      >
+      <StatusTabs investigations={allInvestigations} selectedKey={statusFilter}>
         {/* Generating alert */}
         {investigations.some((i) => i.status === "generating") && (
           <StatusBanner
@@ -97,6 +67,7 @@ export default async function DashboardPage({
             action={
               <Link
                 href={`/dashboard/investigations/${investigations.find((i) => i.status === "generating")?.id}`}
+                variant="plain"
                 className="text-xs font-semibold text-(--tm-color-accent-700) hover:text-(--tm-color-accent-500) transition-colors"
               >
                 View progress →
@@ -127,5 +98,23 @@ export default async function DashboardPage({
         )}
       </StatusTabs>
     </div>
+  );
+}
+
+function PlusIcon() {
+  return (
+    <svg
+      className="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 4.5v15m7.5-7.5h-15"
+      />
+    </svg>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/components/ui/Link";
 import { usePathname } from "next/navigation";
 
 function FileTextIcon() {
@@ -145,7 +145,7 @@ export function DashboardSidebar() {
     <aside className="flex h-screen w-64 flex-shrink-0 flex-col bg-(--tm-color-primary-900) border-r border-white/8">
       {/* Brand */}
       <div className="flex h-14 items-center gap-2.5 border-b border-white/8 px-5">
-        <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+        <Link href="/" variant="plain" className="flex items-center gap-2 transition-opacity hover:opacity-80">
           <span className="inline-block h-5 w-1 rounded-sm bg-(--tm-color-accent-500)" />
           <span className="font-serif text-base font-semibold tracking-tight text-white">
             TrueMotives
@@ -158,10 +158,7 @@ export function DashboardSidebar() {
 
       {/* New investigation CTA */}
       <div className="p-3 border-b border-white/8">
-        <Link
-          href="/dashboard/new"
-          className="flex items-center justify-center gap-2 w-full rounded-lg bg-(--tm-color-accent-500) hover:bg-(--tm-color-accent-400) active:bg-(--tm-color-accent-700) px-3 py-2 text-sm font-semibold text-(--tm-color-primary-900) transition-all shadow-sm"
-        >
+        <Link href="/dashboard/new" variant="button-accent" className="w-full">
           <PlusIcon />
           New investigation
         </Link>
