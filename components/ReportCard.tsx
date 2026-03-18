@@ -1,14 +1,7 @@
 import { Link } from "@/components/ui/Link";
+import { formatDate } from "@/lib/utils";
 import type { Report } from "@/lib/types";
 import { CategoryBadge } from "./CategoryBadge";
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 export function ReportCard({
   report,

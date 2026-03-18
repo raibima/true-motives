@@ -42,8 +42,9 @@ function GeneratePlanButton() {
   return (
     <Button
       type="submit"
+      variant="primary"
       isPending={pending}
-      className="bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) pressed:bg-(--tm-color-primary-600) h-auto px-5 py-2.5 font-semibold shadow-sm"
+      className="h-auto px-5 py-2.5 font-semibold"
     >
       <Sparkles className="h-4 w-4" />
       <span>Generate AI plan</span>

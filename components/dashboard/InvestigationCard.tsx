@@ -1,31 +1,7 @@
 import { Link } from "@/components/ui/Link";
-import type { Investigation, InvestigationStatus } from "@/lib/types";
-
-const STATUS_CONFIG: Record<
-  InvestigationStatus,
-  { label: string; className: string; dotClassName: string }
-> = {
-  completed: {
-    label: "Completed",
-    className: "bg-(--tm-color-success-100) text-(--tm-color-success-500)",
-    dotClassName: "bg-(--tm-color-success-500)",
-  },
-  generating: {
-    label: "Generating",
-    className: "bg-(--tm-color-accent-400)/15 text-(--tm-color-accent-700)",
-    dotClassName: "bg-(--tm-color-accent-500) animate-pulse",
-  },
-  draft: {
-    label: "Draft",
-    className: "bg-(--tm-color-neutral-100) text-(--tm-color-neutral-600)",
-    dotClassName: "bg-(--tm-color-neutral-300)",
-  },
-  failed: {
-    label: "Failed",
-    className: "bg-(--tm-color-danger-100) text-(--tm-color-danger-500)",
-    dotClassName: "bg-(--tm-color-danger-500)",
-  },
-};
+import { InvestigationStatusBadge } from "@/components/dashboard/InvestigationStatusBadge";
+import { formatDate } from "@/lib/utils";
+import type { Investigation } from "@/lib/types";
 
 const CATEGORY_LABELS: Record<string, string> = {
   policy: "Policy",
@@ -35,14 +11,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   legislation: "Legislation",
 };
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 export function InvestigationCard({
   investigation,
   animationClass,
@@ -50,8 +18,6 @@ export function InvestigationCard({
   investigation: Investigation;
   animationClass?: string;
 }) {
-  const status = STATUS_CONFIG[investigation.status];
-
   return (
     <Link
       href={`/dashboard/investigations/${investigation.id}`}
@@ -70,15 +36,10 @@ export function InvestigationCard({
           </h3>
         </div>
         {/* Status badge */}
-        <span
-          className={[
-            "flex-shrink-0 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
-            status.className,
-          ].join(" ")}
-        >
-          <span className={["h-1.5 w-1.5 rounded-full", status.dotClassName].join(" ")} />
-          {status.label}
-        </span>
+        <InvestigationStatusBadge
+          status={investigation.status}
+          className="flex-shrink-0"
+        />
       </div>
 
       {/* Description */}
