@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Link } from "@/components/ui/Link";
 import { generatePlan, startInvestigation } from "@/lib/investigations-api";
@@ -97,12 +98,34 @@ const sparkleIcon = (
 
 type Step = "prompt" | "review";
 
+function GeneratePlanSubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) disabled:opacity-60 disabled:cursor-not-allowed px-5 py-2.5 text-sm font-semibold text-white transition-all shadow-sm"
+    >
+      {pending ? (
+        <>
+          <div className="animate-spin">{spinnerIcon}</div>
+          Analyzing your investigation…
+        </>
+      ) : (
+        <>
+          {sparkleIcon}
+          Generate AI plan
+        </>
+      )}
+    </button>
+  );
+}
+
 export default function NewInvestigationPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>("prompt");
   const [prompt, setPrompt] = useState("");
   const [promptError, setPromptError] = useState<string | null>(null);
-  const [isPlanPending, startPlanTransition] = useTransition();
   const [isStartPending, startInvestigationTransition] = useTransition();
   const [planError, setPlanError] = useState<string | null>(null);
   const [startError, setStartError] = useState<string | null>(null);
@@ -113,10 +136,8 @@ export default function NewInvestigationPage() {
   const characterLimit = 2000;
   const remainingCharacters = characterLimit - characterCount;
 
-  function handleGeneratePlan(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    const trimmed = prompt.trim();
+  async function generatePlanAction(formData: FormData) {
+    const trimmed = (formData.get("prompt") as string || "").trim();
     if (!trimmed) {
       setPromptError("Describe what you want to investigate first.");
       return;
@@ -131,22 +152,20 @@ export default function NewInvestigationPage() {
     setPromptError(null);
     setPlanError(null);
 
-    startPlanTransition(async () => {
-      try {
-        const plan = await generatePlan(trimmed);
-        setPlannedInput({
-          ...plan,
-          geography: plan.geography || "Global",
-        });
-        setStep("review");
-      } catch (error) {
-        setPlanError(
-          error instanceof Error
-            ? error.message
-            : "Failed to analyze your investigation idea.",
-        );
-      }
-    });
+    try {
+      const plan = await generatePlan(trimmed);
+      setPlannedInput({
+        ...plan,
+        geography: plan.geography || "Global",
+      });
+      setStep("review");
+    } catch (error) {
+      setPlanError(
+        error instanceof Error
+          ? error.message
+          : "Failed to analyze your investigation idea.",
+      );
+    }
   }
 
   function handleStartInvestigation() {
@@ -203,7 +222,7 @@ export default function NewInvestigationPage() {
       </div>
 
       {step === "prompt" && (
-        <form onSubmit={handleGeneratePlan} className="space-y-6">
+        <form action={generatePlanAction} className="space-y-6">
           {/* Freeform investigation idea */}
           <div className="space-y-2">
             <label
@@ -269,23 +288,7 @@ export default function NewInvestigationPage() {
 
           {/* Submit */}
           <div className="flex items-center gap-3 pt-2">
-            <button
-              type="submit"
-              disabled={isPlanPending}
-              className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) disabled:opacity-60 disabled:cursor-not-allowed px-5 py-2.5 text-sm font-semibold text-white transition-all shadow-sm"
-            >
-              {isPlanPending ? (
-                <>
-                  <div className="animate-spin">{spinnerIcon}</div>
-                  Analyzing your investigation…
-                </>
-              ) : (
-                <>
-                  {sparkleIcon}
-                  Generate AI plan
-                </>
-              )}
-            </button>
+            <GeneratePlanSubmitButton />
             <Link
               href="/dashboard"
               className="rounded-lg px-4 py-2.5 text-sm font-medium text-(--tm-color-neutral-600) hover:text-(--tm-color-primary-900) transition-colors"
