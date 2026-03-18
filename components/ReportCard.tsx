@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/components/ui/Link";
 import type { Report } from "@/lib/types";
 import { CategoryBadge } from "./CategoryBadge";
 

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/components/ui/Link";
 import { ConfidenceBadge } from "@/components/ConfidenceBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { InvestigateCTA } from "@/components/InvestigateCTA";

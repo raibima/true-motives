@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/components/ui/Link";
 import { getRun } from "workflow/api";
 import { getInvestigationById } from "@/lib/mock-data";
 import { GenerationProgress } from "@/components/dashboard/GenerationProgress";

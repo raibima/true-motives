@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/components/ui/Link";
 import {
   Button as RACButton,
   Dialog,
@@ -112,14 +112,14 @@ export function SiteHeader() {
                       <div className="flex flex-col gap-1 px-4 py-4">
                         <Link
                           href="/reports"
-                          onClick={close}
+                          onPress={close}
                           className="rounded-lg px-3 py-2.5 text-sm font-medium text-(--tm-color-neutral-600) transition-colors hover:bg-(--tm-color-neutral-100) hover:text-(--tm-color-primary-900)"
                         >
                           Browse reports
                         </Link>
                         <Link
                           href="/pricing"
-                          onClick={close}
+                          onPress={close}
                           className="rounded-lg px-3 py-2.5 text-sm font-medium text-(--tm-color-neutral-600) transition-colors hover:bg-(--tm-color-neutral-100) hover:text-(--tm-color-primary-900)"
                         >
                           Pricing

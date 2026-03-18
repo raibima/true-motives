@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/components/ui/Link";
 import { ReportCard } from "@/components/ReportCard";
 import { InvestigateCTA } from "@/components/InvestigateCTA";
 import { getFeaturedReports } from "@/lib/mock-data";

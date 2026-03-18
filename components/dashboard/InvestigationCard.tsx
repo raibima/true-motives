@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@/components/ui/Link";
 import type { Investigation, InvestigationStatus } from "@/lib/types";
 
 const STATUS_CONFIG: Record<
