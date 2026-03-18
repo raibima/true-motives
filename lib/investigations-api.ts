@@ -32,7 +32,7 @@ export type StartInvestigationInput = {
   description: string;
   category: InvestigationWorkflowInput["category"];
   geography: string;
-  context: string;
+  phases?: Array<{ id: string; label: string; description: string }>;
 };
 
 export async function startInvestigation(

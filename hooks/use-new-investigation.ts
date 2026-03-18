@@ -142,7 +142,7 @@ export function useNewInvestigation() {
           description: plannedInput.description ?? "",
           category: plannedInput.category,
           geography: plannedInput.geography || "Global",
-          context: plannedInput.context ?? "",
+          phases: plannedInput.phases,
         });
         router.push(`/dashboard/investigations/${runId}`);
       } catch (error) {

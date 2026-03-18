@@ -741,8 +741,38 @@ export const INVESTIGATIONS: Investigation[] = [
     createdAt: "2026-03-14T08:00:00Z",
     updatedAt: "2026-03-14T08:00:00Z",
     generationProgress: {
-      currentPhase: "analyzing-incentives",
-      completedPhases: ["gathering-sources", "identifying-stakeholders"],
+      phases: [
+        {
+          id: "gather-sources",
+          label: "Gather sources",
+          description: "Searching IBGE databases, Brazilian federal sources, and international media",
+          status: "completed",
+        },
+        {
+          id: "identify-stakeholders",
+          label: "Identify stakeholders",
+          description: "Mapping agribusiness, political, and international actors involved",
+          status: "completed",
+        },
+        {
+          id: "analyze-incentives",
+          label: "Analyze incentives",
+          description: "Cross-referencing campaign finance data with deforestation permits",
+          status: "in-progress",
+        },
+        {
+          id: "trace-trade-links",
+          label: "Trace trade links",
+          description: "Examining EU-Mercosur trade deal timeline correlation with deforestation policy",
+          status: "pending",
+        },
+        {
+          id: "draft-report",
+          label: "Draft report",
+          description: "Structuring findings into the TrueMotives report format",
+          status: "pending",
+        },
+      ],
       percentage: 52,
       estimatedSecondsRemaining: 67,
       activityLog: [

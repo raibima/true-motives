@@ -40,7 +40,7 @@ const PROMPT_PLACEHOLDER =
 const PLAN_FEATURES = [
   "Proposed title and 1–3 sentence summary",
   "Issue category and geography inferred from your description",
-  "Optional context field capturing constraints, leads, or angles",
+  "Customized research phases tailored to your investigation",
   "Review screen where you can tweak everything before running",
 ];
 
@@ -230,17 +230,36 @@ export function NewInvestigationPageView() {
                   onChange={(value) => editPlan({ geography: value })}
                 />
               </div>
-
-              <TextAreaField
-                label="Additional context"
-                description="optional"
-                rows={4}
-                value={plannedInput.context ?? ""}
-                onChange={(value) => editPlan({ context: value })}
-                placeholder="Add any links, leads, red flags, or constraints you want the system to prioritize."
-              />
             </div>
           </div>
+
+          {plannedInput.phases && plannedInput.phases.length > 0 && (
+            <div className="rounded-xl border border-(--tm-color-neutral-100) bg-white p-5">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-(--tm-color-neutral-400) mb-3">
+                Planned research phases
+              </p>
+              <p className="text-xs text-(--tm-color-neutral-600) mb-4">
+                The AI will follow this customized research plan. Phases may be adjusted during the investigation if new angles emerge.
+              </p>
+              <ol className="space-y-2.5">
+                {plannedInput.phases.map((phase, index) => (
+                  <li key={phase.id} className="flex items-start gap-3">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-(--tm-color-neutral-50) text-[10px] font-semibold text-(--tm-color-neutral-600) ring-1 ring-inset ring-(--tm-color-neutral-100) mt-0.5">
+                      {index + 1}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-(--tm-color-primary-900)">
+                        {phase.label}
+                      </p>
+                      <p className="text-xs text-(--tm-color-neutral-600) mt-0.5">
+                        {phase.description}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
 
           <div className="flex items-center gap-3 pt-1">
             <Button
@@ -286,14 +305,22 @@ export function NewInvestigationPageView() {
               </span>
             </div>
 
-            {plannedInput.context && (
-              <div className="rounded-lg bg-(--tm-color-neutral-50) px-4 py-3">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-(--tm-color-neutral-400) mb-1">
-                  Additional context
+            {plannedInput.phases && plannedInput.phases.length > 0 && (
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-(--tm-color-neutral-400) mb-2">
+                  Research plan — {plannedInput.phases.length} phases
                 </p>
-                <p className="text-sm text-(--tm-color-neutral-600) leading-relaxed">
-                  {plannedInput.context}
-                </p>
+                <div className="flex flex-wrap gap-2">
+                  {plannedInput.phases.map((phase, index) => (
+                    <span
+                      key={phase.id}
+                      className="inline-flex items-center gap-1.5 rounded-md bg-(--tm-color-neutral-50) px-2.5 py-1 text-xs font-medium text-(--tm-color-neutral-600) ring-1 ring-inset ring-(--tm-color-neutral-100)"
+                    >
+                      <span className="text-(--tm-color-neutral-300)">{index + 1}.</span>
+                      {phase.label}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
           </div>

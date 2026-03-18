@@ -9,31 +9,11 @@ import {
   uiMessageChunkSchema,
 } from "ai";
 
-import type { ActivityLogEntry, GenerationPhase } from "@/lib/types";
-
-const PHASE_PROGRESS: Record<GenerationPhase, number> = {
-  "gathering-sources": 20,
-  "identifying-stakeholders": 40,
-  "analyzing-incentives": 62,
-  "drafting-report": 84,
-  finalizing: 95,
-};
-
-function inferPhaseFromTool(toolName: string): GenerationPhase {
-  if (
-    toolName.includes("brave") ||
-    toolName.includes("firecrawl") ||
-    toolName.includes("news")
-  ) {
-    return "gathering-sources";
-  }
-
-  if (toolName.includes("gdelt")) {
-    return "identifying-stakeholders";
-  }
-
-  return "analyzing-incentives";
-}
+import type {
+  ActivityLogEntry,
+  DynamicPhase,
+  DynamicPhaseStatus,
+} from "@/lib/types";
 
 function nowIso() {
   return new Date().toISOString();
@@ -45,11 +25,25 @@ function truncateJson(value: unknown, max = 220): string {
   return raw.length > max ? `${raw.slice(0, max)}...` : raw;
 }
 
+type DataProgressChunk = UIMessageChunk & {
+  type: string;
+  data: unknown;
+  transient?: boolean;
+};
+
+function isDataProgressChunk(
+  chunk: UIMessageChunk,
+): chunk is DataProgressChunk {
+  return (
+    "data" in chunk &&
+    (chunk as DataProgressChunk).type === "data-progress"
+  );
+}
+
 export function useInvestigationStream(runId: string) {
   const [messages, setMessages] = useState<UIMessage[]>([]);
   const [activityLog, setActivityLog] = useState<ActivityLogEntry[]>([]);
-  const [currentPhase, setCurrentPhase] =
-    useState<GenerationPhase>("gathering-sources");
+  const [phases, setPhases] = useState<DynamicPhase[]>([]);
   const [percentage, setPercentage] = useState(5);
   const [isComplete, setIsComplete] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +55,21 @@ export function useInvestigationStream(runId: string) {
   const logCounterRef = useRef(0);
 
   useEffect(() => {
+    if (phases.length === 0) return;
+    const completed = phases.filter(
+      (p) => p.status === "completed" || p.status === "skipped",
+    ).length;
+    const inProgress = phases.filter(
+      (p) => p.status === "in-progress",
+    ).length;
+    const computed = Math.min(
+      95,
+      Math.round(((completed + 0.5 * inProgress) / phases.length) * 100),
+    );
+    setPercentage((prev) => Math.max(prev, Math.max(5, computed)));
+  }, [phases]);
+
+  useEffect(() => {
     const abortController = new AbortController();
 
     function nextLogId() {
@@ -68,22 +77,90 @@ export function useInvestigationStream(runId: string) {
       return `${runId}-log-${current}`;
     }
 
+    function appendLog(message: string) {
+      setActivityLog((prev) =>
+        [
+          ...prev,
+          {
+            id: nextLogId(),
+            timestamp: nowIso(),
+            message,
+          },
+        ].slice(-40),
+      );
+    }
+
+    function handleDataProgress(chunk: DataProgressChunk) {
+      const payload = Array.isArray(chunk.data)
+        ? chunk.data[0]
+        : chunk.data;
+      if (!payload || typeof payload !== "object") return;
+
+      const kind = (payload as { kind?: string }).kind;
+
+      if (kind === "phases-init") {
+        const phasesData = (payload as { phases: DynamicPhase[] }).phases;
+        setPhases(phasesData);
+      } else if (kind === "phase-update") {
+        const { phaseId, status, note } = payload as {
+          phaseId: string;
+          status: DynamicPhaseStatus;
+          note?: string;
+        };
+        setPhases((prev) =>
+          prev.map((p) => (p.id === phaseId ? { ...p, status } : p)),
+        );
+        if (note) {
+          appendLog(note);
+        }
+      } else if (kind === "phase-added") {
+        const { phase, insertAfter } = payload as {
+          phase: DynamicPhase;
+          insertAfter?: string;
+        };
+        setPhases((prev) => {
+          if (insertAfter) {
+            const idx = prev.findIndex((p) => p.id === insertAfter);
+            if (idx !== -1) {
+              const next = [...prev];
+              next.splice(idx + 1, 0, phase);
+              return next;
+            }
+          }
+          return [...prev, phase];
+        });
+        appendLog(`Research plan updated: added phase "${phase.label}"`);
+      } else if (kind === "activity") {
+        const msg = (payload as { message?: string }).message;
+        if (msg) {
+          appendLog(msg);
+        }
+      } else {
+        const msg = (payload as { message?: string }).message;
+        if (msg) {
+          appendLog(msg);
+        }
+      }
+
+      const eta = (payload as { estimatedSecondsRemaining?: number })
+        .estimatedSecondsRemaining;
+      if (typeof eta === "number") {
+        setEstimatedSecondsRemaining(eta);
+      }
+    }
+
     async function consume() {
       setError(null);
       setIsComplete(false);
       setMessages([]);
       setActivityLog([]);
-      setCurrentPhase("gathering-sources");
+      setPhases([]);
       setPercentage(5);
       setEstimatedSecondsRemaining(undefined);
       processedPartsRef.current = new Set();
-      setActivityLog([
-        {
-          id: nextLogId(),
-          timestamp: nowIso(),
-          message: `Connected to workflow stream for run ${runId}. Awaiting investigation events...`,
-        },
-      ]);
+      appendLog(
+        `Connected to workflow stream for run ${runId}. Awaiting investigation events...`,
+      );
 
       try {
         const response = await fetch(`/api/investigations/${runId}/stream`, {
@@ -113,9 +190,13 @@ export function useInvestigationStream(runId: string) {
             UIMessageChunk
           >({
             transform(part, controller) {
-              if (part.success) {
-                controller.enqueue(part.value);
+              if (!part.success) return;
+              const chunk = part.value;
+              if (isDataProgressChunk(chunk)) {
+                handleDataProgress(chunk);
+                return;
               }
+              controller.enqueue(chunk);
             },
           }),
         );
@@ -140,135 +221,71 @@ export function useInvestigationStream(runId: string) {
             if (processedPartsRef.current.has(key)) return;
             processedPartsRef.current.add(key);
 
-            if (part.type === "data-progress") {
-              const payload = Array.isArray(part.data) ? part.data[0] : part.data;
-              if (payload && typeof payload === "object") {
-                const phase = (payload as { phase?: GenerationPhase }).phase;
-                const msg = (payload as { message?: string }).message;
-                const nextPercentage = (payload as { percentage?: number }).percentage;
-                const eta = (payload as { estimatedSecondsRemaining?: number })
-                  .estimatedSecondsRemaining;
-
-                if (phase) {
-                  setCurrentPhase(phase);
-                  setPercentage((prev) =>
-                    Math.max(prev, nextPercentage ?? PHASE_PROGRESS[phase]),
-                  );
-                }
-
-                if (typeof eta === "number") {
-                  setEstimatedSecondsRemaining(eta);
-                }
-
-                if (msg) {
-                  setActivityLog((prev) =>
-                    [
-                      ...prev,
-                      {
-                        id: nextLogId(),
-                        timestamp: nowIso(),
-                        message: msg,
-                      },
-                    ].slice(-40),
-                  );
-                }
-              }
-              return;
-            }
-
-            if (part.type.startsWith("tool-") && "state" in part && part.state === "input-available") {
+            if (
+              part.type.startsWith("tool-") &&
+              "state" in part &&
+              part.state === "input-available"
+            ) {
               const toolName = part.type.replace("tool-", "");
-              const inferredPhase = inferPhaseFromTool(toolName);
-              setCurrentPhase((prev) => prev ?? inferredPhase);
-              setPercentage((prev) => Math.max(prev, PHASE_PROGRESS[inferredPhase]));
-              setActivityLog((prev) =>
-                [
-                  ...prev,
-                  {
-                    id: nextLogId(),
-                    timestamp: nowIso(),
-                    message: `Running tool ${toolName} with input ${truncateJson(
-                      "input" in part ? part.input : undefined,
-                    )}`,
-                  },
-                ].slice(-40),
+              appendLog(
+                `Running tool ${toolName} with input ${truncateJson(
+                  "input" in part ? part.input : undefined,
+                )}`,
               );
             }
 
-            if (part.type.startsWith("tool-") && "state" in part && part.state === "input-streaming") {
+            if (
+              part.type.startsWith("tool-") &&
+              "state" in part &&
+              part.state === "input-streaming"
+            ) {
               const toolName = part.type.replace("tool-", "");
-              setActivityLog((prev) =>
-                [
-                  ...prev,
-                  {
-                    id: nextLogId(),
-                    timestamp: nowIso(),
-                    message: `Preparing ${toolName} call payload...`,
-                  },
-                ].slice(-40),
+              appendLog(`Preparing ${toolName} call payload...`);
+            }
+
+            if (
+              part.type.startsWith("tool-") &&
+              "state" in part &&
+              part.state === "output-available"
+            ) {
+              const toolName = part.type.replace("tool-", "");
+              appendLog(
+                `Tool ${toolName} completed. Output snapshot: ${truncateJson(
+                  "output" in part ? part.output : undefined,
+                )}`,
               );
             }
 
-            if (part.type.startsWith("tool-") && "state" in part && part.state === "output-available") {
+            if (
+              part.type.startsWith("tool-") &&
+              "state" in part &&
+              part.state === "output-error"
+            ) {
               const toolName = part.type.replace("tool-", "");
-              setActivityLog((prev) =>
-                [
-                  ...prev,
-                  {
-                    id: nextLogId(),
-                    timestamp: nowIso(),
-                    message: `Tool ${toolName} completed. Output snapshot: ${truncateJson(
-                      "output" in part ? part.output : undefined,
-                    )}`,
-                  },
-                ].slice(-40),
-              );
-            }
-
-            if (part.type.startsWith("tool-") && "state" in part && part.state === "output-error") {
-              const toolName = part.type.replace("tool-", "");
-              setActivityLog((prev) =>
-                [
-                  ...prev,
-                  {
-                    id: nextLogId(),
-                    timestamp: nowIso(),
-                    message: `Tool ${toolName} failed: ${
-                      "errorText" in part ? part.errorText : "Unknown tool error"
-                    }`,
-                  },
-                ].slice(-40),
+              appendLog(
+                `Tool ${toolName} failed: ${
+                  "errorText" in part ? part.errorText : "Unknown tool error"
+                }`,
               );
             }
 
             if (part.type === "step-start") {
-              setActivityLog((prev) =>
-                [
-                  ...prev,
-                  {
-                    id: nextLogId(),
-                    timestamp: nowIso(),
-                    message: "Starting a new model reasoning step...",
-                  },
-                ].slice(-40),
-              );
+              appendLog("Starting a new model reasoning step...");
             }
-
           });
         }
 
-        setCurrentPhase("finalizing");
+        setPhases((prev) =>
+          prev.map((p) =>
+            p.status !== "completed" && p.status !== "skipped"
+              ? { ...p, status: "completed" as const }
+              : p,
+          ),
+        );
         setPercentage(100);
         setEstimatedSecondsRemaining(0);
-        setActivityLog((prev) =>
-          [
-            ...prev,
-            {
-              id: nextLogId(),
-              timestamp: nowIso(),
-              message: "Investigation complete. Final report is now available.",
-            },
-          ].slice(-40),
+        appendLog(
+          "Investigation complete. Final report is now available.",
         );
         setIsComplete(true);
       } catch (err) {
@@ -288,7 +305,7 @@ export function useInvestigationStream(runId: string) {
     () => ({
       messages,
       activityLog,
-      currentPhase,
+      phases,
       percentage,
       isComplete,
       error,
@@ -297,7 +314,7 @@ export function useInvestigationStream(runId: string) {
     [
       messages,
       activityLog,
-      currentPhase,
+      phases,
       percentage,
       isComplete,
       error,

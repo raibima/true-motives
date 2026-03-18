@@ -2,43 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import type { GenerationPhase } from "@/lib/types";
 import { useInvestigationStream } from "@/hooks/use-investigation-stream";
-
-const PHASES: { id: GenerationPhase; label: string; description: string }[] = [
-  {
-    id: "gathering-sources",
-    label: "Gathering sources",
-    description: "Searching news archives, official documents, and public records",
-  },
-  {
-    id: "identifying-stakeholders",
-    label: "Identifying stakeholders",
-    description: "Mapping actors, organizations, and interest groups involved",
-  },
-  {
-    id: "analyzing-incentives",
-    label: "Analyzing incentives",
-    description: "Modeling economic, political, and ideological motivations",
-  },
-  {
-    id: "drafting-report",
-    label: "Drafting report",
-    description: "Structuring findings into the TrueMotives report format",
-  },
-  {
-    id: "finalizing",
-    label: "Finalizing",
-    description: "Verifying citations and confidence levels",
-  },
-];
 
 function PhaseIcon({
   state,
 }: {
-  state: "completed" | "active" | "pending";
+  state: "completed" | "active" | "pending" | "skipped";
 }) {
-  if (state === "completed") {
+  if (state === "completed" || state === "skipped") {
     return (
       <svg
         className="h-4 w-4 text-white"
@@ -84,7 +55,7 @@ export function GenerationProgress({
   const hasRefreshedRef = useRef(false);
   const {
     activityLog,
-    currentPhase,
+    phases,
     percentage,
     isComplete,
     error,
@@ -105,20 +76,25 @@ export function GenerationProgress({
     return () => clearTimeout(timeout);
   }, [isComplete, router, runId]);
 
-  // Auto-scroll log to bottom
   useEffect(() => {
     if (logRef.current) {
       logRef.current.scrollTop = logRef.current.scrollHeight;
     }
   }, [activityLog]);
 
-  const currentPhaseIndex = PHASES.findIndex((p) => p.id === currentPhase);
-  const safeCurrentPhaseIndex =
-    currentPhaseIndex >= 0 ? currentPhaseIndex : 0;
-  const completedPhases = PHASES.filter(
-    (_, index) => index < safeCurrentPhaseIndex
-  ).map((phase) => phase.id);
   const displayedPercentage = Math.max(1, Math.min(100, Math.round(percentage)));
+  const activePhaseIndex = phases.findIndex((p) => p.status === "in-progress");
+  const completedCount = phases.filter(
+    (p) => p.status === "completed" || p.status === "skipped",
+  ).length;
+  const currentPhaseNumber =
+    activePhaseIndex >= 0 ? activePhaseIndex + 1 : completedCount;
+  const currentPhaseLabel =
+    activePhaseIndex >= 0
+      ? phases[activePhaseIndex].label
+      : isComplete
+        ? "Complete"
+        : "Initializing";
 
   return (
     <div className="space-y-6">
@@ -130,7 +106,7 @@ export function GenerationProgress({
       {/* Transparency callout banner */}
       <div className="flex items-start gap-3 rounded-xl border border-(--tm-color-info-500)/30 bg-(--tm-color-info-100)/60 px-4 py-3.5">
         <svg
-          className="mt-0.5 h-4 w-4 flex-shrink-0 text-(--tm-color-info-500)"
+          className="mt-0.5 h-4 w-4 shrink-0 text-(--tm-color-info-500)"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={2}
@@ -159,73 +135,95 @@ export function GenerationProgress({
         <h3 className="text-sm font-semibold text-(--tm-color-primary-900) mb-5 uppercase tracking-wide">
           Research phases
         </h3>
-        <div className="space-y-1">
-          {PHASES.map((phase, index) => {
-            const isCompleted = completedPhases.includes(phase.id) || (isComplete && phase.id === "finalizing");
-            const isActive = phase.id === currentPhase && !isComplete;
-            const state: "completed" | "active" | "pending" = isCompleted
-              ? "completed"
-              : isActive
-              ? "active"
-              : "pending";
+        {phases.length === 0 ? (
+          <div className="flex items-center gap-3 py-4">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-(--tm-color-accent-500)/20">
+              <span className="h-2.5 w-2.5 rounded-full bg-(--tm-color-accent-500) animate-breathing-pulse" />
+            </span>
+            <span className="text-sm text-(--tm-color-neutral-600)">
+              Preparing research plan…
+            </span>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            {phases.map((phase, index) => {
+              const isCompleted =
+                phase.status === "completed" ||
+                phase.status === "skipped" ||
+                isComplete;
+              const isActive = phase.status === "in-progress" && !isComplete;
+              const state: "completed" | "active" | "pending" | "skipped" =
+                isCompleted
+                  ? phase.status === "skipped" && !isComplete
+                    ? "skipped"
+                    : "completed"
+                  : isActive
+                    ? "active"
+                    : "pending";
 
-            return (
-              <div key={phase.id} className="flex items-start gap-4">
-                {/* Connector line + icon column */}
-                <div className="flex flex-col items-center">
-                  <div
-                    className={[
-                      "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full transition-all duration-500",
-                      isCompleted
-                        ? "bg-(--tm-color-success-500)"
-                        : isActive
-                        ? "bg-(--tm-color-accent-500) shadow-[0_0_12px_rgba(246,168,0,0.4)] animate-breathing-pulse"
-                        : "bg-(--tm-color-neutral-100) border border-(--tm-color-neutral-100)",
-                    ].join(" ")}
-                  >
-                    <PhaseIcon state={state} />
-                  </div>
-                  {index < PHASES.length - 1 && (
+              return (
+                <div key={phase.id} className="flex items-start gap-4">
+                  {/* Connector line + icon column */}
+                  <div className="flex flex-col items-center">
                     <div
                       className={[
-                        "w-px flex-1 min-h-4 transition-colors duration-700",
+                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-500",
                         isCompleted
-                          ? "bg-(--tm-color-success-500)/40"
-                          : "bg-(--tm-color-neutral-100)",
+                          ? "bg-(--tm-color-success-500)"
+                          : isActive
+                            ? "bg-(--tm-color-accent-500) shadow-[0_0_12px_rgba(246,168,0,0.4)] animate-breathing-pulse"
+                            : "bg-(--tm-color-neutral-100) border border-(--tm-color-neutral-100)",
                       ].join(" ")}
-                    />
-                  )}
-                </div>
-
-                {/* Phase content */}
-                <div className={["pb-4 pt-0.5 min-w-0", index === PHASES.length - 1 ? "pb-0" : ""].join(" ")}>
-                  <p
-                    className={[
-                      "text-sm font-medium transition-colors",
-                      isActive
-                        ? "text-(--tm-color-accent-700)"
-                        : isCompleted
-                        ? "text-(--tm-color-neutral-600)"
-                        : "text-(--tm-color-neutral-300)",
-                    ].join(" ")}
-                  >
-                    {phase.label}
-                    {isActive && (
-                      <span className="ml-2 text-xs font-normal text-(--tm-color-neutral-300) italic">
-                        in progress…
-                      </span>
+                    >
+                      <PhaseIcon state={state} />
+                    </div>
+                    {index < phases.length - 1 && (
+                      <div
+                        className={[
+                          "w-px flex-1 min-h-4 transition-colors duration-700",
+                          isCompleted
+                            ? "bg-(--tm-color-success-500)/40"
+                            : "bg-(--tm-color-neutral-100)",
+                        ].join(" ")}
+                      />
                     )}
-                  </p>
-                  {(isActive || isCompleted) && (
-                    <p className="mt-0.5 text-xs text-(--tm-color-neutral-600)/70">
-                      {phase.description}
+                  </div>
+
+                  {/* Phase content */}
+                  <div className={["pb-4 pt-0.5 min-w-0", index === phases.length - 1 ? "pb-0" : ""].join(" ")}>
+                    <p
+                      className={[
+                        "text-sm font-medium transition-colors",
+                        isActive
+                          ? "text-(--tm-color-accent-700)"
+                          : isCompleted
+                            ? "text-(--tm-color-neutral-600)"
+                            : "text-(--tm-color-neutral-300)",
+                      ].join(" ")}
+                    >
+                      {phase.label}
+                      {isActive && (
+                        <span className="ml-2 text-xs font-normal text-(--tm-color-neutral-300) italic">
+                          in progress…
+                        </span>
+                      )}
+                      {phase.status === "skipped" && !isComplete && (
+                        <span className="ml-2 text-xs font-normal text-(--tm-color-neutral-300) italic">
+                          skipped
+                        </span>
+                      )}
                     </p>
-                  )}
+                    {(isActive || isCompleted) && (
+                      <p className="mt-0.5 text-xs text-(--tm-color-neutral-600)/70">
+                        {phase.description}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Overall progress bar */}
@@ -253,13 +251,14 @@ export function GenerationProgress({
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-(--tm-color-neutral-100)">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-(--tm-color-accent-700) to-(--tm-color-accent-400) transition-all duration-1000 ease-out"
+            className="h-full rounded-full bg-linear-to-r from-(--tm-color-accent-700) to-(--tm-color-accent-400) transition-all duration-1000 ease-out"
             style={{ width: `${displayedPercentage}%` }}
           />
         </div>
         <p className="mt-2 text-xs text-(--tm-color-neutral-300)">
-          Phase {safeCurrentPhaseIndex + 1} of {PHASES.length}:{" "}
-          {isComplete ? "Complete" : PHASES[safeCurrentPhaseIndex]?.label}
+          {phases.length > 0
+            ? `Phase ${currentPhaseNumber} of ${phases.length}: ${currentPhaseLabel}`
+            : "Initializing research plan…"}
         </p>
       </div>
 
@@ -288,7 +287,7 @@ export function GenerationProgress({
               key={entry.id}
               className="flex items-start gap-3 animate-log-slide-in"
             >
-              <span className="flex-shrink-0 text-white/25 pt-px">
+              <span className="shrink-0 text-white/25 pt-px">
                 {formatLogTime(entry.timestamp)}
               </span>
               <span className="text-white/80 leading-relaxed">{entry.message}</span>
@@ -296,7 +295,7 @@ export function GenerationProgress({
           ))}
           {!isComplete && (
             <div className="flex items-center gap-3">
-              <span className="flex-shrink-0 text-white/25">
+              <span className="shrink-0 text-white/25">
                 {formatLogTime(new Date().toISOString())}
               </span>
               <span className="inline-flex">

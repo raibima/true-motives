@@ -2,12 +2,18 @@ export type ConfidenceLevel = "high" | "medium" | "low";
 
 export type InvestigationStatus = "draft" | "generating" | "completed" | "failed";
 
-export type GenerationPhase =
-  | "gathering-sources"
-  | "identifying-stakeholders"
-  | "analyzing-incentives"
-  | "drafting-report"
-  | "finalizing";
+export type DynamicPhaseStatus =
+  | "pending"
+  | "in-progress"
+  | "completed"
+  | "skipped";
+
+export interface DynamicPhase {
+  id: string;
+  label: string;
+  description: string;
+  status: DynamicPhaseStatus;
+}
 
 export interface ActivityLogEntry {
   id: string;
@@ -16,8 +22,7 @@ export interface ActivityLogEntry {
 }
 
 export interface InvestigationGenerationProgress {
-  currentPhase: GenerationPhase;
-  completedPhases: GenerationPhase[];
+  phases: DynamicPhase[];
   percentage: number;
   estimatedSecondsRemaining?: number;
   activityLog: ActivityLogEntry[];

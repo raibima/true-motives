@@ -19,7 +19,15 @@ const requestSchema = z.object({
     "culture-and-society",
   ]) as z.ZodType<ReportCategory>,
   geography: z.string().default("Global"),
-  context: z.string().optional(),
+  phases: z
+    .array(
+      z.object({
+        id: z.string(),
+        label: z.string(),
+        description: z.string(),
+      }),
+    )
+    .optional(),
 });
 
 export async function POST(req: Request) {

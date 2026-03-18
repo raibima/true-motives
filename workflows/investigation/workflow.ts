@@ -3,13 +3,14 @@ import { generateText, Output } from "ai";
 import { z } from "zod";
 import { DurableAgent, Output as WorkflowOutput } from "@workflow/ai/agent";
 import { openai as workflowOpenai } from "@workflow/ai/openai";
-import { getWritable } from "workflow";
+import { getWritable, fetch } from "workflow";
 import { openai } from "@ai-sdk/openai";
 
 import { reportSchema } from "@/lib/report-schema";
 import type { Report, ReportCategory } from "@/lib/types";
 import {
   braveWebSearchStep,
+  emitProgress,
   firecrawlScrapeStep,
   firecrawlSearchStep,
   gdeltTopMediaEventsStep,
@@ -27,12 +28,20 @@ export const reportCategorySchema = z.enum([
   "culture-and-society",
 ]);
 
+export const plannedPhaseSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  description: z.string(),
+});
+
+export type PlannedPhase = z.infer<typeof plannedPhaseSchema>;
+
 export const investigationInputSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(""),
   category: reportCategorySchema,
   geography: z.string().default("Global"),
-  context: z.string().optional(),
+  phases: z.array(plannedPhaseSchema).min(2).max(8).optional(),
 });
 
 export type InvestigationWorkflowInput = z.infer<
@@ -96,7 +105,7 @@ export async function planInvestigationFromPrompt(
     description: z.string(),
     category: reportCategorySchema,
     geography: z.string(),
-    context: z.string(),
+    phases: z.array(plannedPhaseSchema).min(2).max(8),
   });
 
   const planningOutput = Output.object({
@@ -104,7 +113,7 @@ export async function planInvestigationFromPrompt(
   });
 
   const { output } = await generateText({
-    model: openai("gpt-5-mini-2025-08-07"),
+    model: openai("gpt-5.4-nano"),
     output: planningOutput,
     prompt: `
 You are an assistant that turns a freeform investigation idea into a structured investigation input for the TrueMotives investigation workflow. TrueMotives investigates with a skeptical, critical lens—questioning official narratives and uncovering hidden motives.
@@ -112,15 +121,24 @@ You are an assistant that turns a freeform investigation idea into a structured 
 Transform the user's idea into an object that matches this schema:
 - title: concise, descriptive investigation title
 - description: 1–3 sentence summary of the investigation focus
-- category: one of "policy" | "regulation" | "corporate-decision" | "government-action" | "legislation" | "culture-and-society"
-- geography: string (use "Global" if unclear)
-- context: optional string with additional context, constraints, or guiding questions
+   - category: one of "policy" | "regulation" | "corporate-decision" | "government-action" | "legislation" | "culture-and-society"
+   - geography: string (use "Global" if unclear)
+   - phases: an array of 3–6 research phases customized for this investigation, each with:
+  - id: a short kebab-case identifier (e.g. "trace-funding-sources")
+  - label: a concise action-oriented label (e.g. "Trace funding sources")
+  - description: one sentence explaining what this phase investigates
 
 Guidelines:
 - Choose the category by mapping the user's description to the closest enum value.
 - Use "Global" as geography when the scope is unclear.
 - Keep the title short but specific.
 - Summarize the core investigative question in the description; frame it to invite skeptical inquiry (e.g., "what might be hidden?", "who benefits?", "what is the official narrative obscuring?").
+- Tailor the phases to the specific investigation topic and category. Different investigations should have different phases.
+- The first phase should gather initial sources and establish context.
+- The last phase should synthesize findings and draft the report.
+- Middle phases should target specific investigative angles relevant to the topic (e.g. "trace-lobbying-expenditures" for a lobbying investigation, "map-stakeholder-network" for a government action).
+- Use active, investigative language for phase labels.
+- Aim for 3–6 phases: more for complex multi-stakeholder topics, fewer for focused inquiries.
 - Never invent fields outside this schema.
 
 User investigation idea:
@@ -135,7 +153,7 @@ ${prompt}
     description: planned.description.trim(),
     category: planned.category,
     geography: planned.geography.trim() || "Global",
-    context: planned.context.trim() || undefined,
+    phases: planned.phases,
   };
 
   return investigationInputSchema.parse(normalized);
@@ -145,6 +163,8 @@ export async function investigationWorkflow(
   rawInput: InvestigationWorkflowInput,
 ) {
   "use workflow";
+
+  globalThis.fetch = fetch;
 
   const input = investigationInputSchema.parse(rawInput);
   const toolCallCounts: Record<string, number> = {};
@@ -157,6 +177,56 @@ export async function investigationWorkflow(
     parsePartial: reportOutput.parsePartialOutput.bind(reportOutput),
   };
 
+  const phases = input.phases ?? [];
+  let phasesInitialized = false;
+  let currentPhaseIndex = -1;
+  let researchCallCount = 0;
+  const callsPerPhase = phases.length > 0
+    ? Math.max(2, Math.ceil(24 / phases.length))
+    : 1;
+
+  async function autoAdvancePhase() {
+    if (phases.length === 0) return;
+
+    if (!phasesInitialized) {
+      await emitProgress({
+        kind: "phases-init",
+        phases: phases.map((p) => ({ ...p, status: "pending" })),
+      });
+      phasesInitialized = true;
+    }
+
+    researchCallCount++;
+
+    const targetIndex = Math.min(
+      phases.length - 1,
+      Math.floor((researchCallCount - 1) / callsPerPhase),
+    );
+
+    if (targetIndex > currentPhaseIndex) {
+      if (currentPhaseIndex >= 0) {
+        await emitProgress({
+          kind: "phase-update",
+          phaseId: phases[currentPhaseIndex].id,
+          status: "completed",
+        });
+      }
+      currentPhaseIndex = targetIndex;
+      await emitProgress({
+        kind: "phase-update",
+        phaseId: phases[currentPhaseIndex].id,
+        status: "in-progress",
+      });
+    } else if (currentPhaseIndex === -1) {
+      currentPhaseIndex = 0;
+      await emitProgress({
+        kind: "phase-update",
+        phaseId: phases[0].id,
+        status: "in-progress",
+      });
+    }
+  }
+
   const tools = {
     webSearch01: {
       description: "General-purpose web search for relevant sources.",
@@ -164,7 +234,7 @@ export async function investigationWorkflow(
         q: z.string(),
         country: z.string().optional(),
         offset: z.number().int().min(0).optional(),
-        count: z.number().int().min(1).max(50).optional(),
+        count: z.number().int().min(1).optional(),
         extraParams: z
           .record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
           .optional(),
@@ -179,8 +249,10 @@ export async function investigationWorkflow(
         count?: number;
         extraParams?: Record<string, string | number | boolean>;
       }) => {
+        await autoAdvancePhase();
         toolCallCounts.braveWebSearch =
           (toolCallCounts.braveWebSearch ?? 0) + 1;
+        if (base.count != null) base.count = Math.min(50, base.count);
         return braveWebSearchStep({ ...base, ...(extraParams ?? {}) });
       },
     },
@@ -219,6 +291,7 @@ export async function investigationWorkflow(
         zeroDataRetention?: boolean;
         scrapeOptions?: Record<string, unknown>;
       }): Promise<unknown> => {
+        await autoAdvancePhase();
         toolCallCounts.firecrawlScrape =
           (toolCallCounts.firecrawlScrape ?? 0) + 1;
         return firecrawlScrapeStep({ ...base, ...(scrapeOptions ?? {}) });
@@ -228,7 +301,7 @@ export async function investigationWorkflow(
       description: "Search web/indexes via Firecrawl for research content.",
       inputSchema: z.object({
         query: z.string(),
-        limit: z.number().int().min(1).max(50).optional(),
+        limit: z.number().int().min(1).optional(),
         country: z.string().optional(),
         location: z.string().optional(),
         categories: z.array(z.enum(["pdf", "research", "github"])).optional(),
@@ -249,17 +322,19 @@ export async function investigationWorkflow(
         scrapeOptions?: Record<string, unknown>;
         extraParams?: Record<string, unknown>;
       }) => {
+        await autoAdvancePhase();
         toolCallCounts.firecrawlSearch =
           (toolCallCounts.firecrawlSearch ?? 0) + 1;
+        if (base.limit != null) base.limit = Math.min(50, base.limit);
         return firecrawlSearchStep({ ...base, ...(extraParams ?? {}) });
       },
     },
     webSearch03: {
       description: "Fetch top media event clusters for geopolitical context.",
       inputSchema: z.object({
-        days: z.number().int().min(1).max(30).optional(),
+        days: z.number().int().min(1).optional(),
         date: z.string().optional(),
-        limit: z.number().int().min(1).max(50).optional(),
+        limit: z.number().int().min(1).optional(),
         offset: z.number().int().min(0).optional(),
         detail: z.enum(["summary", "standard", "full"]).optional(),
         category: z.string().optional(),
@@ -306,8 +381,11 @@ export async function investigationWorkflow(
         search?: string;
         extraParams?: Record<string, string | number | boolean>;
       }) => {
+        await autoAdvancePhase();
         toolCallCounts.gdeltTopMediaEvents =
           (toolCallCounts.gdeltTopMediaEvents ?? 0) + 1;
+        if (base.days != null) base.days = Math.min(30, base.days);
+        if (base.limit != null) base.limit = Math.min(50, base.limit);
         return gdeltTopMediaEventsStep({
           ...base,
           ...(quad_class ? { quad_class: Number(quad_class) as 1 | 2 | 3 | 4 } : {}),
@@ -389,7 +467,7 @@ export async function investigationWorkflow(
           ])
           .optional(),
         sources: z.string().optional(),
-        pageSize: z.number().int().min(1).max(100).optional(),
+        pageSize: z.number().int().min(1).optional(),
         page: z.number().int().min(1).optional(),
         language: z.string().optional(),
         extraParams: z
@@ -409,8 +487,10 @@ export async function investigationWorkflow(
         language?: import("@/lib/newsapi").NewsApiLanguage;
         extraParams?: Record<string, string | number | boolean>;
       }) => {
+        await autoAdvancePhase();
         toolCallCounts.newsTopHeadlines =
           (toolCallCounts.newsTopHeadlines ?? 0) + 1;
+        if (base.pageSize != null) base.pageSize = Math.min(100, base.pageSize);
         return newsTopHeadlinesStep({ ...base, ...(extraParams ?? {}) });
       },
     },
@@ -443,7 +523,7 @@ export async function investigationWorkflow(
           ])
           .optional(),
         sortBy: z.enum(["relevancy", "popularity", "publishedAt"]).optional(),
-        pageSize: z.number().int().min(1).max(100).optional(),
+        pageSize: z.number().int().min(1).optional(),
         page: z.number().int().min(1).optional(),
         extraParams: z
           .record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
@@ -466,8 +546,10 @@ export async function investigationWorkflow(
         page?: number;
         extraParams?: Record<string, string | number | boolean>;
       }) => {
+        await autoAdvancePhase();
         toolCallCounts.newsEverything =
           (toolCallCounts.newsEverything ?? 0) + 1;
+        if (base.pageSize != null) base.pageSize = Math.min(100, base.pageSize);
         return newsEverythingStep({ ...base, ...(extraParams ?? {}) });
       },
     },
@@ -574,11 +656,14 @@ export async function investigationWorkflow(
         country?: import("@/lib/newsapi").NewsApiCountry;
         extraParams?: Record<string, string | number | boolean>;
       }) => {
+        await autoAdvancePhase();
         toolCallCounts.newsSources = (toolCallCounts.newsSources ?? 0) + 1;
         return newsSourcesStep({ ...base, ...(extraParams ?? {}) });
       },
     },
   } as const;
+
+  const phasesPromptSection = "";
 
   const agent = new DurableAgent({
     model: workflowOpenai("gpt-5.4"),
@@ -605,9 +690,14 @@ export async function investigationWorkflow(
 - Make motivations rich with skeptical hypotheses, contrarian angles, and "what if" scenarios—not just sanitized summaries.
 - Include alternative explanations even when speculative; the report should read like an investigator who questions power, not one who parrots it.
 - Executive summary length target: 90–140 words, max 2 short paragraphs. Keep it scannable and avoid long, multi-clause sentences.
-- Keep source citations specific; include sourceUrl when available. Prefer diverse sources over echo chambers.`,
+- Keep source citations specific; include sourceUrl when available. Prefer diverse sources over echo chambers.${phasesPromptSection}`,
     tools,
   });
+
+  const phasesSection =
+    phases.length > 0
+      ? `\nResearch phases planned for this investigation:\n${phases.map((p, i) => `${i + 1}. ${p.label} — ${p.description}`).join("\n")}\n\nFollow these phases as a roadmap for your research.\n`
+      : "";
 
   const result = await agent.stream({
     messages: [
@@ -619,8 +709,7 @@ Title: ${input.title}
 Description: ${input.description || "N/A"}
 Category: ${input.category}
 Geography: ${input.geography || "Global"}
-Additional context: ${input.context || "None provided"}
-`,
+${phasesSection}`,
       },
     ],
     writable,
