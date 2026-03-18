@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Link } from "@/components/ui/Link";
-import { generatePlan } from "@/lib/investigations-api";
+import { generatePlan, startInvestigation } from "@/lib/investigations-api";
 
 import type { InvestigationWorkflowInput } from "@/workflows/investigation/workflow";
 
@@ -156,31 +156,14 @@ export default function NewInvestigationPage() {
 
     startInvestigationTransition(async () => {
       try {
-        const payload = {
+        const runId = await startInvestigation({
           title: plannedInput.title,
           description: plannedInput.description ?? "",
           category: plannedInput.category,
           geography: plannedInput.geography || "Global",
           context: plannedInput.context ?? "",
-        };
-
-        const response = await fetch("/api/investigations", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
         });
-
-        if (!response.ok) {
-          const body = (await response.json().catch(() => null)) as
-            | { error?: string }
-            | null;
-          throw new Error(body?.error || "Failed to start investigation.");
-        }
-
-        const body = (await response.json()) as { runId: string };
-        router.push(`/dashboard/investigations/${body.runId}`);
+        router.push(`/dashboard/investigations/${runId}`);
       } catch (error) {
         setStartError(
           error instanceof Error

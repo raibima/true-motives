@@ -26,3 +26,33 @@ export async function generatePlan(
 
   return body.plan;
 }
+
+export type StartInvestigationInput = {
+  title: string;
+  description: string;
+  category: InvestigationWorkflowInput["category"];
+  geography: string;
+  context: string;
+};
+
+export async function startInvestigation(
+  input: StartInvestigationInput,
+): Promise<string> {
+  const response = await fetch("/api/investigations", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as
+      | { error?: string }
+      | null;
+    throw new Error(body?.error || "Failed to start investigation.");
+  }
+
+  const body = (await response.json()) as { runId: string };
+  return body.runId;
+}
