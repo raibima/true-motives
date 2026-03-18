@@ -4,14 +4,21 @@ import { useFormStatus } from "react-dom";
 import { ArrowLeft, Check, Sparkles } from "lucide-react";
 import { Link } from "@/components/ui/Link";
 import { Button } from "@/components/ui/Button";
+import { ProgressStepper } from "@/components/ui/ProgressStepper";
 import { TextField } from "@/components/ui/TextField";
 import { TextAreaField } from "@/components/ui/TextAreaField";
 import { Select, SelectItem } from "@/components/ui/Select";
 import { Form } from "@/components/ui/Form";
 import { Label } from "@/components/ui/Field";
 import { TextField as AriaTextField, TextArea as AriaTextArea } from "react-aria-components";
-import { useNewInvestigation } from "@/hooks/use-new-investigation";
+import { useNewInvestigation, type Step } from "@/hooks/use-new-investigation";
 import type { InvestigationWorkflowInput } from "@/workflows/investigation/workflow";
+
+const STEPS: ReadonlyArray<{ key: Step; label: string }> = [
+  { key: "prompt", label: "Describe" },
+  { key: "review", label: "Review plan" },
+  { key: "launch", label: "Launch" },
+];
 
 const CATEGORIES = [
   { value: "policy", label: "Public policy" },
@@ -61,7 +68,9 @@ export function NewInvestigationPageView() {
     handleStartInvestigation,
     setPrompt,
     editPlan,
+    proceedToLaunch,
     resetToPrompt,
+    backToReview,
   } = useNewInvestigation();
 
   const { step, prompt, promptError, planError, startError, plannedInput } = state;
@@ -85,6 +94,8 @@ export function NewInvestigationPageView() {
           infer the structured fields for you, then let you review before launching deep research.
         </p>
       </div>
+
+      <ProgressStepper steps={STEPS} currentStep={step} className="mb-8" />
 
       {step === "prompt" && (
         <Form action={generatePlanAction} className="space-y-6">
@@ -172,7 +183,7 @@ export function NewInvestigationPageView() {
                   AI-generated draft
                 </p>
                 <p className="text-xs text-(--tm-color-neutral-600)">
-                  Review and adjust anything before starting deep research.
+                  Review and adjust anything before moving on.
                 </p>
               </div>
               <Button
@@ -233,6 +244,67 @@ export function NewInvestigationPageView() {
 
           <div className="flex items-center gap-3 pt-1">
             <Button
+              onPress={proceedToLaunch}
+              variant="primary"
+              className="h-auto px-5 py-2.5 font-semibold"
+            >
+              Continue
+            </Button>
+            <Button
+              variant="quiet"
+              onPress={resetToPrompt}
+            >
+              Back
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {step === "launch" && plannedInput && (
+        <div className="space-y-6">
+          <div className="rounded-xl border border-(--tm-color-neutral-100) bg-white p-5 space-y-4">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-(--tm-color-neutral-400) mb-3">
+                Investigation summary
+              </p>
+              <h2 className="font-serif text-lg font-semibold text-(--tm-color-primary-900) mb-1">
+                {plannedInput.title}
+              </h2>
+              {plannedInput.description && (
+                <p className="text-sm text-(--tm-color-neutral-600) leading-relaxed">
+                  {plannedInput.description}
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="inline-flex items-center rounded-md bg-(--tm-color-neutral-50) px-2.5 py-1 font-medium text-(--tm-color-neutral-600) ring-1 ring-inset ring-(--tm-color-neutral-100)">
+                {CATEGORIES.find((c) => c.value === plannedInput.category)?.label ?? plannedInput.category}
+              </span>
+              <span className="inline-flex items-center rounded-md bg-(--tm-color-neutral-50) px-2.5 py-1 font-medium text-(--tm-color-neutral-600) ring-1 ring-inset ring-(--tm-color-neutral-100)">
+                {plannedInput.geography || "Global"}
+              </span>
+            </div>
+
+            {plannedInput.context && (
+              <div className="rounded-lg bg-(--tm-color-neutral-50) px-4 py-3">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-(--tm-color-neutral-400) mb-1">
+                  Additional context
+                </p>
+                <p className="text-sm text-(--tm-color-neutral-600) leading-relaxed">
+                  {plannedInput.context}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <p className="text-xs text-(--tm-color-neutral-400) leading-relaxed">
+            The investigation usually completes in 60–120 seconds. You can navigate away and return
+            — the process continues in the background.
+          </p>
+
+          <div className="flex items-center gap-3 pt-1">
+            <Button
               isPending={isStartPending}
               onPress={handleStartInvestigation}
               className="bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) pressed:bg-(--tm-color-primary-600) h-auto px-5 py-2.5 font-semibold shadow-sm"
@@ -242,9 +314,9 @@ export function NewInvestigationPageView() {
             </Button>
             <Button
               variant="quiet"
-              onPress={resetToPrompt}
+              onPress={backToReview}
             >
-              Back to prompt
+              Back
             </Button>
           </div>
 

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { generatePlan, startInvestigation } from "@/lib/investigations-api";
 import type { InvestigationWorkflowInput } from "@/workflows/investigation/workflow";
 
-export type Step = "prompt" | "review";
+export type Step = "prompt" | "review" | "launch";
 
 export type NewInvestigationState = {
   step: Step;
@@ -24,9 +24,11 @@ type Action =
   | { type: "PLAN_GENERATED"; payload: InvestigationWorkflowInput }
   | { type: "PLAN_GENERATION_FAILED"; payload: string }
   | { type: "PLAN_EDITED"; payload: Partial<InvestigationWorkflowInput> }
+  | { type: "PROCEED_TO_LAUNCH" }
   | { type: "INVESTIGATION_START_REQUESTED" }
   | { type: "INVESTIGATION_START_FAILED"; payload: string }
-  | { type: "BACK_TO_PROMPT_REQUESTED" };
+  | { type: "BACK_TO_PROMPT_REQUESTED" }
+  | { type: "BACK_TO_REVIEW_REQUESTED" };
 
 function reducer(draft: NewInvestigationState, action: Action) {
   switch (action.type) {
@@ -54,6 +56,10 @@ function reducer(draft: NewInvestigationState, action: Action) {
         Object.assign(draft.plannedInput, action.payload);
       }
       break;
+    case "PROCEED_TO_LAUNCH":
+      draft.step = "launch";
+      draft.startError = null;
+      break;
     case "INVESTIGATION_START_REQUESTED":
       draft.startError = null;
       break;
@@ -63,6 +69,10 @@ function reducer(draft: NewInvestigationState, action: Action) {
     case "BACK_TO_PROMPT_REQUESTED":
       draft.step = "prompt";
       draft.planError = null;
+      draft.startError = null;
+      break;
+    case "BACK_TO_REVIEW_REQUESTED":
+      draft.step = "review";
       draft.startError = null;
       break;
   }
@@ -157,8 +167,16 @@ export function useNewInvestigation() {
     dispatch({ type: "PLAN_EDITED", payload });
   }
 
+  function proceedToLaunch() {
+    dispatch({ type: "PROCEED_TO_LAUNCH" });
+  }
+
   function resetToPrompt() {
     dispatch({ type: "BACK_TO_PROMPT_REQUESTED" });
+  }
+
+  function backToReview() {
+    dispatch({ type: "BACK_TO_REVIEW_REQUESTED" });
   }
 
   return {
@@ -170,6 +188,8 @@ export function useNewInvestigation() {
     handleStartInvestigation,
     setPrompt,
     editPlan,
+    proceedToLaunch,
     resetToPrompt,
+    backToReview,
   };
 }
