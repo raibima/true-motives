@@ -3,18 +3,38 @@ import { getInvestigations } from "@/lib/mock-data";
 import { InvestigationCard } from "@/components/dashboard/InvestigationCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { StatusBanner } from "@/components/ui/StatusBanner";
+import { StatusTabs } from "@/components/dashboard/StatusTabs";
 import type { InvestigationStatus } from "@/lib/types";
 
-const STATUS_TABS: { id: InvestigationStatus | "all"; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "completed", label: "Completed" },
-  { id: "generating", label: "Generating" },
-  { id: "draft", label: "Drafts" },
-  { id: "failed", label: "Failed" },
+const VALID_STATUSES: (InvestigationStatus | "all")[] = [
+  "all",
+  "completed",
+  "generating",
+  "draft",
+  "failed",
 ];
 
-export default function DashboardPage() {
-  const investigations = getInvestigations();
+function parseStatus(
+  status: string | string[] | undefined
+): InvestigationStatus | "all" {
+  if (typeof status === "string" && VALID_STATUSES.includes(status as InvestigationStatus | "all")) {
+    return status as InvestigationStatus | "all";
+  }
+  return "all";
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
+  const params = await searchParams;
+  const statusFilter = parseStatus(params.status);
+  const allInvestigations = getInvestigations();
+  const investigations =
+    statusFilter === "all"
+      ? allInvestigations
+      : allInvestigations.filter((i) => i.status === statusFilter);
 
   return (
     <div className="px-8 py-8">
@@ -25,13 +45,13 @@ export default function DashboardPage() {
             Investigations
           </h1>
           <p className="text-sm text-(--tm-color-neutral-600)">
-            {investigations.length} total &mdash;{" "}
-            {investigations.filter((i) => i.status === "generating").length >
+            {allInvestigations.length} total &mdash;{" "}
+            {allInvestigations.filter((i) => i.status === "generating").length >
               0 && (
               <>
                 <span className="text-(--tm-color-accent-700) font-medium">
                   {
-                    investigations.filter((i) => i.status === "generating")
+                    allInvestigations.filter((i) => i.status === "generating")
                       .length
                   }{" "}
                   generating now
@@ -39,7 +59,7 @@ export default function DashboardPage() {
                 {` `}&mdash;{` `}
               </>
             )}
-            {investigations.filter((i) => i.status === "completed").length}{" "}
+            {allInvestigations.filter((i) => i.status === "completed").length}{" "}
             completed
           </p>
         </div>
@@ -65,80 +85,47 @@ export default function DashboardPage() {
       </div>
 
       {/* Status filter tabs */}
-      <div className="flex items-center gap-1 mb-6 border-b border-(--tm-color-neutral-100) pb-0">
-        {STATUS_TABS.map((tab) => {
-          const count =
-            tab.id === "all"
-              ? investigations.length
-              : investigations.filter((i) => i.status === tab.id).length;
+      <StatusTabs
+        investigations={allInvestigations}
+        selectedKey={statusFilter}
+      >
+        {/* Generating alert */}
+        {investigations.some((i) => i.status === "generating") && (
+          <StatusBanner
+            variant="accent"
+            className="mb-6"
+            action={
+              <Link
+                href={`/dashboard/investigations/${investigations.find((i) => i.status === "generating")?.id}`}
+                className="text-xs font-semibold text-(--tm-color-accent-700) hover:text-(--tm-color-accent-500) transition-colors"
+              >
+                View progress →
+              </Link>
+            }
+          >
+            <span className="font-semibold">Deep research running</span> &mdash;{" "}
+            {investigations
+              .filter((i) => i.status === "generating")
+              .map((i) => i.title)
+              .join(", ")}
+          </StatusBanner>
+        )}
 
-          return (
-            <Link
-              key={tab.id}
-              href={
-                tab.id === "all" ? "/dashboard" : `/dashboard?status=${tab.id}`
-              }
-              className={[
-                "relative flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px",
-                tab.id === "all"
-                  ? "border-(--tm-color-primary-900) text-(--tm-color-primary-900)"
-                  : "border-transparent text-(--tm-color-neutral-600) hover:text-(--tm-color-primary-900)",
-              ].join(" ")}
-            >
-              {tab.label}
-              {count > 0 && (
-                <span
-                  className={[
-                    "rounded-full px-1.5 py-0.5 text-[10px] font-mono font-semibold",
-                    tab.id === "all"
-                      ? "bg-(--tm-color-primary-900) text-white"
-                      : "bg-(--tm-color-neutral-100) text-(--tm-color-neutral-600)",
-                  ].join(" ")}
-                >
-                  {count}
-                </span>
-              )}
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Generating alert */}
-      {investigations.some((i) => i.status === "generating") && (
-        <StatusBanner
-          variant="accent"
-          className="mb-6"
-          action={
-            <Link
-              href={`/dashboard/investigations/${investigations.find((i) => i.status === "generating")?.id}`}
-              className="text-xs font-semibold text-(--tm-color-accent-700) hover:text-(--tm-color-accent-500) transition-colors"
-            >
-              View progress →
-            </Link>
-          }
-        >
-          <span className="font-semibold">Deep research running</span> &mdash;{" "}
-          {investigations
-            .filter((i) => i.status === "generating")
-            .map((i) => i.title)
-            .join(", ")}
-        </StatusBanner>
-      )}
-
-      {/* Investigations grid */}
-      {investigations.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
-          {investigations.map((investigation, index) => (
-            <InvestigationCard
-              key={investigation.id}
-              investigation={investigation}
-              animationClass={`stagger-${Math.min(index + 1, 6)}`}
-            />
-          ))}
-        </div>
-      )}
+        {/* Investigations grid */}
+        {investigations.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
+            {investigations.map((investigation, index) => (
+              <InvestigationCard
+                key={investigation.id}
+                investigation={investigation}
+                animationClass={`stagger-${Math.min(index + 1, 6)}`}
+              />
+            ))}
+          </div>
+        )}
+      </StatusTabs>
     </div>
   );
 }
