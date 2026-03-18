@@ -8,7 +8,7 @@ import {ColorField} from '@/components/ui/ColorField';
 import {Dialog} from '@/components/ui/Dialog';
 import {Popover} from '@/components/ui/Popover';
 import { tv } from 'tailwind-variants';
-import { focusRing } from '@/lib/react-aria-utils';
+import { focusRing } from '@/client/react-aria-utils';
 
 const buttonStyles = tv({
   extend: focusRing,

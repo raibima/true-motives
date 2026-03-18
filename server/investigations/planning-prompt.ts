@@ -1,3 +1,5 @@
+import "server-only";
+
 export function createPlanningPrompt(prompt: string): string {
   return `
 You are an assistant that turns a freeform investigation idea into a structured investigation input for the TrueMotives investigation workflow. TrueMotives investigates with a skeptical, critical lens-questioning official narratives and uncovering hidden motives.

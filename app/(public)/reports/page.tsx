@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { ReportCard } from "@/components/ReportCard";
 import { ReportFilters } from "@/components/ReportFilters";
-import { filterReports } from "@/lib/mock-data";
+import { filterReports } from "@/server/mock-data";
 
 export const metadata = {
   title: "Browse reports — TrueMotives",

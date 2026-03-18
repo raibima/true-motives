@@ -15,7 +15,7 @@ import {
   composeRenderProps
 } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
-import { focusRing } from '@/lib/react-aria-utils';
+import { focusRing } from '@/client/react-aria-utils';
 import { twMerge } from 'tailwind-merge';
 
 type TabVariant = 'pill' | 'underline';

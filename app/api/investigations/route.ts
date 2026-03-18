@@ -3,11 +3,11 @@ import { start } from "workflow/api";
 
 import {
   investigationWorkflow,
-} from "@/workflows/investigation/workflow";
+} from "@/server/workflows/investigation/workflow";
 import {
   investigationInputSchema,
   type InvestigationWorkflowInput,
-} from "@/lib/investigations/schema";
+} from "@/shared/investigations/schema";
 
 export async function POST(req: Request) {
   try {

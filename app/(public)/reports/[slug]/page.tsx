@@ -4,14 +4,14 @@ import { Link } from "@/components/ui/Link";
 import { ConfidenceBadge } from "@/components/ConfidenceBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { InvestigateCTA } from "@/components/InvestigateCTA";
-import { getReportBySlug, REPORTS } from "@/lib/mock-data";
-import { formatDate, splitIntoParagraphs } from "@/lib/utils";
+import { getReportBySlug, REPORTS } from "@/server/mock-data";
+import { formatDate, splitIntoParagraphs } from "@/shared/utils";
 import type { Metadata } from "next";
 import type {
   Stakeholder,
   MotivationHypothesis,
   EvidenceItem,
-} from "@/lib/types";
+} from "@/shared/types";
 
 export async function generateStaticParams() {
   return REPORTS.map((r) => ({ slug: r.slug }));

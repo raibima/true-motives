@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useInvestigationStream } from "@/hooks/use-investigation-stream";
+import { useInvestigationStream } from "@/client/hooks/use-investigation-stream";
 
 function PhaseIcon({
   state,

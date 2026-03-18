@@ -1,5 +1,5 @@
-import type { ReportCategory } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import type { ReportCategory } from "@/shared/types";
+import { cn } from "@/shared/utils";
 
 const labels: Record<ReportCategory, string> = {
   policy: "Policy",

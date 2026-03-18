@@ -2,7 +2,7 @@
 import { Link as AriaLink, LinkProps as AriaLinkProps, composeRenderProps } from 'react-aria-components';
 import NextLink from 'next/link';
 import { tv } from 'tailwind-variants';
-import { focusRing } from '@/lib/react-aria-utils';
+import { focusRing } from '@/client/react-aria-utils';
 
 interface LinkProps extends AriaLinkProps {
   variant?: 'primary' | 'secondary' | 'plain' | 'button' | 'button-secondary' | 'button-accent';

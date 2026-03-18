@@ -8,7 +8,7 @@ import {
 } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { Description, FieldError, Label, fieldBorderStyles } from '@/components/ui/Field';
-import { composeTailwindRenderProps, focusRing } from '@/lib/react-aria-utils';
+import { composeTailwindRenderProps, focusRing } from '@/client/react-aria-utils';
 
 const textAreaStyles = tv({
   extend: focusRing,

@@ -1,3 +1,5 @@
+import "server-only";
+
 const GDELT_API_BASE_URL = "https://gdeltcloud.com";
 
 export class GdeltError extends Error {
@@ -354,4 +356,3 @@ export async function getTopMediaEventClusters(
     init,
   );
 }
-

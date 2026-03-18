@@ -8,8 +8,8 @@ import {
   TabPanels,
   TabPanel,
 } from '@/components/ui/Tabs';
-import type { InvestigationStatus } from '@/lib/types';
-import type { Investigation } from '@/lib/types';
+import type { InvestigationStatus } from '@/shared/types';
+import type { Investigation } from '@/shared/types';
 
 const STATUS_TABS: { id: InvestigationStatus | 'all'; label: string }[] = [
   { id: 'all', label: 'All' },

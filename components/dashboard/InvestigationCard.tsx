@@ -1,7 +1,7 @@
 import { Link } from "@/components/ui/Link";
 import { InvestigationStatusBadge } from "@/components/dashboard/InvestigationStatusBadge";
-import { formatDate } from "@/lib/utils";
-import type { Investigation } from "@/lib/types";
+import { formatDate } from "@/shared/utils";
+import type { Investigation } from "@/shared/types";
 
 const CATEGORY_LABELS: Record<string, string> = {
   policy: "Policy",

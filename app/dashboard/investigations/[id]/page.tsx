@@ -2,15 +2,15 @@ import { notFound } from "next/navigation";
 import { Link } from "@/components/ui/Link";
 import { Button } from "@/components/ui/Button";
 import { getRun } from "workflow/api";
-import { getInvestigationById } from "@/lib/mock-data";
+import { getInvestigationById } from "@/server/mock-data";
 import { GenerationProgress } from "@/components/dashboard/GenerationProgress";
 import { InvestigationStatusBadge } from "@/components/dashboard/InvestigationStatusBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { ConfidenceBadge } from "@/components/ConfidenceBadge";
 import { PlaceholderCard } from "@/components/dashboard/PlaceholderCard";
 import { ReportSection } from "@/components/dashboard/ReportSection";
-import { reportSchema } from "@/lib/report-schema";
-import { formatDate, splitIntoParagraphs } from "@/lib/utils";
+import { reportSchema } from "@/shared/report-schema";
+import { formatDate, splitIntoParagraphs } from "@/shared/utils";
 import {
   ArrowLeft,
   ArrowDownToLine,
@@ -23,7 +23,7 @@ import {
   Sparkles,
   TriangleAlert,
 } from "lucide-react";
-import type { Investigation } from "@/lib/types";
+import type { Investigation } from "@/shared/types";
 
 export default async function InvestigationDetailPage({
   params,

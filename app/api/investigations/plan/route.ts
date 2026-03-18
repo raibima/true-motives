@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { planInvestigationFromPrompt } from "@/lib/investigations/planning";
-import type { InvestigationWorkflowInput } from "@/lib/investigations/schema";
+import { planInvestigationFromPrompt } from "@/server/investigations/planning";
+import type { InvestigationWorkflowInput } from "@/shared/investigations/schema";
 
 const planningRequestSchema = z.object({
   prompt: z.string().min(1, "Prompt is required."),

@@ -1,28 +1,30 @@
+import "server-only";
+
 import type { UIMessageChunk } from "ai";
 import { z } from "zod";
 import { DurableAgent, Output as WorkflowOutput } from "@workflow/ai/agent";
 import { openai } from "@workflow/ai/openai";
 import { getWritable, fetch } from "workflow";
 
-import { reportSchema } from "@/lib/report-schema";
-import type { Report, ReportCategory } from "@/lib/types";
+import { reportSchema } from "@/shared/report-schema";
+import type { Report, ReportCategory } from "@/shared/types";
 import {
   investigationInputSchema,
   type InvestigationWorkflowInput,
-} from "@/lib/investigations/schema";
-import { emitProgress } from "@/workflows/investigation/steps/research";
+} from "@/shared/investigations/schema";
+import { emitProgress } from "@/server/workflows/investigation/steps/research";
 import {
   getCallsPerPhase,
   getTargetPhaseIndex,
-} from "@/workflows/investigation/phase-tracking";
+} from "@/server/workflows/investigation/phase-tracking";
 import {
   createInvestigationTools,
   type InvestigationToolCallCounts,
-} from "@/workflows/investigation/tools";
+} from "@/server/workflows/investigation/tools";
 import {
   createInvestigationSystemPrompt,
   createInvestigationUserPrompt,
-} from "@/workflows/investigation/prompts";
+} from "@/server/workflows/investigation/prompts";
 
 // Maximum number of steps the agent can take.
 const AGENT_MAX_STEPS = 60;

@@ -11,8 +11,8 @@ import { Select, SelectItem } from "@/components/ui/Select";
 import { Form } from "@/components/ui/Form";
 import { Label } from "@/components/ui/Field";
 import { TextField as AriaTextField, TextArea as AriaTextArea } from "react-aria-components";
-import { useNewInvestigation, type Step } from "@/hooks/use-new-investigation";
-import type { InvestigationWorkflowInput } from "@/lib/investigations/schema";
+import { useNewInvestigation, type Step } from "@/client/hooks/use-new-investigation";
+import type { InvestigationWorkflowInput } from "@/shared/investigations/schema";
 
 const STEPS: ReadonlyArray<{ key: Step; label: string }> = [
   { key: "prompt", label: "Describe" },

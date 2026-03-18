@@ -1,5 +1,5 @@
 import { Link } from "@/components/ui/Link";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 
 interface InvestigateCTAProps {
   /** "band" renders a full-width section; "card" renders an inline bordered card */

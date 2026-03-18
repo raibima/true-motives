@@ -1,3 +1,5 @@
+import "server-only";
+
 export const INVESTIGATION_PHASE_TRACKING = {
   // Treat a typical investigation as spending roughly this many research
   // tool calls across all planned phases.

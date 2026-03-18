@@ -1,3 +1,5 @@
+import "server-only";
+
 const FIRECRAWL_API_BASE_URL = "https://api.firecrawl.dev/v2/";
 
 export class FirecrawlError extends Error {

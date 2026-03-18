@@ -1,6 +1,6 @@
 import { Link } from "@/components/ui/Link";
-import { formatDate } from "@/lib/utils";
-import type { Report } from "@/lib/types";
+import { formatDate } from "@/shared/utils";
+import type { Report } from "@/shared/types";
 import { CategoryBadge } from "./CategoryBadge";
 
 export function ReportCard({

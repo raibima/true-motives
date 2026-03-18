@@ -1,17 +1,19 @@
+import "server-only";
+
 import type { UIMessageChunk } from "ai";
 import { getWritable } from "workflow";
 
-import { braveWebSearch, type BraveSearchParams } from "@/lib/brave-search";
+import { braveWebSearch, type BraveSearchParams } from "@/server/integrations/brave-search";
 import {
   firecrawlScrape,
   firecrawlSearch,
   type FirecrawlScrapeRequest,
   type FirecrawlSearchRequest,
-} from "@/lib/firecrawl";
+} from "@/server/integrations/firecrawl";
 import {
   getTopMediaEventClusters,
   type GdeltMediaEventsParams,
-} from "@/lib/gdelt";
+} from "@/server/integrations/gdelt";
 import {
   fetchEverything,
   fetchSources,
@@ -19,7 +21,7 @@ import {
   type EverythingParams,
   type SourcesParams,
   type TopHeadlinesParams,
-} from "@/lib/newsapi";
+} from "@/server/integrations/newsapi";
 
 type ProgressPayload = Record<string, unknown>;
 
