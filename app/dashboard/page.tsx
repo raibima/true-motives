@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getInvestigations } from "@/lib/mock-data";
 import { InvestigationCard } from "@/components/dashboard/InvestigationCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
+import { StatusBanner } from "@/components/ui/StatusBanner";
 import type { InvestigationStatus } from "@/lib/types";
 
 const STATUS_TABS: { id: InvestigationStatus | "all"; label: string }[] = [
@@ -12,11 +13,7 @@ const STATUS_TABS: { id: InvestigationStatus | "all"; label: string }[] = [
   { id: "failed", label: "Failed" },
 ];
 
-export default function DashboardPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ status?: string }>;
-}) {
+export default function DashboardPage() {
   const investigations = getInvestigations();
 
   return (
@@ -108,25 +105,24 @@ export default function DashboardPage({
 
       {/* Generating alert */}
       {investigations.some((i) => i.status === "generating") && (
-        <div className="mb-6 flex items-center gap-3 rounded-xl border border-(--tm-color-accent-500)/30 bg-(--tm-color-accent-400)/10 px-4 py-3 animate-fade-in-up">
-          <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-(--tm-color-accent-500) opacity-60" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-(--tm-color-accent-500)" />
-          </span>
-          <p className="text-sm text-(--tm-color-accent-700)">
-            <span className="font-semibold">Deep research running</span> &mdash;{" "}
-            {investigations
-              .filter((i) => i.status === "generating")
-              .map((i) => i.title)
-              .join(", ")}
-          </p>
-          <Link
-            href={`/dashboard/investigations/${investigations.find((i) => i.status === "generating")?.id}`}
-            className="ml-auto text-xs font-semibold text-(--tm-color-accent-700) hover:text-(--tm-color-accent-500) transition-colors"
-          >
-            View progress →
-          </Link>
-        </div>
+        <StatusBanner
+          variant="accent"
+          className="mb-6"
+          action={
+            <Link
+              href={`/dashboard/investigations/${investigations.find((i) => i.status === "generating")?.id}`}
+              className="text-xs font-semibold text-(--tm-color-accent-700) hover:text-(--tm-color-accent-500) transition-colors"
+            >
+              View progress →
+            </Link>
+          }
+        >
+          <span className="font-semibold">Deep research running</span> &mdash;{" "}
+          {investigations
+            .filter((i) => i.status === "generating")
+            .map((i) => i.title)
+            .join(", ")}
+        </StatusBanner>
       )}
 
       {/* Investigations grid */}
