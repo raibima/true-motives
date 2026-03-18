@@ -82,7 +82,7 @@ const CHARACTER_LIMIT = 2000;
 export function useNewInvestigation() {
   const router = useRouter();
   const [state, dispatch] = useImmerReducer(reducer, initialState);
-  const [isStartPending, startInvestigationTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const characterCount = state.prompt.length;
   const remainingCharacters = CHARACTER_LIMIT - characterCount;
@@ -125,7 +125,7 @@ export function useNewInvestigation() {
 
     dispatch({ type: "INVESTIGATION_START_REQUESTED" });
 
-    startInvestigationTransition(async () => {
+    startTransition(async () => {
       const plannedInput = state.plannedInput!;
       try {
         const runId = await startInvestigation({
@@ -166,7 +166,7 @@ export function useNewInvestigation() {
     state,
     characterLimit: CHARACTER_LIMIT,
     remainingCharacters,
-    isStartPending,
+    isStartPending: isPending,
     generatePlanAction,
     handleStartInvestigation,
     setPrompt,
