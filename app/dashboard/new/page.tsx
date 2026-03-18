@@ -3,7 +3,15 @@
 import { useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
+import { ArrowLeft, Check, Sparkles } from "lucide-react";
 import { Link } from "@/components/ui/Link";
+import { Button } from "@/components/ui/Button";
+import { TextField } from "@/components/ui/TextField";
+import { TextAreaField } from "@/components/ui/TextAreaField";
+import { Select, SelectItem } from "@/components/ui/Select";
+import { Form } from "@/components/ui/Form";
+import { Label } from "@/components/ui/Field";
+import { TextField as AriaTextField, TextArea as AriaTextArea } from "react-aria-components";
 import { generatePlan, startInvestigation } from "@/lib/investigations-api";
 
 import type { InvestigationWorkflowInput } from "@/workflows/investigation/workflow";
@@ -32,92 +40,19 @@ const PLAN_FEATURES = [
   "Review screen where you can tweak everything before running",
 ];
 
-const backArrowIcon = (
-  <svg
-    className="h-3.5 w-3.5"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-    />
-  </svg>
-);
-
-const checkIcon = (
-  <svg
-    className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--tm-color-success-500)"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2.2}
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="m4.5 12.75 6 6 9-13.5"
-    />
-  </svg>
-);
-
-const spinnerIcon = (
-  <svg
-    className="h-4 w-4"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-    />
-  </svg>
-);
-
-const sparkleIcon = (
-  <svg
-    className="h-4 w-4"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z"
-    />
-  </svg>
-);
-
 type Step = "prompt" | "review";
 
-function GeneratePlanSubmitButton() {
+function GeneratePlanButton() {
   const { pending } = useFormStatus();
   return (
-    <button
+    <Button
       type="submit"
-      disabled={pending}
-      className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) disabled:opacity-60 disabled:cursor-not-allowed px-5 py-2.5 text-sm font-semibold text-white transition-all shadow-sm"
+      isPending={pending}
+      className="bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) pressed:bg-(--tm-color-primary-600) h-auto px-5 py-2.5 font-semibold shadow-sm"
     >
-      {pending ? (
-        <>
-          <div className="animate-spin">{spinnerIcon}</div>
-          Analyzing your investigation…
-        </>
-      ) : (
-        <>
-          {sparkleIcon}
-          Generate AI plan
-        </>
-      )}
-    </button>
+      <Sparkles className="h-4 w-4" />
+      <span>Generate AI plan</span>
+    </Button>
   );
 }
 
@@ -201,16 +136,14 @@ export default function NewInvestigationPage() {
 
   return (
     <div className="px-8 py-8 max-w-2xl">
-      {/* Breadcrumb */}
       <Link
         href="/dashboard"
         className="inline-flex items-center gap-1.5 text-sm text-(--tm-color-neutral-600) hover:text-(--tm-color-primary-900) transition-colors mb-6"
       >
-        {backArrowIcon}
+        <ArrowLeft className="h-3.5 w-3.5" />
         Investigations
       </Link>
 
-      {/* Header */}
       <div className="mb-8">
         <h1 className="font-serif text-2xl font-semibold text-(--tm-color-primary-900) mb-2">
           New investigation
@@ -222,30 +155,27 @@ export default function NewInvestigationPage() {
       </div>
 
       {step === "prompt" && (
-        <form action={generatePlanAction} className="space-y-6">
-          {/* Freeform investigation idea */}
-          <div className="space-y-2">
-            <label
-              htmlFor="prompt"
-              className="block text-sm font-semibold text-(--tm-color-primary-900)"
-            >
+        <Form action={generatePlanAction} className="space-y-6">
+          <AriaTextField
+            name="prompt"
+            value={prompt}
+            onChange={(value: string) => {
+              if (value.length <= characterLimit) {
+                setPrompt(value);
+              }
+            }}
+            className="space-y-2"
+          >
+            <Label className="block font-semibold text-(--tm-color-primary-900)">
               What do you want to investigate?
               <span className="ml-1 text-(--tm-color-danger-500)">*</span>
-            </label>
+            </Label>
             <p className="text-xs text-(--tm-color-neutral-600)">
               Write a short brief in your own words — the decision, policy, pattern, or situation
               you want to understand, plus any hints about who&apos;s involved.
             </p>
-            <textarea
-              id="prompt"
-              name="prompt"
+            <AriaTextArea
               rows={8}
-              value={prompt}
-              onChange={(e) => {
-                if (e.target.value.length <= characterLimit) {
-                  setPrompt(e.target.value);
-                }
-              }}
               placeholder={PROMPT_PLACEHOLDER}
               className="w-full rounded-xl border border-(--tm-color-neutral-100) bg-white/80 px-3.5 py-3 text-sm text-(--tm-color-primary-900) placeholder:text-(--tm-color-neutral-300) outline-none ring-0 transition-all focus:border-(--tm-color-primary-600)/50 focus:ring-2 focus:ring-(--tm-color-accent-400)/40 resize-none leading-relaxed shadow-[0_14px_40px_rgba(15,23,42,0.06)]"
             />
@@ -266,9 +196,8 @@ export default function NewInvestigationPage() {
             {promptError && (
               <p className="text-xs text-(--tm-color-danger-500)">{promptError}</p>
             )}
-          </div>
+          </AriaTextField>
 
-          {/* What you'll receive */}
           <div className="rounded-xl border border-(--tm-color-neutral-100) bg-linear-to-br from-(--tm-color-neutral-50) via-white to-(--tm-color-neutral-50) p-4">
             <p className="text-[11px] font-semibold text-(--tm-color-primary-900) mb-2.5 uppercase tracking-wide">
               AI-drafted investigation plan
@@ -279,16 +208,15 @@ export default function NewInvestigationPage() {
                   key={item}
                   className="flex items-start gap-2 text-xs text-(--tm-color-neutral-600)"
                 >
-                  {checkIcon}
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-(--tm-color-success-500)" strokeWidth={2.2} />
                   {item}
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Submit */}
           <div className="flex items-center gap-3 pt-2">
-            <GeneratePlanSubmitButton />
+            <GeneratePlanButton />
             <Link
               href="/dashboard"
               className="rounded-lg px-4 py-2.5 text-sm font-medium text-(--tm-color-neutral-600) hover:text-(--tm-color-primary-900) transition-colors"
@@ -304,7 +232,7 @@ export default function NewInvestigationPage() {
           {planError && (
             <p className="text-xs text-(--tm-color-danger-500) mt-1">{planError}</p>
           )}
-        </form>
+        </Form>
       )}
 
       {step === "review" && plannedInput && (
@@ -319,160 +247,100 @@ export default function NewInvestigationPage() {
                   Review and adjust anything before starting deep research.
                 </p>
               </div>
-              <button
-                type="button"
-                onClick={resetToPrompt}
-                className="text-xs font-medium text-(--tm-color-neutral-600) hover:text-(--tm-color-primary-900) underline underline-offset-4"
+              <Button
+                variant="quiet"
+                onPress={resetToPrompt}
+                className="text-xs font-medium underline underline-offset-4"
               >
                 Refine prompt instead
-              </button>
+              </Button>
             </div>
 
             <div className="space-y-4">
-              <div className="space-y-1.5">
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-semibold text-(--tm-color-primary-900)"
-                >
-                  Title
-                </label>
-                <input
-                  id="title"
-                  type="text"
-                  value={plannedInput.title}
-                  onChange={(e) =>
-                    setPlannedInput((prev) =>
-                      prev ? { ...prev, title: e.target.value } : prev,
-                    )
-                  }
-                  className="w-full rounded-lg border border-(--tm-color-neutral-100) bg-white px-3.5 py-2.5 text-sm text-(--tm-color-primary-900) placeholder:text-(--tm-color-neutral-300) outline-none ring-0 transition-all focus:border-(--tm-color-primary-600)/50 focus:ring-2 focus:ring-(--tm-color-accent-400)/30"
-                />
-              </div>
+              <TextField
+                label="Title"
+                value={plannedInput.title}
+                onChange={(value) =>
+                  setPlannedInput((prev) =>
+                    prev ? { ...prev, title: value } : prev,
+                  )
+                }
+              />
 
-              <div className="space-y-1.5">
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-semibold text-(--tm-color-primary-900)"
-                >
-                  Short description
-                </label>
-                <textarea
-                  id="description"
-                  rows={3}
-                  value={plannedInput.description ?? ""}
-                  onChange={(e) =>
-                    setPlannedInput((prev) =>
-                      prev ? { ...prev, description: e.target.value } : prev,
-                    )
-                  }
-                  className="w-full rounded-lg border border-(--tm-color-neutral-100) bg-white px-3.5 py-2.5 text-sm text-(--tm-color-primary-900) placeholder:text-(--tm-color-neutral-300) outline-none ring-0 transition-all focus:border-(--tm-color-primary-600)/50 focus:ring-2 focus:ring-(--tm-color-accent-400)/30 resize-none leading-relaxed"
-                />
-              </div>
+              <TextAreaField
+                label="Short description"
+                rows={3}
+                value={plannedInput.description ?? ""}
+                onChange={(value) =>
+                  setPlannedInput((prev) =>
+                    prev ? { ...prev, description: value } : prev,
+                  )
+                }
+              />
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="category"
-                    className="block text-sm font-semibold text-(--tm-color-primary-900)"
-                  >
-                    Issue type
-                  </label>
-                  <select
-                    id="category"
-                    value={plannedInput.category}
-                    onChange={(e) =>
-                      setPlannedInput((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              category: e.target.value as InvestigationWorkflowInput["category"],
-                            }
-                          : prev,
-                      )
-                    }
-                    className="w-full rounded-lg border border-(--tm-color-neutral-100) bg-white px-3.5 py-2.5 text-sm text-(--tm-color-primary-900) outline-none ring-0 transition-all focus:border-(--tm-color-primary-600)/50 focus:ring-2 focus:ring-(--tm-color-accent-400)/30 appearance-none cursor-default"
-                  >
-                    {CATEGORIES.map((c) => (
-                      <option key={c.value} value={c.value}>
-                        {c.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="geography"
-                    className="block text-sm font-semibold text-(--tm-color-primary-900)"
-                  >
-                    Geography
-                  </label>
-                  <input
-                    id="geography"
-                    type="text"
-                    value={plannedInput.geography || "Global"}
-                    onChange={(e) =>
-                      setPlannedInput((prev) =>
-                        prev ? { ...prev, geography: e.target.value } : prev,
-                      )
-                    }
-                    className="w-full rounded-lg border border-(--tm-color-neutral-100) bg-white px-3.5 py-2.5 text-sm text-(--tm-color-primary-900) placeholder:text-(--tm-color-neutral-300) outline-none ring-0 transition-all focus:border-(--tm-color-primary-600)/50 focus:ring-2 focus:ring-(--tm-color-accent-400)/30"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label
-                  htmlFor="context"
-                  className="block text-sm font-semibold text-(--tm-color-primary-900)"
-                >
-                  Additional context
-                  <span className="ml-2 text-xs font-normal text-(--tm-color-neutral-300)">
-                    optional
-                  </span>
-                </label>
-                <textarea
-                  id="context"
-                  rows={4}
-                  value={plannedInput.context ?? ""}
-                  onChange={(e) =>
+                <Select
+                  label="Issue type"
+                  selectedKey={plannedInput.category}
+                  onSelectionChange={(key) =>
                     setPlannedInput((prev) =>
-                      prev ? { ...prev, context: e.target.value } : prev,
+                      prev
+                        ? {
+                            ...prev,
+                            category: key as InvestigationWorkflowInput["category"],
+                          }
+                        : prev,
                     )
                   }
-                  placeholder="Add any links, leads, red flags, or constraints you want the system to prioritize."
-                  className="w-full rounded-lg border border-(--tm-color-neutral-100) bg-white px-3.5 py-2.5 text-sm text-(--tm-color-primary-900) placeholder:text-(--tm-color-neutral-300) outline-none ring-0 transition-all focus:border-(--tm-color-primary-600)/50 focus:ring-2 focus:ring-(--tm-color-accent-400)/30 resize-none leading-relaxed"
+                >
+                  {CATEGORIES.map((c) => (
+                    <SelectItem key={c.value} id={c.value}>
+                      {c.label}
+                    </SelectItem>
+                  ))}
+                </Select>
+
+                <TextField
+                  label="Geography"
+                  value={plannedInput.geography || "Global"}
+                  onChange={(value) =>
+                    setPlannedInput((prev) =>
+                      prev ? { ...prev, geography: value } : prev,
+                    )
+                  }
                 />
               </div>
+
+              <TextAreaField
+                label="Additional context"
+                description="optional"
+                rows={4}
+                value={plannedInput.context ?? ""}
+                onChange={(value) =>
+                  setPlannedInput((prev) =>
+                    prev ? { ...prev, context: value } : prev,
+                  )
+                }
+                placeholder="Add any links, leads, red flags, or constraints you want the system to prioritize."
+              />
             </div>
           </div>
 
           <div className="flex items-center gap-3 pt-1">
-            <button
-              type="button"
-              disabled={isStartPending}
-              onClick={handleStartInvestigation}
-              className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) disabled:opacity-60 disabled:cursor-not-allowed px-5 py-2.5 text-sm font-semibold text-white transition-all shadow-sm"
+            <Button
+              isPending={isStartPending}
+              onPress={handleStartInvestigation}
+              className="bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) pressed:bg-(--tm-color-primary-600) h-auto px-5 py-2.5 font-semibold shadow-sm"
             >
-              {isStartPending ? (
-                <>
-                  <div className="animate-spin">{spinnerIcon}</div>
-                  Starting investigation…
-                </>
-              ) : (
-                <>
-                  {sparkleIcon}
-                  Start investigation
-                </>
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={resetToPrompt}
-              className="rounded-lg px-4 py-2.5 text-sm font-medium text-(--tm-color-neutral-600) hover:text-(--tm-color-primary-900) transition-colors"
+              <Sparkles className="h-4 w-4" />
+              <span>Start investigation</span>
+            </Button>
+            <Button
+              variant="quiet"
+              onPress={resetToPrompt}
             >
               Back to prompt
-            </button>
+            </Button>
           </div>
 
           {startError && (

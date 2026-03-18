@@ -7,3 +7,4 @@ Before any Next.js work, find and read the relevant doc in `node_modules/next/di
 <!-- END:nextjs-agent-rules -->
 
 - Always run `bun run build` after making changes to the codebase.
+- Always check available UI components in `components/ui` before making frontend changes.
