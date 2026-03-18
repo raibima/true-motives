@@ -15,3 +15,10 @@ export function formatDate(
     year: "numeric",
   });
 }
+
+export function splitIntoParagraphs(value: string): string[] {
+  return value
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}

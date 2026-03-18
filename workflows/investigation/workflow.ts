@@ -604,6 +604,7 @@ export async function investigationWorkflow(
 - Return a complete structured report matching the required schema.
 - Make motivations rich with skeptical hypotheses, contrarian angles, and "what if" scenarios—not just sanitized summaries.
 - Include alternative explanations even when speculative; the report should read like an investigator who questions power, not one who parrots it.
+- Executive summary length target: 90–140 words, max 2 short paragraphs. Keep it scannable and avoid long, multi-clause sentences.
 - Keep source citations specific; include sourceUrl when available. Prefer diverse sources over echo chambers.`,
     tools,
   });

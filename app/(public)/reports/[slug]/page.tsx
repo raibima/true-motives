@@ -1,10 +1,17 @@
 import { notFound } from "next/navigation";
+import { AlertTriangle, ArrowLeft, Link2 } from "lucide-react";
 import { Link } from "@/components/ui/Link";
 import { ConfidenceBadge } from "@/components/ConfidenceBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { InvestigateCTA } from "@/components/InvestigateCTA";
 import { getReportBySlug, REPORTS } from "@/lib/mock-data";
-import type { Stakeholder, MotivationHypothesis, EvidenceItem } from "@/lib/types";
+import { formatDate, splitIntoParagraphs } from "@/lib/utils";
+import type { Metadata } from "next";
+import type {
+  Stakeholder,
+  MotivationHypothesis,
+  EvidenceItem,
+} from "@/lib/types";
 
 export async function generateStaticParams() {
   return REPORTS.map((r) => ({ slug: r.slug }));
@@ -14,7 +21,7 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
   const report = getReportBySlug(slug);
   if (!report) return { title: "Report not found — TrueMotives" };
@@ -22,15 +29,6 @@ export async function generateMetadata({
     title: `${report.title} — TrueMotives`,
     description: report.summary,
   };
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
 }
 
 function StakeholderCard({ stakeholder }: { stakeholder: Stakeholder }) {
@@ -49,7 +47,10 @@ function StakeholderCard({ stakeholder }: { stakeholder: Stakeholder }) {
       </div>
       <ul className="mt-3 space-y-1.5">
         {stakeholder.incentives.map((inc, i) => (
-          <li key={i} className="flex gap-2 text-sm text-(--tm-color-neutral-900)">
+          <li
+            key={i}
+            className="flex gap-2 text-sm text-(--tm-color-neutral-900)"
+          >
             <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-(--tm-color-accent-500)" />
             {inc}
           </li>
@@ -79,20 +80,11 @@ function MotivationCard({ motivation }: { motivation: MotivationHypothesis }) {
           </p>
           <ul className="mt-2 space-y-1.5">
             {motivation.supportingEvidence.map((ev, i) => (
-              <li key={i} className="flex gap-2 text-sm text-(--tm-color-neutral-600)">
-                <svg
-                  className="mt-0.5 h-4 w-4 shrink-0 text-(--tm-color-info-500)"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m9.86-2.03a4.5 4.5 0 0 0-1.242-7.244l-4.5-4.5a4.5 4.5 0 0 0-6.364 6.364L4.344 8.25"
-                  />
-                </svg>
+              <li
+                key={i}
+                className="flex gap-2 text-sm text-(--tm-color-neutral-600)"
+              >
+                <Link2 className="mt-0.5 h-4 w-4 shrink-0 text-(--tm-color-info-500)" />
                 {ev}
               </li>
             ))}
@@ -108,15 +100,15 @@ function EvidenceRow({ item }: { item: EvidenceItem }) {
     item.confidence === "high"
       ? "High"
       : item.confidence === "medium"
-      ? "Medium"
-      : "Low";
+        ? "Medium"
+        : "Low";
 
   const confidenceColor =
     item.confidence === "high"
       ? "text-(--tm-color-success-500)"
       : item.confidence === "medium"
-      ? "text-(--tm-color-info-500)"
-      : "text-(--tm-color-danger-500)";
+        ? "text-(--tm-color-info-500)"
+        : "text-(--tm-color-danger-500)";
 
   return (
     <div className="border-b border-(--tm-color-neutral-100) py-4 last:border-b-0">
@@ -162,19 +154,7 @@ export default async function ReportDetailPage({
           href="/reports"
           className="inline-flex items-center gap-1.5 text-sm text-(--tm-color-neutral-600) transition-colors hover:text-(--tm-color-primary-900)"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-            />
-          </svg>
+          <ArrowLeft className="h-4 w-4" />
           Back to reports
         </Link>
       </div>
@@ -190,7 +170,7 @@ export default async function ReportDetailPage({
               <span>{report.geography}</span>
               <span aria-hidden>·</span>
               <time dateTime={report.publishedAt}>
-                {formatDate(report.publishedAt)}
+                {formatDate(report.publishedAt, { month: "long" })}
               </time>
             </div>
 
@@ -224,9 +204,15 @@ export default async function ReportDetailPage({
             <h2 className="font-serif text-xl font-semibold text-(--tm-color-primary-900)">
               Executive summary
             </h2>
-            <p className="mt-4 font-serif text-base leading-[1.8] text-(--tm-color-neutral-900)">
-              {report.executiveSummary}
-            </p>
+            <div className="mt-5 space-y-4 font-serif text-base leading-[1.9] text-(--tm-color-neutral-900)">
+              {splitIntoParagraphs(report.executiveSummary).map(
+                (paragraph, index) => (
+                  <p key={index} className="whitespace-pre-line">
+                    {paragraph}
+                  </p>
+                ),
+              )}
+            </div>
           </section>
 
           {/* Core motivations */}
@@ -307,7 +293,10 @@ export default async function ReportDetailPage({
             </p>
             <ul className="mt-4 space-y-2">
               {report.alternativeExplanations.map((alt, i) => (
-                <li key={i} className="flex gap-3 text-sm leading-relaxed text-(--tm-color-neutral-900)">
+                <li
+                  key={i}
+                  className="flex gap-3 text-sm leading-relaxed text-(--tm-color-neutral-900)"
+                >
                   <span className="text-(--tm-color-neutral-300)">
                     {i + 1}.
                   </span>
@@ -324,20 +313,11 @@ export default async function ReportDetailPage({
             </h2>
             <ul className="mt-4 space-y-2">
               {report.limitations.map((lim, i) => (
-                <li key={i} className="flex gap-2 text-sm leading-relaxed text-(--tm-color-neutral-600)">
-                  <svg
-                    className="mt-0.5 h-4 w-4 shrink-0 text-(--tm-color-danger-500)"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
-                    />
-                  </svg>
+                <li
+                  key={i}
+                  className="flex gap-2 text-sm leading-relaxed text-(--tm-color-neutral-600)"
+                >
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-(--tm-color-danger-500)" />
                   {lim}
                 </li>
               ))}

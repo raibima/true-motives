@@ -79,6 +79,11 @@ const initialState: NewInvestigationState = {
 
 const CHARACTER_LIMIT = 2000;
 
+function validatePrompt(prompt: string): string | null {
+  if (!prompt) return "Describe what you want to investigate first.";
+  return null;
+}
+
 export function useNewInvestigation() {
   const router = useRouter();
   const [state, dispatch] = useImmerReducer(reducer, initialState);
@@ -88,16 +93,10 @@ export function useNewInvestigation() {
   const remainingCharacters = CHARACTER_LIMIT - characterCount;
 
   async function generatePlanAction(formData: FormData) {
-    const trimmed = (formData.get("prompt") as string || "").trim();
-    if (!trimmed) {
-      dispatch({ type: "PROMPT_VALIDATION_FAILED", payload: "Describe what you want to investigate first." });
-      return;
-    }
-    if (trimmed.length < 40) {
-      dispatch({
-        type: "PROMPT_VALIDATION_FAILED",
-        payload: "Add a bit more detail so we can infer a useful plan (at least a sentence or two).",
-      });
+    const trimmed = ((formData.get("prompt") as string) || "").trim();
+    const error = validatePrompt(trimmed);
+    if (error) {
+      dispatch({ type: "PROMPT_VALIDATION_FAILED", payload: error });
       return;
     }
 

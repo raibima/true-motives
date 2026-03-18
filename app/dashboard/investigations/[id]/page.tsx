@@ -10,7 +10,7 @@ import { ConfidenceBadge } from "@/components/ConfidenceBadge";
 import { PlaceholderCard } from "@/components/dashboard/PlaceholderCard";
 import { ReportSection } from "@/components/dashboard/ReportSection";
 import { reportSchema } from "@/lib/report-schema";
-import { formatDate } from "@/lib/utils";
+import { formatDate, splitIntoParagraphs } from "@/lib/utils";
 import {
   ArrowLeft,
   ArrowDownToLine,
@@ -93,6 +93,11 @@ export default async function InvestigationDetailPage({
   if (!investigation) {
     notFound();
   }
+
+  const executiveSummaryParagraphs =
+    investigation?.status === "completed" && investigation.report
+      ? splitIntoParagraphs(investigation.report.executiveSummary)
+      : [];
 
   return (
     <div className="px-8 py-8 max-w-3xl">
@@ -196,9 +201,13 @@ export default async function InvestigationDetailPage({
 
           {/* Executive summary */}
           <ReportSection title="Executive summary">
-            <p className="text-sm text-(--tm-color-neutral-600) leading-relaxed">
-              {investigation.report.executiveSummary}
-            </p>
+            <div className="space-y-3 text-sm text-(--tm-color-neutral-600) leading-7">
+              {executiveSummaryParagraphs.map((paragraph, index) => (
+                <p key={index} className="whitespace-pre-line">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
           </ReportSection>
 
           {/* Motivations */}
