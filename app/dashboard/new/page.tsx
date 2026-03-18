@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Link } from "@/components/ui/Link";
+import { generatePlan } from "@/lib/investigations-api";
 
 import type { InvestigationWorkflowInput } from "@/workflows/investigation/workflow";
 
@@ -132,30 +133,10 @@ export default function NewInvestigationPage() {
 
     startPlanTransition(async () => {
       try {
-        const response = await fetch("/api/investigations/plan", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ prompt: trimmed }),
-        });
-
-        if (!response.ok) {
-          const body = (await response.json().catch(() => null)) as
-            | { error?: string }
-            | null;
-          throw new Error(
-            body?.error || "Failed to analyze your investigation idea.",
-          );
-        }
-
-        const body = (await response.json()) as {
-          plan: InvestigationWorkflowInput;
-        };
-
+        const plan = await generatePlan(trimmed);
         setPlannedInput({
-          ...body.plan,
-          geography: body.plan.geography || "Global",
+          ...plan,
+          geography: plan.geography || "Global",
         });
         setStep("review");
       } catch (error) {
