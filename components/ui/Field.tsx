@@ -3,7 +3,7 @@ import React from 'react';
 import { FieldErrorProps, Group, GroupProps, InputProps, LabelProps, FieldError as RACFieldError, Input as RACInput, Label as RACLabel, Text, TextProps, composeRenderProps } from "react-aria-components";
 import { twMerge } from 'tailwind-merge';
 import { tv } from 'tailwind-variants';
-import { composeTailwindRenderProps, focusRing } from '@/lib/react-aria-utils';
+import { composeTailwindRenderProps, focusRing } from '@/client/react-aria-utils';
 
 export function Label(props: LabelProps) {
   return <RACLabel {...props} className={twMerge('font-sans text-sm text-neutral-600 dark:text-neutral-300 font-medium cursor-default w-fit', props.className)} />;

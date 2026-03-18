@@ -1,10 +1,10 @@
 import { Link } from "@/components/ui/Link";
-import { getInvestigations } from "@/lib/mock-data";
+import { getInvestigations } from "@/server/mock-data";
 import { InvestigationCard } from "@/components/dashboard/InvestigationCard";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { StatusBanner } from "@/components/ui/StatusBanner";
 import { StatusTabs } from "@/components/dashboard/StatusTabs";
-import type { InvestigationStatus } from "@/lib/types";
+import type { InvestigationStatus } from "@/shared/types";
 
 const VALID_STATUSES: (InvestigationStatus | "all")[] = [
   "all",

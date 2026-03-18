@@ -1,5 +1,5 @@
-import type { ConfidenceLevel } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import type { ConfidenceLevel } from "@/shared/types";
+import { cn } from "@/shared/utils";
 
 const styles: Record<ConfidenceLevel, string> = {
   high: "bg-(--tm-color-success-100) text-(--tm-color-success-500)",

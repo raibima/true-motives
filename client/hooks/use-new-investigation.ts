@@ -1,10 +1,12 @@
 "use client";
 
+import "client-only";
+
 import { useTransition } from "react";
 import { useImmerReducer } from "use-immer";
 import { useRouter } from "next/navigation";
-import { generatePlan, startInvestigation } from "@/lib/investigations-api";
-import type { InvestigationWorkflowInput } from "@/lib/investigations/schema";
+import { generatePlan, startInvestigation } from "@/client/investigations/api";
+import type { InvestigationWorkflowInput } from "@/shared/investigations/schema";
 
 export type Step = "prompt" | "review" | "launch";
 

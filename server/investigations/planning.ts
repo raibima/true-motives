@@ -1,3 +1,5 @@
+import "server-only";
+
 import { generateText, Output } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
@@ -7,8 +9,8 @@ import {
   plannedPhaseSchema,
   reportCategorySchema,
   type InvestigationWorkflowInput,
-} from "@/lib/investigations/schema";
-import { createPlanningPrompt } from "@/lib/investigations/prompts";
+} from "@/shared/investigations/schema";
+import { createPlanningPrompt } from "@/server/investigations/planning-prompt";
 
 const planningSchema = z.object({
   title: z.string().min(1),

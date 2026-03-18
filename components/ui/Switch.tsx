@@ -5,7 +5,7 @@ import {
   SwitchProps as AriaSwitchProps
 } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
-import { composeTailwindRenderProps, focusRing } from '@/lib/react-aria-utils';
+import { composeTailwindRenderProps, focusRing } from '@/client/react-aria-utils';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'> {
   children: React.ReactNode;

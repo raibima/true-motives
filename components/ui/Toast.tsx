@@ -10,7 +10,7 @@ import {
   Text
 } from 'react-aria-components';
 import {XIcon} from 'lucide-react';
-import {composeTailwindRenderProps} from '@/lib/react-aria-utils';
+import {composeTailwindRenderProps} from '@/client/react-aria-utils';
 import {flushSync} from 'react-dom';
 import './Toast.css';
 

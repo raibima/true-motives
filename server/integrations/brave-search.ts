@@ -1,3 +1,5 @@
+import "server-only";
+
 const BRAVE_SEARCH_ENDPOINT = "https://api.search.brave.com/res/v1/web/search";
 
 export interface BraveWebResultItem {

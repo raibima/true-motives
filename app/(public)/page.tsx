@@ -1,7 +1,7 @@
 import { Link } from "@/components/ui/Link";
 import { ReportCard } from "@/components/ReportCard";
 import { InvestigateCTA } from "@/components/InvestigateCTA";
-import { getFeaturedReports } from "@/lib/mock-data";
+import { getFeaturedReports } from "@/server/mock-data";
 
 export default function Home() {
   const featured = getFeaturedReports();

@@ -1,5 +1,7 @@
 "use client";
 
+import "client-only";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   parseJsonEventStream,
@@ -13,7 +15,7 @@ import type {
   ActivityLogEntry,
   DynamicPhase,
   DynamicPhaseStatus,
-} from "@/lib/types";
+} from "@/shared/types";
 
 function nowIso() {
   return new Date().toISOString();

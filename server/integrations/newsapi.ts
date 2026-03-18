@@ -1,3 +1,5 @@
+import "server-only";
+
 const NEWS_API_ENDPOINT = "https://newsapi.org/v2";
 
 export type NewsApiLanguage =
@@ -285,4 +287,3 @@ export async function fetchSources(
 ): Promise<NewsApiOkBase & SourcesResponseBody> {
   return request<SourcesResponseBody>("top-headlines/sources", params, init);
 }
-

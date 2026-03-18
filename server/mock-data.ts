@@ -1,4 +1,6 @@
-import type { Investigation, Report } from "./types";
+import "server-only";
+
+import type { Investigation, Report } from "@/shared/types";
 
 export const REPORTS: Report[] = [
   {
@@ -644,28 +646,6 @@ export const REPORTS: Report[] = [
       "The spending increase is a purely domestic political achievement that the ruling party has pursued for decades.",
       "Japan's defense industry lobby successfully created urgency to expand government procurement.",
     ],
-  },
-];
-
-export const GEOGRAPHIES = [
-  "European Union",
-  "United States",
-  "India",
-  "United Kingdom",
-  "Indonesia",
-  "Brazil",
-  "Japan",
-] as const;
-
-export const CATEGORIES: { value: string; label: string }[] = [
-  { value: "policy", label: "Policy" },
-  { value: "regulation", label: "Regulation" },
-  { value: "corporate-decision", label: "Corporate decision" },
-  { value: "government-action", label: "Government action" },
-  { value: "legislation", label: "Legislation" },
-  {
-    value: "culture-and-society",
-    label: "Culture, sports & public narratives",
   },
 ];
 

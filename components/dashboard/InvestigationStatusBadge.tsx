@@ -1,4 +1,4 @@
-import type { InvestigationStatus } from "@/lib/types";
+import type { InvestigationStatus } from "@/shared/types";
 
 const STATUS_CONFIG: Record<
   InvestigationStatus,

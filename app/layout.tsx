@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { Inter, Source_Serif_4 } from "next/font/google";
 import { isRTL } from "react-aria-components";
 import "./globals.css";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils";
 import { ClientProviders } from "./provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });

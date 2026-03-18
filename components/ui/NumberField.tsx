@@ -9,7 +9,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 import { Description, FieldError, FieldGroup, Input, Label, fieldBorderStyles } from '@/components/ui/Field';
-import { composeTailwindRenderProps } from '@/lib/react-aria-utils';
+import { composeTailwindRenderProps } from '@/client/react-aria-utils';
 
 export interface NumberFieldProps extends AriaNumberFieldProps {
   label?: string;

@@ -1,8 +1,11 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { CATEGORIES, GEOGRAPHIES } from "@/lib/mock-data";
 import { useCallback } from "react";
+import {
+  REPORT_FILTER_CATEGORIES,
+  REPORT_FILTER_GEOGRAPHIES,
+} from "@/shared/report-filters";
 
 export function ReportFilters() {
   const searchParams = useSearchParams();
@@ -58,7 +61,7 @@ export function ReportFilters() {
         className="h-9 rounded-lg border border-(--tm-color-neutral-100) bg-white px-3 text-sm text-(--tm-color-neutral-600) focus:border-(--tm-color-neutral-300) focus:outline-none focus:ring-2 focus:ring-(--tm-color-accent-400)/30 transition-shadow cursor-pointer"
       >
         <option value="">All categories</option>
-        {CATEGORIES.map((c) => (
+        {REPORT_FILTER_CATEGORIES.map((c) => (
           <option key={c.value} value={c.value}>
             {c.label}
           </option>
@@ -72,7 +75,7 @@ export function ReportFilters() {
         className="h-9 rounded-lg border border-(--tm-color-neutral-100) bg-white px-3 text-sm text-(--tm-color-neutral-600) focus:border-(--tm-color-neutral-300) focus:outline-none focus:ring-2 focus:ring-(--tm-color-accent-400)/30 transition-shadow cursor-pointer"
       >
         <option value="">All regions</option>
-        {GEOGRAPHIES.map((g) => (
+        {REPORT_FILTER_GEOGRAPHIES.map((g) => (
           <option key={g} value={g}>
             {g}
           </option>

@@ -1,8 +1,10 @@
+import "server-only";
+
 import { z } from "zod";
 
-import type { BraveSearchParams } from "@/lib/brave-search";
-import type { FirecrawlScrapeRequest, FirecrawlSearchRequest } from "@/lib/firecrawl";
-import type { GdeltMediaEventsParams } from "@/lib/gdelt";
+import type { BraveSearchParams } from "@/server/integrations/brave-search";
+import type { FirecrawlScrapeRequest, FirecrawlSearchRequest } from "@/server/integrations/firecrawl";
+import type { GdeltMediaEventsParams } from "@/server/integrations/gdelt";
 import type {
   EverythingParams,
   NewsApiCategory,
@@ -10,7 +12,7 @@ import type {
   NewsApiLanguage,
   SourcesParams,
   TopHeadlinesParams,
-} from "@/lib/newsapi";
+} from "@/server/integrations/newsapi";
 import {
   braveWebSearchStep,
   firecrawlScrapeStep,
@@ -19,7 +21,7 @@ import {
   newsEverythingStep,
   newsSourcesStep,
   newsTopHeadlinesStep,
-} from "@/workflows/investigation/steps/research";
+} from "@/server/workflows/investigation/steps/research";
 
 const NEWS_API_COUNTRIES = [
   "ae",

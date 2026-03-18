@@ -1,4 +1,6 @@
-import type { InvestigationWorkflowInput } from "@/lib/investigations/schema";
+import "server-only";
+
+import type { InvestigationWorkflowInput } from "@/shared/investigations/schema";
 
 const BASE_SYSTEM_PROMPT = `You are a **skeptical investigative analyst** for TrueMotives. Your job is to dig beneath the surface and question everything, especially official narratives.
 

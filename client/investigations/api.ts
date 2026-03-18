@@ -1,4 +1,6 @@
-import type { InvestigationWorkflowInput } from "@/lib/investigations/schema";
+import "client-only";
+
+import type { InvestigationWorkflowInput } from "@/shared/investigations/schema";
 
 export async function generatePlan(
   prompt: string,
