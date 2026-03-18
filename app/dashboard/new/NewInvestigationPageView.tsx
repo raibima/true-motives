@@ -12,7 +12,7 @@ import { Form } from "@/components/ui/Form";
 import { Label } from "@/components/ui/Field";
 import { TextField as AriaTextField, TextArea as AriaTextArea } from "react-aria-components";
 import { useNewInvestigation, type Step } from "@/hooks/use-new-investigation";
-import type { InvestigationWorkflowInput } from "@/workflows/investigation/workflow";
+import type { InvestigationWorkflowInput } from "@/lib/investigations/schema";
 
 const STEPS: ReadonlyArray<{ key: Step; label: string }> = [
   { key: "prompt", label: "Describe" },

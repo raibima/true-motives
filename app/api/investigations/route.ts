@@ -1,39 +1,18 @@
 import { z } from "zod";
 import { start } from "workflow/api";
 
-import type { ReportCategory } from "@/lib/types";
 import {
   investigationWorkflow,
-  type InvestigationWorkflowInput,
 } from "@/workflows/investigation/workflow";
-
-const requestSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().default(""),
-  category: z.enum([
-    "policy",
-    "regulation",
-    "corporate-decision",
-    "government-action",
-    "legislation",
-    "culture-and-society",
-  ]) as z.ZodType<ReportCategory>,
-  geography: z.string().default("Global"),
-  phases: z
-    .array(
-      z.object({
-        id: z.string(),
-        label: z.string(),
-        description: z.string(),
-      }),
-    )
-    .optional(),
-});
+import {
+  investigationInputSchema,
+  type InvestigationWorkflowInput,
+} from "@/lib/investigations/schema";
 
 export async function POST(req: Request) {
   try {
     const json = await req.json();
-    const input = requestSchema.parse(json) as InvestigationWorkflowInput;
+    const input = investigationInputSchema.parse(json) as InvestigationWorkflowInput;
     const run = await start(investigationWorkflow, [input]);
     return Response.json({ runId: run.runId });
   } catch (error) {

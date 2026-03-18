@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { useImmerReducer } from "use-immer";
 import { useRouter } from "next/navigation";
 import { generatePlan, startInvestigation } from "@/lib/investigations-api";
-import type { InvestigationWorkflowInput } from "@/workflows/investigation/workflow";
+import type { InvestigationWorkflowInput } from "@/lib/investigations/schema";
 
 export type Step = "prompt" | "review" | "launch";
 

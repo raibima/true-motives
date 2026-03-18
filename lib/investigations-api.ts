@@ -1,4 +1,4 @@
-import type { InvestigationWorkflowInput } from "@/workflows/investigation/workflow";
+import type { InvestigationWorkflowInput } from "@/lib/investigations/schema";
 
 export async function generatePlan(
   prompt: string,

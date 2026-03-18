@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-import { type InvestigationWorkflowInput, planInvestigationFromPrompt } from "@/workflows/investigation/workflow";
+import { planInvestigationFromPrompt } from "@/lib/investigations/planning";
+import type { InvestigationWorkflowInput } from "@/lib/investigations/schema";
 
 const planningRequestSchema = z.object({
   prompt: z.string().min(1, "Prompt is required."),
@@ -43,4 +44,3 @@ export async function POST(req: Request) {
     );
   }
 }
-
