@@ -158,7 +158,7 @@ export async function investigationWorkflow(
   };
 
   const tools = {
-    braveWebSearch: {
+    webSearch01: {
       description: "General-purpose web search for relevant sources.",
       inputSchema: z.object({
         q: z.string(),
@@ -184,7 +184,7 @@ export async function investigationWorkflow(
         return braveWebSearchStep({ ...base, ...(extraParams ?? {}) });
       },
     },
-    firecrawlScrape: {
+    webFetch: {
       description: "Scrape and extract content from a URL.",
       inputSchema: z.object({
         url: z.string().url(),
@@ -224,7 +224,7 @@ export async function investigationWorkflow(
         return firecrawlScrapeStep({ ...base, ...(scrapeOptions ?? {}) });
       },
     },
-    firecrawlSearch: {
+    webSearch02: {
       description: "Search web/indexes via Firecrawl for research content.",
       inputSchema: z.object({
         query: z.string(),
@@ -254,7 +254,7 @@ export async function investigationWorkflow(
         return firecrawlSearchStep({ ...base, ...(extraParams ?? {}) });
       },
     },
-    gdeltTopMediaEvents: {
+    webSearch03: {
       description: "Fetch top media event clusters for geopolitical context.",
       inputSchema: z.object({
         days: z.number().int().min(1).max(30).optional(),
@@ -315,7 +315,7 @@ export async function investigationWorkflow(
         });
       },
     },
-    newsTopHeadlines: {
+    webSearch04: {
       description: "Fetch top headlines from NewsAPI.",
       inputSchema: z.object({
         q: z.string().optional(),
@@ -414,7 +414,7 @@ export async function investigationWorkflow(
         return newsTopHeadlinesStep({ ...base, ...(extraParams ?? {}) });
       },
     },
-    newsEverything: {
+    webSearch05: {
       description: "Search the complete NewsAPI corpus.",
       inputSchema: z.object({
         q: z.string().optional(),
@@ -471,7 +471,7 @@ export async function investigationWorkflow(
         return newsEverythingStep({ ...base, ...(extraParams ?? {}) });
       },
     },
-    newsSources: {
+    webSearch06: {
       description: "Fetch source metadata from NewsAPI.",
       inputSchema: z.object({
         category: z
