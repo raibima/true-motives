@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
+import { useImmerReducer } from "use-immer";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, Sparkles } from "lucide-react";
@@ -42,6 +43,76 @@ const PLAN_FEATURES = [
 
 type Step = "prompt" | "review";
 
+type State = {
+  step: Step;
+  prompt: string;
+  promptError: string | null;
+  planError: string | null;
+  startError: string | null;
+  plannedInput: InvestigationWorkflowInput | null;
+};
+
+/** Domain events — what happened, not what to set */
+type Action =
+  | { type: "PROMPT_CHANGED"; payload: string }
+  | { type: "PROMPT_VALIDATION_FAILED"; payload: string }
+  | { type: "PLAN_GENERATION_STARTED" }
+  | { type: "PLAN_GENERATED"; payload: InvestigationWorkflowInput }
+  | { type: "PLAN_GENERATION_FAILED"; payload: string }
+  | { type: "PLAN_EDITED"; payload: Partial<InvestigationWorkflowInput> }
+  | { type: "INVESTIGATION_START_REQUESTED" }
+  | { type: "INVESTIGATION_START_FAILED"; payload: string }
+  | { type: "BACK_TO_PROMPT_REQUESTED" };
+
+function reducer(draft: State, action: Action) {
+  switch (action.type) {
+    case "PROMPT_CHANGED":
+      draft.prompt = action.payload;
+      break;
+    case "PROMPT_VALIDATION_FAILED":
+      draft.promptError = action.payload;
+      break;
+    case "PLAN_GENERATION_STARTED":
+      draft.promptError = null;
+      draft.planError = null;
+      break;
+    case "PLAN_GENERATED":
+      draft.plannedInput = action.payload;
+      draft.step = "review";
+      draft.promptError = null;
+      draft.planError = null;
+      break;
+    case "PLAN_GENERATION_FAILED":
+      draft.planError = action.payload;
+      break;
+    case "PLAN_EDITED":
+      if (draft.plannedInput) {
+        Object.assign(draft.plannedInput, action.payload);
+      }
+      break;
+    case "INVESTIGATION_START_REQUESTED":
+      draft.startError = null;
+      break;
+    case "INVESTIGATION_START_FAILED":
+      draft.startError = action.payload;
+      break;
+    case "BACK_TO_PROMPT_REQUESTED":
+      draft.step = "prompt";
+      draft.planError = null;
+      draft.startError = null;
+      break;
+  }
+}
+
+const initialState: State = {
+  step: "prompt",
+  prompt: "",
+  promptError: null,
+  planError: null,
+  startError: null,
+  plannedInput: null,
+};
+
 function GeneratePlanButton() {
   const { pending } = useFormStatus();
   return (
@@ -58,57 +129,53 @@ function GeneratePlanButton() {
 
 export default function NewInvestigationPage() {
   const router = useRouter();
-  const [step, setStep] = useState<Step>("prompt");
-  const [prompt, setPrompt] = useState("");
-  const [promptError, setPromptError] = useState<string | null>(null);
+  const [state, dispatch] = useImmerReducer(reducer, initialState);
   const [isStartPending, startInvestigationTransition] = useTransition();
-  const [planError, setPlanError] = useState<string | null>(null);
-  const [startError, setStartError] = useState<string | null>(null);
-  const [plannedInput, setPlannedInput] =
-    useState<InvestigationWorkflowInput | null>(null);
 
-  const characterCount = prompt.length;
+  const characterCount = state.prompt.length;
   const characterLimit = 2000;
   const remainingCharacters = characterLimit - characterCount;
 
   async function generatePlanAction(formData: FormData) {
     const trimmed = (formData.get("prompt") as string || "").trim();
     if (!trimmed) {
-      setPromptError("Describe what you want to investigate first.");
+      dispatch({ type: "PROMPT_VALIDATION_FAILED", payload: "Describe what you want to investigate first." });
       return;
     }
     if (trimmed.length < 40) {
-      setPromptError(
-        "Add a bit more detail so we can infer a useful plan (at least a sentence or two).",
-      );
+      dispatch({
+        type: "PROMPT_VALIDATION_FAILED",
+        payload: "Add a bit more detail so we can infer a useful plan (at least a sentence or two).",
+      });
       return;
     }
 
-    setPromptError(null);
-    setPlanError(null);
+    dispatch({ type: "PLAN_GENERATION_STARTED" });
 
     try {
       const plan = await generatePlan(trimmed);
-      setPlannedInput({
-        ...plan,
-        geography: plan.geography || "Global",
+      dispatch({
+        type: "PLAN_GENERATED",
+        payload: { ...plan, geography: plan.geography || "Global" },
       });
-      setStep("review");
     } catch (error) {
-      setPlanError(
-        error instanceof Error
-          ? error.message
-          : "Failed to analyze your investigation idea.",
-      );
+      dispatch({
+        type: "PLAN_GENERATION_FAILED",
+        payload:
+          error instanceof Error
+            ? error.message
+            : "Failed to analyze your investigation idea.",
+      });
     }
   }
 
   function handleStartInvestigation() {
-    if (!plannedInput) return;
+    if (!state.plannedInput) return;
 
-    setStartError(null);
+    dispatch({ type: "INVESTIGATION_START_REQUESTED" });
 
     startInvestigationTransition(async () => {
+      const plannedInput = state.plannedInput!;
       try {
         const runId = await startInvestigation({
           title: plannedInput.title,
@@ -119,19 +186,19 @@ export default function NewInvestigationPage() {
         });
         router.push(`/dashboard/investigations/${runId}`);
       } catch (error) {
-        setStartError(
-          error instanceof Error
-            ? error.message
-            : "Failed to start investigation.",
-        );
+        dispatch({
+          type: "INVESTIGATION_START_FAILED",
+          payload:
+            error instanceof Error
+              ? error.message
+              : "Failed to start investigation.",
+        });
       }
     });
   }
 
   function resetToPrompt() {
-    setStep("prompt");
-    setPlanError(null);
-    setStartError(null);
+    dispatch({ type: "BACK_TO_PROMPT_REQUESTED" });
   }
 
   return (
@@ -154,14 +221,14 @@ export default function NewInvestigationPage() {
         </p>
       </div>
 
-      {step === "prompt" && (
+      {state.step === "prompt" && (
         <Form action={generatePlanAction} className="space-y-6">
           <AriaTextField
             name="prompt"
-            value={prompt}
+            value={state.prompt}
             onChange={(value: string) => {
               if (value.length <= characterLimit) {
-                setPrompt(value);
+                dispatch({ type: "PROMPT_CHANGED", payload: value });
               }
             }}
             className="space-y-2"
@@ -193,8 +260,8 @@ export default function NewInvestigationPage() {
                 {remainingCharacters} chars left
               </span>
             </div>
-            {promptError && (
-              <p className="text-xs text-(--tm-color-danger-500)">{promptError}</p>
+            {state.promptError && (
+              <p className="text-xs text-(--tm-color-danger-500)">{state.promptError}</p>
             )}
           </AriaTextField>
 
@@ -229,13 +296,13 @@ export default function NewInvestigationPage() {
             The full investigation usually completes in 60–120 seconds once you start it. You can
             navigate away and return — the process continues in the background.
           </p>
-          {planError && (
-            <p className="text-xs text-(--tm-color-danger-500) mt-1">{planError}</p>
+          {state.planError && (
+            <p className="text-xs text-(--tm-color-danger-500) mt-1">{state.planError}</p>
           )}
         </Form>
       )}
 
-      {step === "review" && plannedInput && (
+      {state.step === "review" && state.plannedInput && (
         <div className="space-y-6">
           <div className="rounded-xl border border-(--tm-color-neutral-100) bg-white p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
@@ -259,38 +326,30 @@ export default function NewInvestigationPage() {
             <div className="space-y-4">
               <TextField
                 label="Title"
-                value={plannedInput.title}
+                value={state.plannedInput.title}
                 onChange={(value) =>
-                  setPlannedInput((prev) =>
-                    prev ? { ...prev, title: value } : prev,
-                  )
+                  dispatch({ type: "PLAN_EDITED", payload: { title: value } })
                 }
               />
 
               <TextAreaField
                 label="Short description"
                 rows={3}
-                value={plannedInput.description ?? ""}
+                value={state.plannedInput.description ?? ""}
                 onChange={(value) =>
-                  setPlannedInput((prev) =>
-                    prev ? { ...prev, description: value } : prev,
-                  )
+                  dispatch({ type: "PLAN_EDITED", payload: { description: value } })
                 }
               />
 
               <div className="grid grid-cols-2 gap-4">
                 <Select
                   label="Issue type"
-                  selectedKey={plannedInput.category}
+                  selectedKey={state.plannedInput.category}
                   onSelectionChange={(key) =>
-                    setPlannedInput((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            category: key as InvestigationWorkflowInput["category"],
-                          }
-                        : prev,
-                    )
+                    dispatch({
+                      type: "PLAN_EDITED",
+                      payload: { category: key as InvestigationWorkflowInput["category"] },
+                    })
                   }
                 >
                   {CATEGORIES.map((c) => (
@@ -302,11 +361,9 @@ export default function NewInvestigationPage() {
 
                 <TextField
                   label="Geography"
-                  value={plannedInput.geography || "Global"}
+                  value={state.plannedInput.geography || "Global"}
                   onChange={(value) =>
-                    setPlannedInput((prev) =>
-                      prev ? { ...prev, geography: value } : prev,
-                    )
+                    dispatch({ type: "PLAN_EDITED", payload: { geography: value } })
                   }
                 />
               </div>
@@ -315,11 +372,9 @@ export default function NewInvestigationPage() {
                 label="Additional context"
                 description="optional"
                 rows={4}
-                value={plannedInput.context ?? ""}
+                value={state.plannedInput.context ?? ""}
                 onChange={(value) =>
-                  setPlannedInput((prev) =>
-                    prev ? { ...prev, context: value } : prev,
-                  )
+                  dispatch({ type: "PLAN_EDITED", payload: { context: value } })
                 }
                 placeholder="Add any links, leads, red flags, or constraints you want the system to prioritize."
               />
@@ -343,8 +398,8 @@ export default function NewInvestigationPage() {
             </Button>
           </div>
 
-          {startError && (
-            <p className="text-xs text-(--tm-color-danger-500) mt-1">{startError}</p>
+          {state.startError && (
+            <p className="text-xs text-(--tm-color-danger-500) mt-1">{state.startError}</p>
           )}
         </div>
       )}
