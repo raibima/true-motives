@@ -586,7 +586,7 @@ export async function investigationWorkflow(
 Your primary goal is to uncover the **hidden motivations** and incentive structures behind the topic, going well beyond surface-level explanations.
 
 Operational requirements:
-- Start by formulating multiple plausible hypotheses about hidden motives, incentives, and constraints for each key stakeholder.
+- Start by formulating multiple plausible hypotheses about hidden motives, incentives, and constraints for each key stakeholder. THINK OUTSIDE THE BOX.
 - For each hypothesis try to confirm, refine, or falsify it using the available research tools.
 - Use the research tools iteratively and **thoroughly**: begin with broad scans to map the landscape, then run focused queries for each major hypothesis before drawing conclusions.
 - Aim to use **multiple different tools** (web search, scraping, news APIs, and geopolitical/event data) whenever they are relevant, rather than stopping after the first few calls.
