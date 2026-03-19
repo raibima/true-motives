@@ -1,37 +1,33 @@
-import { notFound } from "next/navigation";
-import { AlertTriangle, ArrowLeft, Link2 } from "lucide-react";
-import { Link } from "@/components/ui/Link";
-import { ConfidenceBadge } from "@/components/ConfidenceBadge";
-import { CategoryBadge } from "@/components/CategoryBadge";
-import { InvestigateCTA } from "@/components/InvestigateCTA";
-import { getReportBySlug, REPORTS } from "@/server/mock-data";
-import { formatDate, splitIntoParagraphs } from "@/shared/utils";
-import type { Metadata } from "next";
-import type {
-  Stakeholder,
-  MotivationHypothesis,
-  EvidenceItem,
-} from "@/shared/types";
+import {notFound} from 'next/navigation';
+import {AlertTriangle, ArrowLeft, Link2} from 'lucide-react';
+import {Link} from '@/components/ui/Link';
+import {ConfidenceBadge} from '@/components/ConfidenceBadge';
+import {CategoryBadge} from '@/components/CategoryBadge';
+import {InvestigateCTA} from '@/components/InvestigateCTA';
+import {getReportBySlug, REPORTS} from '@/server/mock-data';
+import {formatDate, splitIntoParagraphs} from '@/shared/utils';
+import type {Metadata} from 'next';
+import type {Stakeholder, MotivationHypothesis, EvidenceItem} from '@/shared/types';
 
 export async function generateStaticParams() {
-  return REPORTS.map((r) => ({ slug: r.slug }));
+  return REPORTS.map((r) => ({slug: r.slug}));
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{slug: string}>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const {slug} = await params;
   const report = getReportBySlug(slug);
-  if (!report) return { title: "Report not found — TrueMotives" };
+  if (!report) return {title: 'Report not found — TrueMotives'};
   return {
     title: `${report.title} — TrueMotives`,
     description: report.summary,
   };
 }
 
-function StakeholderCard({ stakeholder }: { stakeholder: Stakeholder }) {
+function StakeholderCard({stakeholder}: {stakeholder: Stakeholder}) {
   return (
     <div className="rounded-lg border border-(--tm-color-neutral-100) bg-white p-5">
       <div className="flex items-start justify-between gap-3">
@@ -39,18 +35,13 @@ function StakeholderCard({ stakeholder }: { stakeholder: Stakeholder }) {
           <h4 className="text-base font-semibold text-(--tm-color-primary-900)">
             {stakeholder.name}
           </h4>
-          <p className="mt-0.5 text-sm text-(--tm-color-neutral-600)">
-            {stakeholder.role}
-          </p>
+          <p className="mt-0.5 text-sm text-(--tm-color-neutral-600)">{stakeholder.role}</p>
         </div>
         <ConfidenceBadge level={stakeholder.confidence} className="shrink-0" />
       </div>
       <ul className="mt-3 space-y-1.5">
         {stakeholder.incentives.map((inc, i) => (
-          <li
-            key={i}
-            className="flex gap-2 text-sm text-(--tm-color-neutral-900)"
-          >
+          <li key={i} className="flex gap-2 text-sm text-(--tm-color-neutral-900)">
             <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-(--tm-color-accent-500)" />
             {inc}
           </li>
@@ -60,10 +51,10 @@ function StakeholderCard({ stakeholder }: { stakeholder: Stakeholder }) {
   );
 }
 
-function MotivationCard({ motivation }: { motivation: MotivationHypothesis }) {
+function MotivationCard({motivation}: {motivation: MotivationHypothesis}) {
   return (
     <div className="relative rounded-lg border border-(--tm-color-neutral-100) bg-white p-5">
-      <span className="absolute left-0 top-4 bottom-4 w-[3px] rounded-r-full bg-(--tm-color-accent-500)" />
+      <span className="absolute top-4 bottom-4 left-0 w-[3px] rounded-r-full bg-(--tm-color-accent-500)" />
       <div className="flex items-start justify-between gap-3">
         <h4 className="font-serif text-lg font-semibold text-(--tm-color-primary-900)">
           {motivation.title}
@@ -75,15 +66,12 @@ function MotivationCard({ motivation }: { motivation: MotivationHypothesis }) {
       </p>
       {motivation.supportingEvidence.length > 0 && (
         <div className="mt-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-(--tm-color-neutral-600)">
+          <p className="text-xs font-semibold tracking-wider text-(--tm-color-neutral-600) uppercase">
             Supporting evidence
           </p>
           <ul className="mt-2 space-y-1.5">
             {motivation.supportingEvidence.map((ev, i) => (
-              <li
-                key={i}
-                className="flex gap-2 text-sm text-(--tm-color-neutral-600)"
-              >
+              <li key={i} className="flex gap-2 text-sm text-(--tm-color-neutral-600)">
                 <Link2 className="mt-0.5 h-4 w-4 shrink-0 text-(--tm-color-info-500)" />
                 {ev}
               </li>
@@ -95,37 +83,31 @@ function MotivationCard({ motivation }: { motivation: MotivationHypothesis }) {
   );
 }
 
-function EvidenceRow({ item }: { item: EvidenceItem }) {
+function EvidenceRow({item}: {item: EvidenceItem}) {
   const confidenceLabel =
-    item.confidence === "high"
-      ? "High"
-      : item.confidence === "medium"
-        ? "Medium"
-        : "Low";
+    item.confidence === 'high' ? 'High' : item.confidence === 'medium' ? 'Medium' : 'Low';
 
   const confidenceColor =
-    item.confidence === "high"
-      ? "text-(--tm-color-success-500)"
-      : item.confidence === "medium"
-        ? "text-(--tm-color-info-500)"
-        : "text-(--tm-color-danger-500)";
+    item.confidence === 'high'
+      ? 'text-(--tm-color-success-500)'
+      : item.confidence === 'medium'
+        ? 'text-(--tm-color-info-500)'
+        : 'text-(--tm-color-danger-500)';
 
   return (
     <div className="border-b border-(--tm-color-neutral-100) py-4 last:border-b-0">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-(--tm-color-neutral-600)">
-        <span className={confidenceColor}>{confidenceLabel}</span>{" "}
+      <p className="text-[11px] font-medium tracking-wide text-(--tm-color-neutral-600) uppercase">
+        <span className={confidenceColor}>{confidenceLabel}</span>{' '}
         <span className="text-(--tm-color-neutral-400)">confidence</span>
       </p>
-      <p className="mt-1 text-sm leading-relaxed text-(--tm-color-neutral-900)">
-        {item.claim}
-      </p>
+      <p className="mt-1 text-sm leading-relaxed text-(--tm-color-neutral-900)">{item.claim}</p>
       <p className="mt-1 text-xs text-(--tm-color-neutral-600)">
-        Source:{" "}
+        Source:{' '}
         <a
           href={item.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-(--tm-color-info-500) underline underline-offset-2 hover:text-(--tm-color-info-500)/80 transition-colors"
+          className="text-(--tm-color-info-500) underline underline-offset-2 transition-colors hover:text-(--tm-color-info-500)/80"
         >
           {item.source}
         </a>
@@ -134,12 +116,8 @@ function EvidenceRow({ item }: { item: EvidenceItem }) {
   );
 }
 
-export default async function ReportDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+export default async function ReportDetailPage({params}: {params: Promise<{slug: string}>}) {
+  const {slug} = await params;
   const report = getReportBySlug(slug);
 
   if (!report) {
@@ -170,11 +148,11 @@ export default async function ReportDetailPage({
               <span>{report.geography}</span>
               <span aria-hidden>·</span>
               <time dateTime={report.publishedAt}>
-                {formatDate(report.publishedAt, { month: "long" })}
+                {formatDate(report.publishedAt, {month: 'long'})}
               </time>
             </div>
 
-            <h1 className="mt-4 font-serif text-3xl font-bold leading-snug tracking-tight text-(--tm-color-primary-900) sm:text-4xl sm:leading-snug">
+            <h1 className="mt-4 font-serif text-3xl leading-snug font-bold tracking-tight text-(--tm-color-primary-900) sm:text-4xl sm:leading-snug">
               {report.title}
             </h1>
 
@@ -192,10 +170,9 @@ export default async function ReportDetailPage({
 
           {/* Disclaimer */}
           <div className="border-b border-(--tm-color-neutral-100) bg-(--tm-color-neutral-50) px-8 py-3 sm:px-12">
-            <p className="text-xs italic text-(--tm-color-neutral-600)">
-              This is an AI-assisted analysis, not definitive fact. It is
-              intended as a starting point for investigation. All hypotheses
-              should be independently verified.
+            <p className="text-xs text-(--tm-color-neutral-600) italic">
+              This is an AI-assisted analysis, not definitive fact. It is intended as a starting
+              point for investigation. All hypotheses should be independently verified.
             </p>
           </div>
 
@@ -205,13 +182,11 @@ export default async function ReportDetailPage({
               Executive summary
             </h2>
             <div className="mt-5 space-y-4 font-serif text-base leading-[1.9] text-(--tm-color-neutral-900)">
-              {splitIntoParagraphs(report.executiveSummary).map(
-                (paragraph, index) => (
-                  <p key={index} className="whitespace-pre-line">
-                    {paragraph}
-                  </p>
-                ),
-              )}
+              {splitIntoParagraphs(report.executiveSummary).map((paragraph, index) => (
+                <p key={index} className="whitespace-pre-line">
+                  {paragraph}
+                </p>
+              ))}
             </div>
           </section>
 
@@ -221,8 +196,8 @@ export default async function ReportDetailPage({
               Core motivation hypotheses
             </h2>
             <p className="mt-1 text-xs text-(--tm-color-neutral-600)">
-              Ranked by assessed plausibility. Each hypothesis includes
-              supporting evidence and a confidence level.
+              Ranked by assessed plausibility. Each hypothesis includes supporting evidence and a
+              confidence level.
             </p>
             <div className="mt-6 space-y-4">
               {report.motivations.map((m, i) => (
@@ -237,8 +212,7 @@ export default async function ReportDetailPage({
               Stakeholder map &amp; incentives
             </h2>
             <p className="mt-1 text-xs text-(--tm-color-neutral-600)">
-              Key actors identified in this analysis, with their assessed roles
-              and incentives.
+              Key actors identified in this analysis, with their assessed roles and incentives.
             </p>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               {report.stakeholders.map((s, i) => (
@@ -253,8 +227,8 @@ export default async function ReportDetailPage({
               Evidence &amp; citations
             </h2>
             <p className="mt-1 text-xs text-(--tm-color-neutral-600)">
-              Sourced claims supporting the analysis. Confidence reflects source
-              reliability and corroboration.
+              Sourced claims supporting the analysis. Confidence reflects source reliability and
+              corroboration.
             </p>
             <div>
               {report.evidence.map((ev, i) => (
@@ -297,9 +271,7 @@ export default async function ReportDetailPage({
                   key={i}
                   className="flex gap-3 text-sm leading-relaxed text-(--tm-color-neutral-900)"
                 >
-                  <span className="text-(--tm-color-neutral-300)">
-                    {i + 1}.
-                  </span>
+                  <span className="text-(--tm-color-neutral-300)">{i + 1}.</span>
                   {alt}
                 </li>
               ))}

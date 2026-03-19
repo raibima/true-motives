@@ -1,6 +1,6 @@
-import "server-only";
+import 'server-only';
 
-const FIRECRAWL_API_BASE_URL = "https://api.firecrawl.dev/v2/";
+const FIRECRAWL_API_BASE_URL = 'https://api.firecrawl.dev/v2/';
 
 export class FirecrawlError extends Error {
   status: number;
@@ -8,7 +8,7 @@ export class FirecrawlError extends Error {
 
   constructor(message: string, status: number, code?: string) {
     super(message);
-    this.name = "FirecrawlError";
+    this.name = 'FirecrawlError';
     this.status = status;
     this.code = code;
   }
@@ -17,9 +17,7 @@ export class FirecrawlError extends Error {
 function getApiKey(): string {
   const key = process.env.FIRECRAWL_API_KEY;
   if (!key) {
-    throw new Error(
-      "Missing Firecrawl API key. Set FIRECRAWL_API_KEY in your environment.",
-    );
+    throw new Error('Missing Firecrawl API key. Set FIRECRAWL_API_KEY in your environment.');
   }
   return key;
 }
@@ -31,7 +29,7 @@ function sanitizeHeaders(headers?: HeadersInit): HeadersInit | undefined {
 
   const append = (k: string, v: string) => {
     const lower = k.toLowerCase();
-    if (lower === "authorization") {
+    if (lower === 'authorization') {
       // Never allow callers to override our auth header
       return;
     }
@@ -56,16 +54,16 @@ function sanitizeHeaders(headers?: HeadersInit): HeadersInit | undefined {
 }
 
 export type FirecrawlFormatType =
-  | "markdown"
-  | "summary"
-  | "html"
-  | "rawHtml"
-  | "links"
-  | "images"
-  | "screenshot"
-  | "json"
-  | "changeTracking"
-  | "branding";
+  | 'markdown'
+  | 'summary'
+  | 'html'
+  | 'rawHtml'
+  | 'links'
+  | 'images'
+  | 'screenshot'
+  | 'json'
+  | 'changeTracking'
+  | 'branding';
 
 export type FirecrawlFormat =
   | FirecrawlFormatType
@@ -81,25 +79,25 @@ export interface FirecrawlLocation {
 }
 
 export interface FirecrawlParserPdf {
-  type: "pdf";
-  mode?: "fast" | "auto" | "ocr";
+  type: 'pdf';
+  mode?: 'fast' | 'auto' | 'ocr';
   maxPages?: number;
 }
 
 export type FirecrawlParser = FirecrawlParserPdf;
 
 export interface FirecrawlActionWaitByDuration {
-  type: "wait";
+  type: 'wait';
   milliseconds: number;
 }
 
 export interface FirecrawlActionWaitForElement {
-  type: "wait";
+  type: 'wait';
   selector: string;
 }
 
 export interface FirecrawlActionScreenshot {
-  type: "screenshot";
+  type: 'screenshot';
   fullPage?: boolean;
   quality?: number;
   viewport?: {
@@ -109,50 +107,50 @@ export interface FirecrawlActionScreenshot {
 }
 
 export interface FirecrawlActionClick {
-  type: "click";
+  type: 'click';
   selector: string;
   all?: boolean;
 }
 
 export interface FirecrawlActionWrite {
-  type: "write";
+  type: 'write';
   text: string;
 }
 
 export interface FirecrawlActionPress {
-  type: "press";
+  type: 'press';
   key: string;
 }
 
 export interface FirecrawlActionScroll {
-  type: "scroll";
-  direction?: "up" | "down";
+  type: 'scroll';
+  direction?: 'up' | 'down';
   selector?: string;
 }
 
 export interface FirecrawlActionScrape {
-  type: "scrape";
+  type: 'scrape';
 }
 
 export interface FirecrawlActionExecuteJavascript {
-  type: "executeJavascript";
+  type: 'executeJavascript';
   script: string;
 }
 
 export interface FirecrawlActionPdf {
-  type: "pdf";
+  type: 'pdf';
   format?:
-    | "A0"
-    | "A1"
-    | "A2"
-    | "A3"
-    | "A4"
-    | "A5"
-    | "A6"
-    | "Letter"
-    | "Legal"
-    | "Tabloid"
-    | "Ledger";
+    | 'A0'
+    | 'A1'
+    | 'A2'
+    | 'A3'
+    | 'A4'
+    | 'A5'
+    | 'A6'
+    | 'Letter'
+    | 'Legal'
+    | 'Tabloid'
+    | 'Ledger';
   landscape?: boolean;
   scale?: number;
 }
@@ -186,7 +184,7 @@ export interface FirecrawlScrapeOptions {
   location?: FirecrawlLocation;
   removeBase64Images?: boolean;
   blockAds?: boolean;
-  proxy?: "basic" | "enhanced" | "auto";
+  proxy?: 'basic' | 'enhanced' | 'auto';
   storeInCache?: boolean;
   [key: string]: unknown;
 }
@@ -198,8 +196,8 @@ export interface FirecrawlScrapeRequest extends FirecrawlScrapeOptions {
 
 export interface FirecrawlScrapeActionsResult {
   screenshots?: string[];
-  scrapes?: { url: string; html: string }[];
-  javascriptReturns?: { type: string; value: unknown }[];
+  scrapes?: {url: string; html: string}[];
+  javascriptReturns?: {type: string; value: unknown}[];
   pdfs?: string[];
 }
 
@@ -218,17 +216,17 @@ export interface FirecrawlScrapeMetadata {
 
 export interface FirecrawlScrapeChangeTracking {
   previousScrapeAt?: string | null;
-  changeStatus?: "new" | "same" | "changed" | "removed";
-  visibility?: "visible" | "hidden";
+  changeStatus?: 'new' | 'same' | 'changed' | 'removed';
+  visibility?: 'visible' | 'hidden';
   diff?: string | null;
   json?: Record<string, unknown> | null;
 }
 
 export interface FirecrawlBranding {
-  colorScheme?: "light" | "dark";
+  colorScheme?: 'light' | 'dark';
   logo?: string | null;
   colors?: Record<string, unknown> | null;
-  fonts?: { family: string }[] | null;
+  fonts?: {family: string}[] | null;
   typography?: Record<string, unknown> | null;
   spacing?: Record<string, unknown> | null;
   components?: Record<string, unknown> | null;
@@ -262,7 +260,7 @@ export interface FirecrawlScrapeResponse {
   [key: string]: unknown;
 }
 
-export type FirecrawlSearchCategory = "pdf" | "research" | "github";
+export type FirecrawlSearchCategory = 'pdf' | 'research' | 'github';
 
 export interface FirecrawlSearchRequest {
   query: string;
@@ -297,7 +295,7 @@ export interface FirecrawlSearchResponse {
 }
 
 async function firecrawlRequest<TRequest, TResponse>(
-  path: "scrape" | "search",
+  path: 'scrape' | 'search',
   body: TRequest,
   init?: RequestInit,
 ): Promise<TResponse> {
@@ -307,17 +305,17 @@ async function firecrawlRequest<TRequest, TResponse>(
 
   const response = await fetch(url, {
     ...init,
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
       Authorization: `Bearer ${apiKey}`,
       ...sanitizeHeaders(init?.headers),
     },
     body: JSON.stringify(body),
   });
 
-  const text = await response.text().catch(() => "");
+  const text = await response.text().catch(() => '');
   let json: unknown;
   if (text) {
     try {
@@ -329,31 +327,21 @@ async function firecrawlRequest<TRequest, TResponse>(
 
   if (!response.ok) {
     const errorJson =
-      json && typeof json === "object"
-        ? (json as { error?: unknown; code?: unknown })
-        : null;
+      json && typeof json === 'object' ? (json as {error?: unknown; code?: unknown}) : null;
 
     const message =
-      (errorJson &&
-        typeof errorJson.error === "string" &&
-        errorJson.error) ||
+      (errorJson && typeof errorJson.error === 'string' && errorJson.error) ||
       `Firecrawl API request to ${path} failed with status ${response.status}${
-        text ? `: ${text}` : ""
+        text ? `: ${text}` : ''
       }`;
 
-    const code =
-      errorJson && typeof errorJson.code === "string"
-        ? errorJson.code
-        : undefined;
+    const code = errorJson && typeof errorJson.code === 'string' ? errorJson.code : undefined;
 
     throw new FirecrawlError(message, response.status, code);
   }
 
-  if (!json || typeof json !== "object") {
-    throw new FirecrawlError(
-      "Unexpected Firecrawl API response shape.",
-      response.status,
-    );
+  if (!json || typeof json !== 'object') {
+    throw new FirecrawlError('Unexpected Firecrawl API response shape.', response.status);
   }
 
   return json as TResponse;
@@ -363,55 +351,36 @@ export async function firecrawlScrape(
   request: FirecrawlScrapeRequest,
   init?: RequestInit,
 ): Promise<FirecrawlScrapeResponse> {
-  if (!request || typeof request !== "object") {
-    throw new TypeError("firecrawlScrape request must be an object.");
+  if (!request || typeof request !== 'object') {
+    throw new TypeError('firecrawlScrape request must be an object.');
   }
 
-  if (!request.url || typeof request.url !== "string") {
-    throw new TypeError(
-      "firecrawlScrape request.url must be a non-empty string.",
-    );
+  if (!request.url || typeof request.url !== 'string') {
+    throw new TypeError('firecrawlScrape request.url must be a non-empty string.');
   }
 
   if (!/^https?:\/\//i.test(request.url)) {
-    throw new TypeError(
-      "firecrawlScrape request.url must be an absolute HTTP(S) URL.",
-    );
+    throw new TypeError('firecrawlScrape request.url must be an absolute HTTP(S) URL.');
   }
 
-  return firecrawlRequest<FirecrawlScrapeRequest, FirecrawlScrapeResponse>(
-    "scrape",
-    request,
-    init,
-  );
+  return firecrawlRequest<FirecrawlScrapeRequest, FirecrawlScrapeResponse>('scrape', request, init);
 }
 
 export async function firecrawlSearch(
   request: FirecrawlSearchRequest,
   init?: RequestInit,
 ): Promise<FirecrawlSearchResponse> {
-  if (!request || typeof request !== "object") {
-    throw new TypeError("firecrawlSearch request must be an object.");
+  if (!request || typeof request !== 'object') {
+    throw new TypeError('firecrawlSearch request must be an object.');
   }
 
-  if (!request.query || typeof request.query !== "string") {
-    throw new TypeError(
-      "firecrawlSearch request.query must be a non-empty string.",
-    );
+  if (!request.query || typeof request.query !== 'string') {
+    throw new TypeError('firecrawlSearch request.query must be a non-empty string.');
   }
 
-  if (
-    request.limit !== undefined &&
-    (!Number.isInteger(request.limit) || request.limit <= 0)
-  ) {
-    throw new TypeError(
-      "firecrawlSearch request.limit must be a positive integer when provided.",
-    );
+  if (request.limit !== undefined && (!Number.isInteger(request.limit) || request.limit <= 0)) {
+    throw new TypeError('firecrawlSearch request.limit must be a positive integer when provided.');
   }
 
-  return firecrawlRequest<FirecrawlSearchRequest, FirecrawlSearchResponse>(
-    "search",
-    request,
-    init,
-  );
+  return firecrawlRequest<FirecrawlSearchRequest, FirecrawlSearchResponse>('search', request, init);
 }

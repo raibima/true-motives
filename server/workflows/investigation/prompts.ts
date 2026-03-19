@@ -1,6 +1,6 @@
-import "server-only";
+import 'server-only';
 
-import type { InvestigationWorkflowInput } from "@/shared/investigations/schema";
+import type {InvestigationWorkflowInput} from '@/shared/investigations/schema';
 
 const BASE_SYSTEM_PROMPT = `You are a **skeptical investigative analyst** for TrueMotives. Your job is to dig beneath the surface and question everything, especially official narratives.
 
@@ -27,16 +27,14 @@ const BASE_SYSTEM_PROMPT = `You are a **skeptical investigative analyst** for Tr
 - Executive summary length target: 90-140 words, max 2 short paragraphs. Keep it scannable and avoid long, multi-clause sentences.
 - Keep source citations specific; include sourceUrl when available. Prefer diverse sources over echo chambers.`;
 
-function buildPhasesPromptSection(
-  phases: InvestigationWorkflowInput["phases"],
-): string {
+function buildPhasesPromptSection(phases: InvestigationWorkflowInput['phases']): string {
   if (!phases?.length) {
-    return "";
+    return '';
   }
 
   const phaseLines = phases
     .map((phase, index) => `${index + 1}. ${phase.label} - ${phase.description}`)
-    .join("\n");
+    .join('\n');
 
   return `\n\nResearch phases planned for this investigation:\n${phaseLines}\n\nFollow these phases as a roadmap for your research.`;
 }
@@ -45,13 +43,11 @@ export function createInvestigationSystemPrompt(): string {
   return BASE_SYSTEM_PROMPT;
 }
 
-export function createInvestigationUserPrompt(
-  input: InvestigationWorkflowInput,
-): string {
+export function createInvestigationUserPrompt(input: InvestigationWorkflowInput): string {
   return `Investigate the following topic with a skeptical, critical lens. Question official narratives and dig for hidden motives.
 
 Title: ${input.title}
-Description: ${input.description || "N/A"}
+Description: ${input.description || 'N/A'}
 Category: ${input.category}
-Geography: ${input.geography || "Global"}${buildPhasesPromptSection(input.phases)}`;
+Geography: ${input.geography || 'Global'}${buildPhasesPromptSection(input.phases)}`;
 }

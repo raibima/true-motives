@@ -1,7 +1,7 @@
-import { Link } from "@/components/ui/Link";
-import { ReportCard } from "@/components/ReportCard";
-import { InvestigateCTA } from "@/components/InvestigateCTA";
-import { getFeaturedReports } from "@/server/mock-data";
+import {Link} from '@/components/ui/Link';
+import {ReportCard} from '@/components/ReportCard';
+import {InvestigateCTA} from '@/components/InvestigateCTA';
+import {getFeaturedReports} from '@/server/mock-data';
 
 export default function Home() {
   const featured = getFeaturedReports();
@@ -13,18 +13,8 @@ export default function Home() {
         <div className="absolute inset-0 opacity-[0.07]">
           <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <pattern
-                id="grid"
-                width="40"
-                height="40"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M 40 0 L 0 0 0 40"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="0.5"
-                />
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
@@ -33,22 +23,21 @@ export default function Home() {
 
         <div className="relative mx-auto max-w-6xl px-6 py-24 sm:py-32">
           <div className="max-w-2xl">
-            <div className="flex items-center gap-3 text-sm font-medium text-(--tm-color-accent-400) animate-fade-in-up stagger-1">
+            <div className="animate-fade-in-up stagger-1 flex items-center gap-3 text-sm font-medium text-(--tm-color-accent-400)">
               <span className="inline-block h-px w-8 bg-(--tm-color-accent-500)" />
               AI-powered investigative analysis
             </div>
 
-            <h1 className="mt-6 font-serif text-4xl font-bold leading-[1.15] tracking-tight text-white sm:text-5xl animate-fade-in-up stagger-2 text-balance">
+            <h1 className="animate-fade-in-up stagger-2 mt-6 font-serif text-4xl leading-[1.15] font-bold tracking-tight text-balance text-white sm:text-5xl">
               Uncover the real motivations behind major decisions
             </h1>
 
-            <p className="mt-6 text-lg leading-relaxed text-(--tm-color-neutral-300) animate-fade-in-up stagger-3 max-w-xl">
-              TrueMotives uses structured AI analysis to map stakeholders,
-              incentives, and power dynamics — with transparent reasoning and
-              sourced evidence, not opaque guesses.
+            <p className="animate-fade-in-up stagger-3 mt-6 max-w-xl text-lg leading-relaxed text-(--tm-color-neutral-300)">
+              TrueMotives uses structured AI analysis to map stakeholders, incentives, and power
+              dynamics — with transparent reasoning and sourced evidence, not opaque guesses.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-4 animate-fade-in-up stagger-4">
+            <div className="animate-fade-in-up stagger-4 mt-10 flex flex-wrap gap-4">
               <Link
                 href="/reports"
                 className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-(--tm-color-primary-900) shadow-sm transition-all hover:bg-(--tm-color-neutral-50) hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--tm-color-accent-400)"
@@ -83,34 +72,31 @@ export default function Home() {
 
       {/* How it works */}
       <section className="mx-auto max-w-6xl px-6 py-20">
-        <h2 className="font-serif text-2xl font-semibold text-(--tm-color-primary-900) animate-fade-in-up">
+        <h2 className="animate-fade-in-up font-serif text-2xl font-semibold text-(--tm-color-primary-900)">
           How TrueMotives works
         </h2>
         <div className="mt-10 grid gap-8 sm:grid-cols-3">
           {[
             {
-              step: "01",
-              title: "Identify stakeholders",
+              step: '01',
+              title: 'Identify stakeholders',
               description:
-                "We map every actor with a stake in the decision — governments, corporations, lobbies, and public groups.",
+                'We map every actor with a stake in the decision — governments, corporations, lobbies, and public groups.',
             },
             {
-              step: "02",
-              title: "Model incentives",
+              step: '02',
+              title: 'Model incentives',
               description:
-                "Economic, political, ideological, and institutional incentives are analyzed for each stakeholder.",
+                'Economic, political, ideological, and institutional incentives are analyzed for each stakeholder.',
             },
             {
-              step: "03",
-              title: "Generate hypotheses",
+              step: '03',
+              title: 'Generate hypotheses',
               description:
-                "Structured motivation analyses with explicit confidence levels, citations, and alternative explanations.",
+                'Structured motivation analyses with explicit confidence levels, citations, and alternative explanations.',
             },
           ].map((item, i) => (
-            <div
-              key={item.step}
-              className={`animate-fade-in-up stagger-${i + 2}`}
-            >
+            <div key={item.step} className={`animate-fade-in-up stagger-${i + 2}`}>
               <span className="text-xs font-bold tracking-widest text-(--tm-color-accent-500)">
                 {item.step}
               </span>
@@ -137,13 +123,12 @@ export default function Home() {
               Featured analyses
             </h2>
             <p className="mt-2 text-sm text-(--tm-color-neutral-600)">
-              Recent investigations into the motivations behind major global
-              decisions.
+              Recent investigations into the motivations behind major global decisions.
             </p>
           </div>
           <Link
             href="/reports"
-            className="hidden text-sm font-medium text-(--tm-color-primary-800) underline underline-offset-4 decoration-(--tm-color-neutral-300) hover:decoration-(--tm-color-primary-800) transition-colors sm:block"
+            className="hidden text-sm font-medium text-(--tm-color-primary-800) underline decoration-(--tm-color-neutral-300) underline-offset-4 transition-colors hover:decoration-(--tm-color-primary-800) sm:block"
           >
             View all reports
           </Link>
@@ -171,7 +156,6 @@ export default function Home() {
 
       {/* CTA band */}
       <InvestigateCTA variant="band" />
-
     </>
   );
 }

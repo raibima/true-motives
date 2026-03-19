@@ -1,12 +1,8 @@
-export type ConfidenceLevel = "high" | "medium" | "low";
+export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
-export type InvestigationStatus = "draft" | "generating" | "completed" | "failed";
+export type InvestigationStatus = 'draft' | 'generating' | 'completed' | 'failed';
 
-export type DynamicPhaseStatus =
-  | "pending"
-  | "in-progress"
-  | "completed"
-  | "skipped";
+export type DynamicPhaseStatus = 'pending' | 'in-progress' | 'completed' | 'skipped';
 
 export interface DynamicPhase {
   id: string;
@@ -42,12 +38,12 @@ export interface Investigation {
 }
 
 export type ReportCategory =
-  | "policy"
-  | "regulation"
-  | "corporate-decision"
-  | "government-action"
-  | "legislation"
-  | "culture-and-society";
+  | 'policy'
+  | 'regulation'
+  | 'corporate-decision'
+  | 'government-action'
+  | 'legislation'
+  | 'culture-and-society';
 
 export interface Stakeholder {
   name: string;

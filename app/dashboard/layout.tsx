@@ -1,14 +1,10 @@
-import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import {DashboardSidebar} from '@/components/dashboard/DashboardSidebar';
 
 export const metadata = {
-  title: "Dashboard — TrueMotives",
+  title: 'Dashboard — TrueMotives',
 };
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({children}: {children: React.ReactNode}) {
   return (
     <div className="flex h-screen overflow-hidden bg-(--tm-color-neutral-50)">
       <DashboardSidebar />

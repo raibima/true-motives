@@ -1,4 +1,4 @@
-import "server-only";
+import 'server-only';
 
 export function createPlanningPrompt(prompt: string): string {
   return `

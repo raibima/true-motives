@@ -1,13 +1,13 @@
-import type { ReportCategory } from "@/shared/types";
-import { cn } from "@/shared/utils";
+import type {ReportCategory} from '@/shared/types';
+import {cn} from '@/shared/utils';
 
 const labels: Record<ReportCategory, string> = {
-  policy: "Policy",
-  regulation: "Regulation",
-  "corporate-decision": "Corporate decision",
-  "government-action": "Government action",
-  legislation: "Legislation",
-  "culture-and-society": "Culture, sports & public narratives",
+  policy: 'Policy',
+  regulation: 'Regulation',
+  'corporate-decision': 'Corporate decision',
+  'government-action': 'Government action',
+  legislation: 'Legislation',
+  'culture-and-society': 'Culture, sports & public narratives',
 };
 
 export function CategoryBadge({
@@ -20,7 +20,7 @@ export function CategoryBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full bg-(--tm-color-neutral-100) px-2.5 py-0.5 text-xs font-medium text-(--tm-color-neutral-600)",
+        'inline-flex items-center rounded-full bg-(--tm-color-neutral-100) px-2.5 py-0.5 text-xs font-medium text-(--tm-color-neutral-600)',
         className,
       )}
     >

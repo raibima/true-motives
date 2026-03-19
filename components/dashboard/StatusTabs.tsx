@@ -1,22 +1,16 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
-} from '@/components/ui/Tabs';
-import type { InvestigationStatus } from '@/shared/types';
-import type { Investigation } from '@/shared/types';
+import {Tabs, TabList, Tab, TabPanels, TabPanel} from '@/components/ui/Tabs';
+import type {InvestigationStatus} from '@/shared/types';
+import type {Investigation} from '@/shared/types';
 
-const STATUS_TABS: { id: InvestigationStatus | 'all'; label: string }[] = [
-  { id: 'all', label: 'All' },
-  { id: 'completed', label: 'Completed' },
-  { id: 'generating', label: 'Generating' },
-  { id: 'draft', label: 'Drafts' },
-  { id: 'failed', label: 'Failed' },
+const STATUS_TABS: {id: InvestigationStatus | 'all'; label: string}[] = [
+  {id: 'all', label: 'All'},
+  {id: 'completed', label: 'Completed'},
+  {id: 'generating', label: 'Generating'},
+  {id: 'draft', label: 'Drafts'},
+  {id: 'failed', label: 'Failed'},
 ];
 
 interface StatusTabsProps {
@@ -25,26 +19,18 @@ interface StatusTabsProps {
   children: React.ReactNode;
 }
 
-function getCount(
-  investigations: Investigation[],
-  tabId: InvestigationStatus | 'all'
-): number {
+function getCount(investigations: Investigation[], tabId: InvestigationStatus | 'all'): number {
   if (tabId === 'all') return investigations.length;
   return investigations.filter((i) => i.status === tabId).length;
 }
 
-export function StatusTabs({
-  investigations,
-  selectedKey,
-  children,
-}: StatusTabsProps) {
+export function StatusTabs({investigations, selectedKey, children}: StatusTabsProps) {
   return (
     <Tabs selectedKey={selectedKey} className="mb-6">
       <TabList aria-label="Filter by status" variant="underline">
         {STATUS_TABS.map((tab) => {
           const count = getCount(investigations, tab.id);
-          const href =
-            tab.id === 'all' ? '/dashboard' : `/dashboard?status=${tab.id}`;
+          const href = tab.id === 'all' ? '/dashboard' : `/dashboard?status=${tab.id}`;
 
           return (
             <Tab

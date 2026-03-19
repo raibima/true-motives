@@ -1,25 +1,19 @@
-import "client-only";
+import 'client-only';
 
-import type { InvestigationWorkflowInput } from "@/shared/investigations/schema";
+import type {InvestigationWorkflowInput} from '@/shared/investigations/schema';
 
-export async function generatePlan(
-  prompt: string,
-): Promise<InvestigationWorkflowInput> {
-  const response = await fetch("/api/investigations/plan", {
-    method: "POST",
+export async function generatePlan(prompt: string): Promise<InvestigationWorkflowInput> {
+  const response = await fetch('/api/investigations/plan', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ prompt }),
+    body: JSON.stringify({prompt}),
   });
 
   if (!response.ok) {
-    const body = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null;
-    throw new Error(
-      body?.error || "Failed to analyze your investigation idea.",
-    );
+    const body = (await response.json().catch(() => null)) as {error?: string} | null;
+    throw new Error(body?.error || 'Failed to analyze your investigation idea.');
   }
 
   const body = (await response.json()) as {
@@ -32,29 +26,25 @@ export async function generatePlan(
 export type StartInvestigationInput = {
   title: string;
   description: string;
-  category: InvestigationWorkflowInput["category"];
+  category: InvestigationWorkflowInput['category'];
   geography: string;
-  phases?: Array<{ id: string; label: string; description: string }>;
+  phases?: Array<{id: string; label: string; description: string}>;
 };
 
-export async function startInvestigation(
-  input: StartInvestigationInput,
-): Promise<string> {
-  const response = await fetch("/api/investigations", {
-    method: "POST",
+export async function startInvestigation(input: StartInvestigationInput): Promise<string> {
+  const response = await fetch('/api/investigations', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(input),
   });
 
   if (!response.ok) {
-    const body = (await response.json().catch(() => null)) as
-      | { error?: string }
-      | null;
-    throw new Error(body?.error || "Failed to start investigation.");
+    const body = (await response.json().catch(() => null)) as {error?: string} | null;
+    throw new Error(body?.error || 'Failed to start investigation.');
   }
 
-  const body = (await response.json()) as { runId: string };
+  const body = (await response.json()) as {runId: string};
   return body.runId;
 }

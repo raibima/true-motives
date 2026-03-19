@@ -1,10 +1,7 @@
-export function Footer({ className = "" }: { className?: string }) {
+export function Footer({className = ''}: {className?: string}) {
   return (
     <footer
-      className={
-        className ||
-        "border-t border-(--tm-color-neutral-100) bg-(--tm-color-neutral-50)"
-      }
+      className={className || 'border-t border-(--tm-color-neutral-100) bg-(--tm-color-neutral-50)'}
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
@@ -20,4 +17,3 @@ export function Footer({ className = "" }: { className?: string }) {
     </footer>
   );
 }
-

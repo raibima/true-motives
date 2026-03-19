@@ -1,27 +1,25 @@
-import { Suspense } from "react";
-import { ReportCard } from "@/components/ReportCard";
-import { ReportFilters } from "@/components/ReportFilters";
-import { filterReports } from "@/server/mock-data";
+import {Suspense} from 'react';
+import {ReportCard} from '@/components/ReportCard';
+import {ReportFilters} from '@/components/ReportFilters';
+import {filterReports} from '@/server/mock-data';
 
 export const metadata = {
-  title: "Browse reports — TrueMotives",
+  title: 'Browse reports — TrueMotives',
   description:
-    "Explore AI-powered motivation analyses of public policies, government decisions, and corporate actions.",
+    'Explore AI-powered motivation analyses of public policies, government decisions, and corporate actions.',
 };
 
 export default async function ReportsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams: Promise<{[key: string]: string | string[] | undefined}>;
 }) {
   const params = await searchParams;
-  const query = typeof params.q === "string" ? params.q : undefined;
-  const category =
-    typeof params.category === "string" ? params.category : undefined;
-  const geography =
-    typeof params.geography === "string" ? params.geography : undefined;
+  const query = typeof params.q === 'string' ? params.q : undefined;
+  const category = typeof params.category === 'string' ? params.category : undefined;
+  const geography = typeof params.geography === 'string' ? params.geography : undefined;
 
-  const reports = filterReports({ query, category, geography });
+  const reports = filterReports({query, category, geography});
 
   const hasActiveFilters = query || category || geography;
 
@@ -33,8 +31,8 @@ export default async function ReportsPage({
           Report library
         </h1>
         <p className="mt-2 text-sm text-(--tm-color-neutral-600)">
-          Browse investigations into the motivations behind major global
-          decisions. Filter by topic, region, or category.
+          Browse investigations into the motivations behind major global decisions. Filter by topic,
+          region, or category.
         </p>
       </div>
 
@@ -49,8 +47,8 @@ export default async function ReportsPage({
       {reports.length > 0 ? (
         <>
           <p className="mb-4 text-xs font-medium text-(--tm-color-neutral-600)">
-            {reports.length} report{reports.length !== 1 && "s"}
-            {hasActiveFilters && " matching your filters"}
+            {reports.length} report{reports.length !== 1 && 's'}
+            {hasActiveFilters && ' matching your filters'}
           </p>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {reports.map((report, i) => (

@@ -1,11 +1,11 @@
-import { Link } from "@/components/ui/Link";
+import {Link} from '@/components/ui/Link';
 
 export function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
+    <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
       {/* Decorative icon */}
       <div className="relative mb-6">
-        <div className="h-20 w-20 rounded-2xl bg-(--tm-color-neutral-100) flex items-center justify-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-(--tm-color-neutral-100)">
           <svg
             className="h-9 w-9 text-(--tm-color-neutral-300)"
             fill="none"
@@ -20,7 +20,7 @@ export function EmptyState() {
             />
           </svg>
         </div>
-        <div className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-(--tm-color-accent-500) flex items-center justify-center">
+        <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-(--tm-color-accent-500)">
           <svg
             className="h-3 w-3 text-(--tm-color-primary-900)"
             fill="none"
@@ -33,17 +33,17 @@ export function EmptyState() {
         </div>
       </div>
 
-      <h2 className="font-serif text-xl font-semibold text-(--tm-color-primary-900) mb-2">
+      <h2 className="mb-2 font-serif text-xl font-semibold text-(--tm-color-primary-900)">
         No investigations yet
       </h2>
-      <p className="max-w-sm text-sm text-(--tm-color-neutral-600) leading-relaxed mb-6">
-        Start your first investigation to uncover the hidden motivations behind
-        public policies, government decisions, and corporate actions.
+      <p className="mb-6 max-w-sm text-sm leading-relaxed text-(--tm-color-neutral-600)">
+        Start your first investigation to uncover the hidden motivations behind public policies,
+        government decisions, and corporate actions.
       </p>
 
       <Link
         href="/dashboard/new"
-        className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) px-5 py-2.5 text-sm font-semibold text-white transition-colors shadow-sm"
+        className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-(--tm-color-primary-800)"
       >
         <svg
           className="h-4 w-4"

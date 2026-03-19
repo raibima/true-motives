@@ -1,40 +1,38 @@
-import "server-only";
+import 'server-only';
 
-import type { UIMessageChunk } from "ai";
-import { z } from "zod";
-import { DurableAgent, Output as WorkflowOutput } from "@workflow/ai/agent";
-import { openai } from "@workflow/ai/openai";
-import { getWritable, fetch } from "workflow";
+import type {UIMessageChunk} from 'ai';
+import {z} from 'zod';
+import {DurableAgent, Output as WorkflowOutput} from '@workflow/ai/agent';
+import {openai} from '@workflow/ai/openai';
+import {getWritable, fetch} from 'workflow';
 
-import { reportSchema } from "@/shared/report-schema";
-import type { Report, ReportCategory } from "@/shared/types";
+import {reportSchema} from '@/shared/report-schema';
+import type {Report, ReportCategory} from '@/shared/types';
 import {
   investigationInputSchema,
   type InvestigationWorkflowInput,
-} from "@/shared/investigations/schema";
-import { emitProgress } from "@/server/workflows/investigation/steps/research";
+} from '@/shared/investigations/schema';
+import {emitProgress} from '@/server/workflows/investigation/steps/research';
 import {
   getCallsPerPhase,
   getTargetPhaseIndex,
-} from "@/server/workflows/investigation/phase-tracking";
+} from '@/server/workflows/investigation/phase-tracking';
 import {
   createInvestigationTools,
   type InvestigationToolCallCounts,
-} from "@/server/workflows/investigation/tools";
+} from '@/server/workflows/investigation/tools';
 import {
   createInvestigationSystemPrompt,
   createInvestigationUserPrompt,
-} from "@/server/workflows/investigation/prompts";
+} from '@/server/workflows/investigation/prompts';
 
 // Maximum number of steps the agent can take.
 const AGENT_MAX_STEPS = 60;
 
-const AGENT_MODEL = openai("gpt-5.4");
+const AGENT_MODEL = openai('gpt-5.4');
 
-export async function investigationWorkflow(
-  rawInput: InvestigationWorkflowInput,
-) {
-  "use workflow";
+export async function investigationWorkflow(rawInput: InvestigationWorkflowInput) {
+  'use workflow';
 
   // See: https://useworkflow.dev/docs/errors/fetch-in-workflow
   globalThis.fetch = fetch;
@@ -42,9 +40,9 @@ export async function investigationWorkflow(
   const input = investigationInputSchema.parse(rawInput);
   const toolCallCounts: InvestigationToolCallCounts = {};
   const writable = getWritable<UIMessageChunk>();
-  const reportOutput = WorkflowOutput.object({ schema: reportSchema });
+  const reportOutput = WorkflowOutput.object({schema: reportSchema});
   const reportOutputSpecification = {
-    type: "object" as const,
+    type: 'object' as const,
     responseFormat: await reportOutput.responseFormat,
     parseOutput: reportOutput.parseCompleteOutput.bind(reportOutput),
     parsePartial: reportOutput.parsePartialOutput.bind(reportOutput),
@@ -75,40 +73,36 @@ export async function investigationWorkflow(
 
     if (!phasesInitialized) {
       await emitProgress({
-        kind: "phases-init",
-        phases: phases.map((p) => ({ ...p, status: "pending" })),
+        kind: 'phases-init',
+        phases: phases.map((p) => ({...p, status: 'pending'})),
       });
       phasesInitialized = true;
     }
 
     researchCallCount++;
 
-    const targetIndex = getTargetPhaseIndex(
-      researchCallCount,
-      phases.length,
-      callsPerPhase,
-    );
+    const targetIndex = getTargetPhaseIndex(researchCallCount, phases.length, callsPerPhase);
 
     if (targetIndex > currentPhaseIndex) {
       if (currentPhaseIndex >= 0) {
         await emitProgress({
-          kind: "phase-update",
+          kind: 'phase-update',
           phaseId: phases[currentPhaseIndex].id,
-          status: "completed",
+          status: 'completed',
         });
       }
       currentPhaseIndex = targetIndex;
       await emitProgress({
-        kind: "phase-update",
+        kind: 'phase-update',
         phaseId: phases[currentPhaseIndex].id,
-        status: "in-progress",
+        status: 'in-progress',
       });
     } else if (currentPhaseIndex === -1) {
       currentPhaseIndex = 0;
       await emitProgress({
-        kind: "phase-update",
+        kind: 'phase-update',
         phaseId: phases[0].id,
-        status: "in-progress",
+        status: 'in-progress',
       });
     }
   }
@@ -129,7 +123,7 @@ export async function investigationWorkflow(
   const result = await agent.stream({
     messages: [
       {
-        role: "user",
+        role: 'user',
         content: createInvestigationUserPrompt(input),
       },
     ],
@@ -140,7 +134,7 @@ export async function investigationWorkflow(
 
   if (Object.keys(toolCallCounts).length > 0) {
     console.log(
-      "Investigation tool usage for title=%s, geography=%s:",
+      'Investigation tool usage for title=%s, geography=%s:',
       input.title,
       input.geography,
       toolCallCounts,
@@ -155,7 +149,7 @@ function finalizeReport(
   report: z.infer<typeof reportSchema> | undefined,
   input: InvestigationWorkflowInput,
 ): Report {
-  const fallbackSlug = slugify(input.title) || "investigation-report";
+  const fallbackSlug = slugify(input.title) || 'investigation-report';
 
   const base: Report = {
     slug: fallbackSlug,
@@ -163,7 +157,7 @@ function finalizeReport(
     summary: input.description || input.title,
     executiveSummary: input.description || input.title,
     category: input.category as ReportCategory,
-    geography: input.geography || "Global",
+    geography: input.geography || 'Global',
     tags: [],
     publishedAt: new Date().toISOString(),
     featured: false,
@@ -194,8 +188,8 @@ function slugify(value: string): string {
   return value
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
 }

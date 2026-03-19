@@ -1,4 +1,4 @@
-import "server-only";
+import 'server-only';
 
 export const INVESTIGATION_PHASE_TRACKING = {
   // Treat a typical investigation as spending roughly this many research
@@ -27,9 +27,7 @@ export function getCallsPerPhase(phaseCount: number) {
 
   return Math.max(
     INVESTIGATION_PHASE_TRACKING.minCallsPerPhase,
-    Math.ceil(
-      INVESTIGATION_PHASE_TRACKING.targetResearchCalls / phaseCount,
-    ),
+    Math.ceil(INVESTIGATION_PHASE_TRACKING.targetResearchCalls / phaseCount),
   );
 }
 
@@ -38,8 +36,5 @@ export function getTargetPhaseIndex(
   phaseCount: number,
   callsPerPhase: number,
 ) {
-  return Math.min(
-    phaseCount - 1,
-    Math.floor((researchCallCount - 1) / callsPerPhase),
-  );
+  return Math.min(phaseCount - 1, Math.floor((researchCallCount - 1) / callsPerPhase));
 }

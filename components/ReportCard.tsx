@@ -1,22 +1,16 @@
-import { Link } from "@/components/ui/Link";
-import { formatDate } from "@/shared/utils";
-import type { Report } from "@/shared/types";
-import { CategoryBadge } from "./CategoryBadge";
+import {Link} from '@/components/ui/Link';
+import {formatDate} from '@/shared/utils';
+import type {Report} from '@/shared/types';
+import {CategoryBadge} from './CategoryBadge';
 
-export function ReportCard({
-  report,
-  className,
-}: {
-  report: Report;
-  className?: string;
-}) {
+export function ReportCard({report, className}: {report: Report; className?: string}) {
   return (
     <Link
       href={`/reports/${report.slug}`}
-      className={`group relative block rounded-lg border border-(--tm-color-neutral-100) bg-white p-5 transition-all duration-200 hover:border-(--tm-color-neutral-300) hover:shadow-md ${className ?? ""}`}
+      className={`group relative block rounded-lg border border-(--tm-color-neutral-100) bg-white p-5 transition-all duration-200 hover:border-(--tm-color-neutral-300) hover:shadow-md ${className ?? ''}`}
     >
       {report.featured && (
-        <span className="absolute left-0 top-4 bottom-4 w-[3px] rounded-r-full bg-(--tm-color-accent-500)" />
+        <span className="absolute top-4 bottom-4 left-0 w-[3px] rounded-r-full bg-(--tm-color-accent-500)" />
       )}
 
       <div className="flex items-center gap-2 text-xs text-(--tm-color-neutral-600)">
@@ -27,11 +21,11 @@ export function ReportCard({
         <time dateTime={report.publishedAt}>{formatDate(report.publishedAt)}</time>
       </div>
 
-      <h3 className="mt-3 font-serif text-lg font-semibold leading-snug text-(--tm-color-primary-900) group-hover:text-(--tm-color-primary-600) transition-colors line-clamp-2">
+      <h3 className="mt-3 line-clamp-2 font-serif text-lg leading-snug font-semibold text-(--tm-color-primary-900) transition-colors group-hover:text-(--tm-color-primary-600)">
         {report.title}
       </h3>
 
-      <p className="mt-2 text-sm leading-relaxed text-(--tm-color-neutral-600) line-clamp-2">
+      <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-(--tm-color-neutral-600)">
         {report.summary}
       </p>
 

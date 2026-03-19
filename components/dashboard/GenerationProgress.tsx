@@ -1,15 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { useInvestigationStream } from "@/client/hooks/use-investigation-stream";
+import {useEffect, useRef} from 'react';
+import {useRouter} from 'next/navigation';
+import {useInvestigationStream} from '@/client/hooks/use-investigation-stream';
 
-function PhaseIcon({
-  state,
-}: {
-  state: "completed" | "active" | "pending" | "skipped";
-}) {
-  if (state === "completed" || state === "skipped") {
+function PhaseIcon({state}: {state: 'completed' | 'active' | 'pending' | 'skipped'}) {
+  if (state === 'completed' || state === 'skipped') {
     return (
       <svg
         className="h-4 w-4 text-white"
@@ -22,10 +18,8 @@ function PhaseIcon({
       </svg>
     );
   }
-  if (state === "active") {
-    return (
-      <span className="h-2.5 w-2.5 rounded-full bg-white animate-breathing-pulse" />
-    );
+  if (state === 'active') {
+    return <span className="animate-breathing-pulse h-2.5 w-2.5 rounded-full bg-white" />;
   }
   return <span className="h-2 w-2 rounded-full bg-white/30" />;
 }
@@ -37,36 +31,26 @@ function formatSecondsRemaining(seconds: number): string {
 }
 
 function formatLogTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
+  return new Date(iso).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
     hour12: false,
   });
 }
 
-export function GenerationProgress({
-  runId,
-}: {
-  runId: string;
-}) {
+export function GenerationProgress({runId}: {runId: string}) {
   const router = useRouter();
   const logRef = useRef<HTMLDivElement>(null);
   const hasRefreshedRef = useRef(false);
-  const {
-    activityLog,
-    phases,
-    percentage,
-    isComplete,
-    error,
-    estimatedSecondsRemaining,
-  } = useInvestigationStream(runId);
+  const {activityLog, phases, percentage, isComplete, error, estimatedSecondsRemaining} =
+    useInvestigationStream(runId);
 
   useEffect(() => {
     if (!isComplete || hasRefreshedRef.current) return;
     hasRefreshedRef.current = true;
     const timeout = setTimeout(() => {
-      if (typeof window !== "undefined") {
+      if (typeof window !== 'undefined') {
         window.location.reload();
       } else {
         router.refresh();
@@ -83,18 +67,17 @@ export function GenerationProgress({
   }, [activityLog]);
 
   const displayedPercentage = Math.max(1, Math.min(100, Math.round(percentage)));
-  const activePhaseIndex = phases.findIndex((p) => p.status === "in-progress");
+  const activePhaseIndex = phases.findIndex((p) => p.status === 'in-progress');
   const completedCount = phases.filter(
-    (p) => p.status === "completed" || p.status === "skipped",
+    (p) => p.status === 'completed' || p.status === 'skipped',
   ).length;
-  const currentPhaseNumber =
-    activePhaseIndex >= 0 ? activePhaseIndex + 1 : completedCount;
+  const currentPhaseNumber = activePhaseIndex >= 0 ? activePhaseIndex + 1 : completedCount;
   const currentPhaseLabel =
     activePhaseIndex >= 0
       ? phases[activePhaseIndex].label
       : isComplete
-        ? "Complete"
-        : "Initializing";
+        ? 'Complete'
+        : 'Initializing';
 
   return (
     <div className="space-y-6">
@@ -124,42 +107,37 @@ export function GenerationProgress({
           />
         </svg>
         <p className="text-sm text-(--tm-color-info-500)">
-          <span className="font-semibold">TrueMotives shows its work.</span>{" "}
-          Every claim in the final report will include sources, confidence levels,
-          and explicit reasoning chains — not just conclusions.
+          <span className="font-semibold">TrueMotives shows its work.</span> Every claim in the
+          final report will include sources, confidence levels, and explicit reasoning chains — not
+          just conclusions.
         </p>
       </div>
 
       {/* Phase stepper */}
       <div className="rounded-xl border border-(--tm-color-neutral-100) bg-white p-6">
-        <h3 className="text-sm font-semibold text-(--tm-color-primary-900) mb-5 uppercase tracking-wide">
+        <h3 className="mb-5 text-sm font-semibold tracking-wide text-(--tm-color-primary-900) uppercase">
           Research phases
         </h3>
         {phases.length === 0 ? (
           <div className="flex items-center gap-3 py-4">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-(--tm-color-accent-500)/20">
-              <span className="h-2.5 w-2.5 rounded-full bg-(--tm-color-accent-500) animate-breathing-pulse" />
+              <span className="animate-breathing-pulse h-2.5 w-2.5 rounded-full bg-(--tm-color-accent-500)" />
             </span>
-            <span className="text-sm text-(--tm-color-neutral-600)">
-              Preparing research plan…
-            </span>
+            <span className="text-sm text-(--tm-color-neutral-600)">Preparing research plan…</span>
           </div>
         ) : (
           <div className="space-y-1">
             {phases.map((phase, index) => {
               const isCompleted =
-                phase.status === "completed" ||
-                phase.status === "skipped" ||
-                isComplete;
-              const isActive = phase.status === "in-progress" && !isComplete;
-              const state: "completed" | "active" | "pending" | "skipped" =
-                isCompleted
-                  ? phase.status === "skipped" && !isComplete
-                    ? "skipped"
-                    : "completed"
-                  : isActive
-                    ? "active"
-                    : "pending";
+                phase.status === 'completed' || phase.status === 'skipped' || isComplete;
+              const isActive = phase.status === 'in-progress' && !isComplete;
+              const state: 'completed' | 'active' | 'pending' | 'skipped' = isCompleted
+                ? phase.status === 'skipped' && !isComplete
+                  ? 'skipped'
+                  : 'completed'
+                : isActive
+                  ? 'active'
+                  : 'pending';
 
               return (
                 <div key={phase.id} className="flex items-start gap-4">
@@ -167,39 +145,44 @@ export function GenerationProgress({
                   <div className="flex flex-col items-center">
                     <div
                       className={[
-                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-500",
+                        'flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all duration-500',
                         isCompleted
-                          ? "bg-(--tm-color-success-500)"
+                          ? 'bg-(--tm-color-success-500)'
                           : isActive
-                            ? "bg-(--tm-color-accent-500) shadow-[0_0_12px_rgba(246,168,0,0.4)] animate-breathing-pulse"
-                            : "bg-(--tm-color-neutral-100) border border-(--tm-color-neutral-100)",
-                      ].join(" ")}
+                            ? 'bg-(--tm-color-accent-500) shadow-[0_0_12px_rgba(246,168,0,0.4)] animate-breathing-pulse'
+                            : 'bg-(--tm-color-neutral-100) border border-(--tm-color-neutral-100)',
+                      ].join(' ')}
                     >
                       <PhaseIcon state={state} />
                     </div>
                     {index < phases.length - 1 && (
                       <div
                         className={[
-                          "w-px flex-1 min-h-4 transition-colors duration-700",
+                          'w-px flex-1 min-h-4 transition-colors duration-700',
                           isCompleted
-                            ? "bg-(--tm-color-success-500)/40"
-                            : "bg-(--tm-color-neutral-100)",
-                        ].join(" ")}
+                            ? 'bg-(--tm-color-success-500)/40'
+                            : 'bg-(--tm-color-neutral-100)',
+                        ].join(' ')}
                       />
                     )}
                   </div>
 
                   {/* Phase content */}
-                  <div className={["pb-4 pt-0.5 min-w-0", index === phases.length - 1 ? "pb-0" : ""].join(" ")}>
+                  <div
+                    className={[
+                      'pb-4 pt-0.5 min-w-0',
+                      index === phases.length - 1 ? 'pb-0' : '',
+                    ].join(' ')}
+                  >
                     <p
                       className={[
-                        "text-sm font-medium transition-colors",
+                        'text-sm font-medium transition-colors',
                         isActive
-                          ? "text-(--tm-color-accent-700)"
+                          ? 'text-(--tm-color-accent-700)'
                           : isCompleted
-                            ? "text-(--tm-color-neutral-600)"
-                            : "text-(--tm-color-neutral-300)",
-                      ].join(" ")}
+                            ? 'text-(--tm-color-neutral-600)'
+                            : 'text-(--tm-color-neutral-300)',
+                      ].join(' ')}
                     >
                       {phase.label}
                       {isActive && (
@@ -207,7 +190,7 @@ export function GenerationProgress({
                           in progress…
                         </span>
                       )}
-                      {phase.status === "skipped" && !isComplete && (
+                      {phase.status === 'skipped' && !isComplete && (
                         <span className="ml-2 text-xs font-normal text-(--tm-color-neutral-300) italic">
                           skipped
                         </span>
@@ -228,7 +211,7 @@ export function GenerationProgress({
 
       {/* Overall progress bar */}
       <div className="rounded-xl border border-(--tm-color-neutral-100) bg-white px-6 py-5">
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-(--tm-color-accent-500) opacity-60" />
@@ -244,7 +227,7 @@ export function GenerationProgress({
                 {formatSecondsRemaining(estimatedSecondsRemaining)}
               </span>
             )}
-            <span className="text-sm font-mono font-semibold text-(--tm-color-accent-700)">
+            <span className="font-mono text-sm font-semibold text-(--tm-color-accent-700)">
               {Math.round(displayedPercentage)}%
             </span>
           </div>
@@ -252,45 +235,38 @@ export function GenerationProgress({
         <div className="h-2 w-full overflow-hidden rounded-full bg-(--tm-color-neutral-100)">
           <div
             className="h-full rounded-full bg-linear-to-r from-(--tm-color-accent-700) to-(--tm-color-accent-400) transition-all duration-1000 ease-out"
-            style={{ width: `${displayedPercentage}%` }}
+            style={{width: `${displayedPercentage}%`}}
           />
         </div>
         <p className="mt-2 text-xs text-(--tm-color-neutral-300)">
           {phases.length > 0
             ? `Phase ${currentPhaseNumber} of ${phases.length}: ${currentPhaseLabel}`
-            : "Initializing research plan…"}
+            : 'Initializing research plan…'}
         </p>
       </div>
 
       {/* Live activity log */}
-      <div className="rounded-xl border border-(--tm-color-neutral-100) bg-(--tm-color-primary-900) overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-(--tm-color-neutral-100) bg-(--tm-color-primary-900)">
         <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
           <div className="flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-(--tm-color-accent-500) opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-(--tm-color-accent-500)" />
             </span>
-            <span className="text-xs font-semibold uppercase tracking-widest text-white/60">
+            <span className="text-xs font-semibold tracking-widest text-white/60 uppercase">
               Live activity log
             </span>
           </div>
-          <span className="text-xs text-white/30 font-mono">
-            {activityLog.length} events
-          </span>
+          <span className="font-mono text-xs text-white/30">{activityLog.length} events</span>
         </div>
         <div
           ref={logRef}
-          className="h-56 overflow-y-auto px-5 py-4 space-y-2 font-mono text-xs scroll-smooth"
+          className="h-56 space-y-2 overflow-y-auto scroll-smooth px-5 py-4 font-mono text-xs"
         >
           {activityLog.map((entry) => (
-            <div
-              key={entry.id}
-              className="flex items-start gap-3 animate-log-slide-in"
-            >
-              <span className="shrink-0 text-white/25 pt-px">
-                {formatLogTime(entry.timestamp)}
-              </span>
-              <span className="text-white/80 leading-relaxed">{entry.message}</span>
+            <div key={entry.id} className="animate-log-slide-in flex items-start gap-3">
+              <span className="shrink-0 pt-px text-white/25">{formatLogTime(entry.timestamp)}</span>
+              <span className="leading-relaxed text-white/80">{entry.message}</span>
             </div>
           ))}
           {!isComplete && (
@@ -299,7 +275,7 @@ export function GenerationProgress({
                 {formatLogTime(new Date().toISOString())}
               </span>
               <span className="inline-flex">
-                <span className="h-3.5 w-0.5 bg-(--tm-color-accent-500) animate-pulse" />
+                <span className="h-3.5 w-0.5 animate-pulse bg-(--tm-color-accent-500)" />
               </span>
             </div>
           )}
@@ -310,13 +286,13 @@ export function GenerationProgress({
       <div className="flex items-center gap-3">
         <button
           type="button"
-          className="rounded-lg border border-(--tm-color-neutral-100) bg-white px-4 py-2 text-sm font-medium text-(--tm-color-neutral-600) hover:bg-(--tm-color-neutral-50) hover:text-(--tm-color-primary-900) transition-colors"
+          className="rounded-lg border border-(--tm-color-neutral-100) bg-white px-4 py-2 text-sm font-medium text-(--tm-color-neutral-600) transition-colors hover:bg-(--tm-color-neutral-50) hover:text-(--tm-color-primary-900)"
         >
           Continue in background
         </button>
         <button
           type="button"
-          className="rounded-lg px-4 py-2 text-sm font-medium text-(--tm-color-danger-500) hover:bg-(--tm-color-danger-100) transition-colors"
+          className="rounded-lg px-4 py-2 text-sm font-medium text-(--tm-color-danger-500) transition-colors hover:bg-(--tm-color-danger-100)"
         >
           Cancel generation
         </button>

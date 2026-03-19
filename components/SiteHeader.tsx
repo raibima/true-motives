@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Link } from "@/components/ui/Link";
+import {Link} from '@/components/ui/Link';
 import {
   Button as RACButton,
   Dialog,
@@ -8,7 +8,7 @@ import {
   Heading,
   Modal,
   ModalOverlay,
-} from "react-aria-components";
+} from 'react-aria-components';
 
 function HamburgerIcon() {
   return (
@@ -37,11 +37,7 @@ function CloseIcon() {
       strokeWidth={1.5}
       stroke="currentColor"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M6 18 18 6M6 6l12 12"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
     </svg>
   );
 }
@@ -50,10 +46,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-(--tm-color-neutral-100) bg-(--tm-color-neutral-50)/95 backdrop-blur-sm">
       <nav className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2 transition-opacity hover:opacity-80"
-        >
+        <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
           <span className="inline-block h-5 w-1 rounded-sm bg-(--tm-color-accent-500)" />
           <span className="font-serif text-lg font-semibold tracking-tight text-(--tm-color-primary-900)">
             TrueMotives
@@ -88,11 +81,11 @@ export function SiteHeader() {
             </RACButton>
             <ModalOverlay
               isDismissable
-              className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm entering:animate-in entering:fade-in entering:duration-200 exiting:animate-out exiting:fade-out exiting:duration-150"
+              className="entering:animate-in entering:fade-in entering:duration-200 exiting:animate-out exiting:fade-out exiting:duration-150 fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
             >
-              <Modal className="fixed top-0 right-0 bottom-0 w-64 bg-(--tm-color-neutral-50) shadow-2xl entering:animate-in entering:slide-in-from-right entering:duration-300 entering:ease-out exiting:animate-out exiting:slide-out-to-right exiting:duration-200 exiting:ease-in">
+              <Modal className="entering:animate-in entering:slide-in-from-right entering:duration-300 entering:ease-out exiting:animate-out exiting:slide-out-to-right exiting:duration-200 exiting:ease-in fixed top-0 right-0 bottom-0 w-64 bg-(--tm-color-neutral-50) shadow-2xl">
                 <Dialog className="flex h-full flex-col outline-none">
-                  {({ close }) => (
+                  {({close}) => (
                     <>
                       <div className="flex h-14 items-center justify-between border-b border-(--tm-color-neutral-100) px-6">
                         <Heading

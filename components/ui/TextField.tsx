@@ -3,11 +3,11 @@ import React from 'react';
 import {
   TextField as AriaTextField,
   TextFieldProps as AriaTextFieldProps,
-  ValidationResult
+  ValidationResult,
 } from 'react-aria-components';
-import { tv } from 'tailwind-variants';
-import { Description, FieldError, Input, Label, fieldBorderStyles } from '@/components/ui/Field';
-import { composeTailwindRenderProps, focusRing } from '@/client/react-aria-utils';
+import {tv} from 'tailwind-variants';
+import {Description, FieldError, Input, Label, fieldBorderStyles} from '@/components/ui/Field';
+import {composeTailwindRenderProps, focusRing} from '@/client/react-aria-utils';
 
 const inputStyles = tv({
   extend: focusRing,
@@ -15,8 +15,8 @@ const inputStyles = tv({
   variants: {
     isFocused: fieldBorderStyles.variants.isFocusWithin,
     isInvalid: fieldBorderStyles.variants.isInvalid,
-    isDisabled: fieldBorderStyles.variants.isDisabled
-  }
+    isDisabled: fieldBorderStyles.variants.isDisabled,
+  },
 });
 
 export interface TextFieldProps extends AriaTextFieldProps {
@@ -26,11 +26,12 @@ export interface TextFieldProps extends AriaTextFieldProps {
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
-export function TextField(
-  { label, description, errorMessage, ...props }: TextFieldProps
-) {
+export function TextField({label, description, errorMessage, ...props}: TextFieldProps) {
   return (
-    <AriaTextField {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1 font-sans')}>
+    <AriaTextField
+      {...props}
+      className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1 font-sans')}
+    >
       {label && <Label>{label}</Label>}
       <Input className={inputStyles} />
       {description && <Description>{description}</Description>}

@@ -1,29 +1,29 @@
-import type { Metadata } from "next";
-import { Link } from "@/components/ui/Link";
-import { PricingFAQ } from "./PricingFAQ";
+import type {Metadata} from 'next';
+import {Link} from '@/components/ui/Link';
+import {PricingFAQ} from './PricingFAQ';
 
 export const metadata: Metadata = {
-  title: "Pricing — TrueMotives",
+  title: 'Pricing — TrueMotives',
   description:
-    "Choose a plan that fits your investigative needs. Free access to public reports or Pro tools for journalists and researchers.",
+    'Choose a plan that fits your investigative needs. Free access to public reports or Pro tools for journalists and researchers.',
 };
 
 const FREE_FEATURES = [
-  "Browse the full public report library",
-  "Read executive summaries and stakeholder maps",
-  "Access sourced evidence and citations",
-  "Filter by topic, geography, and category",
+  'Browse the full public report library',
+  'Read executive summaries and stakeholder maps',
+  'Access sourced evidence and citations',
+  'Filter by topic, geography, and category',
 ];
 
 const PRO_FEATURES = [
-  "Everything in Free, plus:",
-  "Run up to 20 custom investigations per month",
-  "AI-generated structured TrueMotives reports",
-  "Stakeholder mapping with incentive analysis",
-  "Confidence levels and alternative hypotheses",
-  "Save drafts and edit report sections",
-  "Priority generation queue",
-  "Publish to the public library (opt-in)",
+  'Everything in Free, plus:',
+  'Run up to 20 custom investigations per month',
+  'AI-generated structured TrueMotives reports',
+  'Stakeholder mapping with incentive analysis',
+  'Confidence levels and alternative hypotheses',
+  'Save drafts and edit report sections',
+  'Priority generation queue',
+  'Publish to the public library (opt-in)',
 ];
 
 export default function PricingPage() {
@@ -34,12 +34,7 @@ export default function PricingPage() {
         <div className="absolute inset-0 opacity-[0.05]">
           <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <pattern
-                id="pricing-grid"
-                width="60"
-                height="60"
-                patternUnits="userSpaceOnUse"
-              >
+              <pattern id="pricing-grid" width="60" height="60" patternUnits="userSpaceOnUse">
                 <circle cx="30" cy="30" r="0.8" fill="white" />
               </pattern>
             </defs>
@@ -49,23 +44,21 @@ export default function PricingPage() {
 
         <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-24 sm:pt-28 sm:pb-32">
           <div className="mx-auto max-w-2xl text-center">
-            <div className="flex items-center justify-center gap-3 text-sm font-medium text-(--tm-color-accent-400) animate-fade-in-up stagger-1">
+            <div className="animate-fade-in-up stagger-1 flex items-center justify-center gap-3 text-sm font-medium text-(--tm-color-accent-400)">
               <span className="inline-block h-px w-8 bg-(--tm-color-accent-500)" />
               Pricing
               <span className="inline-block h-px w-8 bg-(--tm-color-accent-500)" />
             </div>
 
-            <h1 className="mt-5 font-serif text-4xl font-bold leading-[1.12] tracking-tight text-white sm:text-5xl animate-fade-in-up stagger-2 text-balance">
+            <h1 className="animate-fade-in-up stagger-2 mt-5 font-serif text-4xl leading-[1.12] font-bold tracking-tight text-balance text-white sm:text-5xl">
               Investigate with clarity.
               <br />
-              <span className="text-(--tm-color-accent-400)">
-                Pay only when you need to.
-              </span>
+              <span className="text-(--tm-color-accent-400)">Pay only when you need to.</span>
             </h1>
 
-            <p className="mt-6 text-lg leading-relaxed text-(--tm-color-neutral-300) animate-fade-in-up stagger-3">
-              Everyone can read. Journalists and researchers get the power to
-              generate custom motivation analyses on any topic.
+            <p className="animate-fade-in-up stagger-3 mt-6 text-lg leading-relaxed text-(--tm-color-neutral-300)">
+              Everyone can read. Journalists and researchers get the power to generate custom
+              motivation analyses on any topic.
             </p>
           </div>
         </div>
@@ -74,10 +67,10 @@ export default function PricingPage() {
       </section>
 
       {/* Pricing cards */}
-      <section className="mx-auto max-w-6xl px-6 -mt-8 relative z-10">
-        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8 items-start">
+      <section className="relative z-10 mx-auto -mt-8 max-w-6xl px-6">
+        <div className="grid items-start gap-6 lg:grid-cols-2 lg:gap-8">
           {/* Free tier */}
-          <div className="rounded-xl border border-(--tm-color-neutral-100) bg-white p-8 shadow-sm animate-fade-in-up stagger-3 lg:mt-8">
+          <div className="animate-fade-in-up stagger-3 rounded-xl border border-(--tm-color-neutral-100) bg-white p-8 shadow-sm lg:mt-8">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-(--tm-color-neutral-100)">
                 <svg
@@ -98,9 +91,7 @@ export default function PricingPage() {
                 <h2 className="font-serif text-xl font-semibold text-(--tm-color-primary-900)">
                   Reader
                 </h2>
-                <p className="text-xs text-(--tm-color-neutral-600)">
-                  For the curious public
-                </p>
+                <p className="text-xs text-(--tm-color-neutral-600)">For the curious public</p>
               </div>
             </div>
 
@@ -108,14 +99,12 @@ export default function PricingPage() {
               <span className="font-serif text-4xl font-bold tracking-tight text-(--tm-color-primary-900)">
                 $0
               </span>
-              <span className="text-sm text-(--tm-color-neutral-600)">
-                / forever
-              </span>
+              <span className="text-sm text-(--tm-color-neutral-600)">/ forever</span>
             </div>
 
             <p className="mt-4 text-sm leading-relaxed text-(--tm-color-neutral-600)">
-              Full access to our growing library of AI-assisted motivation
-              analyses. Read, search, and learn — no account required.
+              Full access to our growing library of AI-assisted motivation analyses. Read, search,
+              and learn — no account required.
             </p>
 
             <Link
@@ -126,7 +115,7 @@ export default function PricingPage() {
             </Link>
 
             <div className="mt-8 border-t border-(--tm-color-neutral-100) pt-6">
-              <p className="text-xs font-semibold uppercase tracking-widest text-(--tm-color-neutral-600)">
+              <p className="text-xs font-semibold tracking-widest text-(--tm-color-neutral-600) uppercase">
                 What&apos;s included
               </p>
               <ul className="mt-4 space-y-3">
@@ -145,9 +134,7 @@ export default function PricingPage() {
                         d="m4.5 12.75 6 6 9-13.5"
                       />
                     </svg>
-                    <span className="text-sm text-(--tm-color-neutral-600)">
-                      {feature}
-                    </span>
+                    <span className="text-sm text-(--tm-color-neutral-600)">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -155,12 +142,12 @@ export default function PricingPage() {
           </div>
 
           {/* Pro tier — featured */}
-          <div className="relative rounded-xl border-2 border-(--tm-color-accent-500) bg-white p-8 shadow-lg shadow-(--tm-color-accent-500)/8 animate-fade-in-up stagger-4">
-            <div className="absolute -top-3.5 left-6 inline-flex items-center rounded-full bg-(--tm-color-accent-500) px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-(--tm-color-primary-900)">
+          <div className="animate-fade-in-up stagger-4 relative rounded-xl border-2 border-(--tm-color-accent-500) bg-white p-8 shadow-(--tm-color-accent-500)/8 shadow-lg">
+            <div className="absolute -top-3.5 left-6 inline-flex items-center rounded-full bg-(--tm-color-accent-500) px-3.5 py-1 text-xs font-bold tracking-wider text-(--tm-color-primary-900) uppercase">
               For journalists
             </div>
 
-            <div className="flex items-center gap-3 mt-1">
+            <div className="mt-1 flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-(--tm-color-accent-500)/10">
                 <svg
                   className="h-5 w-5 text-(--tm-color-accent-700)"
@@ -190,24 +177,19 @@ export default function PricingPage() {
               <span className="font-serif text-4xl font-bold tracking-tight text-(--tm-color-primary-900)">
                 $49
               </span>
-              <span className="text-sm text-(--tm-color-neutral-600)">
-                / month
-              </span>
+              <span className="text-sm text-(--tm-color-neutral-600)">/ month</span>
             </div>
 
             <div className="mt-1 flex items-center gap-2">
-              <span className="text-xs text-(--tm-color-neutral-600)">
-                or $470/year
-              </span>
-              <span className="inline-flex items-center rounded-full bg-(--tm-color-success-100) px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-(--tm-color-success-500)">
+              <span className="text-xs text-(--tm-color-neutral-600)">or $470/year</span>
+              <span className="inline-flex items-center rounded-full bg-(--tm-color-success-100) px-2 py-0.5 text-[10px] font-bold tracking-wider text-(--tm-color-success-500) uppercase">
                 Save 20%
               </span>
             </div>
 
             <p className="mt-4 text-sm leading-relaxed text-(--tm-color-neutral-600)">
-              Generate custom AI-powered motivation analyses on any public
-              policy, government decision, or corporate action. Up to 20
-              investigations per month.
+              Generate custom AI-powered motivation analyses on any public policy, government
+              decision, or corporate action. Up to 20 investigations per month.
             </p>
 
             <span className="mt-6 flex min-h-11 cursor-default items-center justify-center rounded-lg bg-(--tm-color-primary-800) px-5 py-2.5 text-center text-sm font-semibold text-white transition-all hover:bg-(--tm-color-primary-600) hover:shadow-md">
@@ -215,7 +197,7 @@ export default function PricingPage() {
             </span>
 
             <div className="mt-8 border-t border-(--tm-color-neutral-100) pt-6">
-              <p className="text-xs font-semibold uppercase tracking-widest text-(--tm-color-neutral-600)">
+              <p className="text-xs font-semibold tracking-widest text-(--tm-color-neutral-600) uppercase">
                 What&apos;s included
               </p>
               <ul className="mt-4 space-y-3">
@@ -234,9 +216,7 @@ export default function PricingPage() {
                         d="m4.5 12.75 6 6 9-13.5"
                       />
                     </svg>
-                    <span className="text-sm text-(--tm-color-neutral-600)">
-                      {feature}
-                    </span>
+                    <span className="text-sm text-(--tm-color-neutral-600)">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -248,12 +228,12 @@ export default function PricingPage() {
       {/* Comparison strip */}
       <section className="mx-auto max-w-6xl px-6 py-20">
         <div className="mx-auto max-w-3xl">
-          <h2 className="font-serif text-2xl font-semibold text-(--tm-color-primary-900) text-center animate-fade-in-up">
+          <h2 className="animate-fade-in-up text-center font-serif text-2xl font-semibold text-(--tm-color-primary-900)">
             What sets Pro apart
           </h2>
           <p className="mt-3 text-center text-sm text-(--tm-color-neutral-600)">
-            Both tiers include full access to every public report. Here&apos;s
-            what changes when you go Pro.
+            Both tiers include full access to every public report. Here&apos;s what changes when you
+            go Pro.
           </p>
 
           <div className="mt-10 overflow-hidden rounded-xl border border-(--tm-color-neutral-100)">
@@ -273,19 +253,17 @@ export default function PricingPage() {
               </thead>
               <tbody className="divide-y divide-(--tm-color-neutral-100)">
                 {[
-                  ["Read public reports", true, true],
-                  ["Search & filter library", true, true],
-                  ["Generate custom investigations", false, true],
-                  ["AI motivation analysis engine", false, true],
-                  ["Stakeholder & incentive mapping", false, true],
-                  ["Save and edit drafts", false, true],
-                  ["Alternative hypothesis generation", false, true],
-                  ["Priority processing queue", false, true],
+                  ['Read public reports', true, true],
+                  ['Search & filter library', true, true],
+                  ['Generate custom investigations', false, true],
+                  ['AI motivation analysis engine', false, true],
+                  ['Stakeholder & incentive mapping', false, true],
+                  ['Save and edit drafts', false, true],
+                  ['Alternative hypothesis generation', false, true],
+                  ['Priority processing queue', false, true],
                 ].map(([feature, free, pro]) => (
                   <tr key={feature as string} className="bg-white">
-                    <td className="px-5 py-3 text-(--tm-color-neutral-900)">
-                      {feature as string}
-                    </td>
+                    <td className="px-5 py-3 text-(--tm-color-neutral-900)">{feature as string}</td>
                     <td className="px-5 py-3 text-center">
                       {free ? (
                         <CheckIcon className="text-(--tm-color-success-500)" />
@@ -294,11 +272,7 @@ export default function PricingPage() {
                       )}
                     </td>
                     <td className="px-5 py-3 text-center">
-                      {pro ? (
-                        <CheckIcon className="text-(--tm-color-accent-500)" />
-                      ) : (
-                        <DashIcon />
-                      )}
+                      {pro ? <CheckIcon className="text-(--tm-color-accent-500)" /> : <DashIcon />}
                     </td>
                   </tr>
                 ))}
@@ -314,7 +288,7 @@ export default function PricingPage() {
 
       {/* FAQ */}
       <section className="mx-auto max-w-3xl px-6 py-20">
-        <h2 className="font-serif text-2xl font-semibold text-(--tm-color-primary-900) text-center">
+        <h2 className="text-center font-serif text-2xl font-semibold text-(--tm-color-primary-900)">
           Frequently asked questions
         </h2>
         <p className="mt-3 text-center text-sm text-(--tm-color-neutral-600)">
@@ -334,7 +308,7 @@ export default function PricingPage() {
             Start uncovering the truth
             <span className="inline-block h-px w-6 bg-(--tm-color-accent-500)" />
           </div>
-          <h2 className="font-serif text-2xl font-semibold text-white text-balance max-w-md">
+          <h2 className="max-w-md font-serif text-2xl font-semibold text-balance text-white">
             The public reports are free. Your first investigation is on us.
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-4">
@@ -344,7 +318,7 @@ export default function PricingPage() {
             >
               Browse reports
             </Link>
-            <span className="inline-flex items-center rounded-lg border border-white/20 px-6 py-2.5 text-sm font-medium text-white/70 cursor-default">
+            <span className="inline-flex cursor-default items-center rounded-lg border border-white/20 px-6 py-2.5 text-sm font-medium text-white/70">
               Pro waitlist — coming soon
             </span>
           </div>
@@ -354,7 +328,7 @@ export default function PricingPage() {
   );
 }
 
-function CheckIcon({ className = "" }: { className?: string }) {
+function CheckIcon({className = ''}: {className?: string}) {
   return (
     <svg
       className={`inline-block h-4 w-4 ${className}`}
@@ -363,17 +337,11 @@ function CheckIcon({ className = "" }: { className?: string }) {
       strokeWidth={2.5}
       stroke="currentColor"
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m4.5 12.75 6 6 9-13.5"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
     </svg>
   );
 }
 
 function DashIcon() {
-  return (
-    <span className="inline-block h-0.5 w-3 rounded-full bg-(--tm-color-neutral-300)" />
-  );
+  return <span className="inline-block h-0.5 w-3 rounded-full bg-(--tm-color-neutral-300)" />;
 }

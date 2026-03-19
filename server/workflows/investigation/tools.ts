@@ -1,10 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { z } from "zod";
+import {z} from 'zod';
 
-import type { BraveSearchParams } from "@/server/integrations/brave-search";
-import type { FirecrawlScrapeRequest, FirecrawlSearchRequest } from "@/server/integrations/firecrawl";
-import type { GdeltMediaEventsParams } from "@/server/integrations/gdelt";
+import type {BraveSearchParams} from '@/server/integrations/brave-search';
+import type {FirecrawlScrapeRequest, FirecrawlSearchRequest} from '@/server/integrations/firecrawl';
+import type {GdeltMediaEventsParams} from '@/server/integrations/gdelt';
 import type {
   EverythingParams,
   NewsApiCategory,
@@ -12,7 +12,7 @@ import type {
   NewsApiLanguage,
   SourcesParams,
   TopHeadlinesParams,
-} from "@/server/integrations/newsapi";
+} from '@/server/integrations/newsapi';
 import {
   braveWebSearchStep,
   firecrawlScrapeStep,
@@ -21,100 +21,100 @@ import {
   newsEverythingStep,
   newsSourcesStep,
   newsTopHeadlinesStep,
-} from "@/server/workflows/investigation/steps/research";
+} from '@/server/workflows/investigation/steps/research';
 
 const NEWS_API_COUNTRIES = [
-  "ae",
-  "ar",
-  "at",
-  "au",
-  "be",
-  "bg",
-  "br",
-  "ca",
-  "ch",
-  "cn",
-  "co",
-  "cu",
-  "cz",
-  "de",
-  "eg",
-  "fr",
-  "gb",
-  "gr",
-  "hk",
-  "hu",
-  "id",
-  "ie",
-  "il",
-  "in",
-  "it",
-  "jp",
-  "kr",
-  "lt",
-  "lv",
-  "ma",
-  "mx",
-  "my",
-  "ng",
-  "nl",
-  "no",
-  "nz",
-  "ph",
-  "pl",
-  "pt",
-  "ro",
-  "rs",
-  "ru",
-  "sa",
-  "se",
-  "sg",
-  "si",
-  "sk",
-  "th",
-  "tr",
-  "tw",
-  "ua",
-  "us",
-  "ve",
-  "za",
+  'ae',
+  'ar',
+  'at',
+  'au',
+  'be',
+  'bg',
+  'br',
+  'ca',
+  'ch',
+  'cn',
+  'co',
+  'cu',
+  'cz',
+  'de',
+  'eg',
+  'fr',
+  'gb',
+  'gr',
+  'hk',
+  'hu',
+  'id',
+  'ie',
+  'il',
+  'in',
+  'it',
+  'jp',
+  'kr',
+  'lt',
+  'lv',
+  'ma',
+  'mx',
+  'my',
+  'ng',
+  'nl',
+  'no',
+  'nz',
+  'ph',
+  'pl',
+  'pt',
+  'ro',
+  'rs',
+  'ru',
+  'sa',
+  'se',
+  'sg',
+  'si',
+  'sk',
+  'th',
+  'tr',
+  'tw',
+  'ua',
+  'us',
+  've',
+  'za',
 ] as const satisfies readonly NewsApiCountry[];
 
 const NEWS_API_CATEGORIES = [
-  "business",
-  "entertainment",
-  "general",
-  "health",
-  "science",
-  "sports",
-  "technology",
+  'business',
+  'entertainment',
+  'general',
+  'health',
+  'science',
+  'sports',
+  'technology',
 ] as const satisfies readonly NewsApiCategory[];
 
 const NEWS_API_LANGUAGES = [
-  "ar",
-  "de",
-  "en",
-  "es",
-  "fr",
-  "he",
-  "it",
-  "nl",
-  "no",
-  "pt",
-  "ru",
-  "se",
-  "ud",
-  "zh",
+  'ar',
+  'de',
+  'en',
+  'es',
+  'fr',
+  'he',
+  'it',
+  'nl',
+  'no',
+  'pt',
+  'ru',
+  'se',
+  'ud',
+  'zh',
 ] as const satisfies readonly NewsApiLanguage[];
 
 type ToolCallName =
-  | "braveWebSearch"
-  | "firecrawlScrape"
-  | "firecrawlSearch"
-  | "gdeltTopMediaEvents"
-  | "newsTopHeadlines"
-  | "newsEverything"
-  | "newsSources";
+  | 'braveWebSearch'
+  | 'firecrawlScrape'
+  | 'firecrawlSearch'
+  | 'gdeltTopMediaEvents'
+  | 'newsTopHeadlines'
+  | 'newsEverything'
+  | 'newsSources';
 
 export type InvestigationToolCallCounts = Partial<Record<ToolCallName, number>>;
 
@@ -122,16 +122,14 @@ interface CreateInvestigationToolsOptions {
   onToolStart?: (tool: ToolCallName) => Promise<void> | void;
 }
 
-export function createInvestigationTools({
-  onToolStart,
-}: CreateInvestigationToolsOptions) {
+export function createInvestigationTools({onToolStart}: CreateInvestigationToolsOptions) {
   const notifyToolStart = async (tool: ToolCallName) => {
     await onToolStart?.(tool);
   };
 
   return {
     webSearch01: {
-      description: "General-purpose web search for relevant sources.",
+      description: 'General-purpose web search for relevant sources.',
       inputSchema: z.object({
         q: z.string(),
         country: z.string().optional(),
@@ -151,16 +149,16 @@ export function createInvestigationTools({
         count?: number;
         extraParams?: Record<string, string | number | boolean>;
       }) => {
-        await notifyToolStart("braveWebSearch");
+        await notifyToolStart('braveWebSearch');
         if (base.count != null) base.count = Math.min(50, base.count);
-        return braveWebSearchStep({ ...base, ...(extraParams ?? {}) } satisfies BraveSearchParams);
+        return braveWebSearchStep({...base, ...(extraParams ?? {})} satisfies BraveSearchParams);
       },
     },
     webFetch: {
-      description: "Scrape and extract content from a URL.",
+      description: 'Scrape and extract content from a URL.',
       inputSchema: z.object({
         url: z.string().url(),
-        formats: z.array(z.union([z.literal("markdown"), z.literal("html")])).optional(),
+        formats: z.array(z.union([z.literal('markdown'), z.literal('html')])).optional(),
         onlyMainContent: z.boolean().optional(),
         includeTags: z.array(z.string()).optional(),
         excludeTags: z.array(z.string()).optional(),
@@ -178,7 +176,7 @@ export function createInvestigationTools({
         ...base
       }: {
         url: string;
-        formats?: Array<"markdown" | "html">;
+        formats?: Array<'markdown' | 'html'>;
         onlyMainContent?: boolean;
         includeTags?: string[];
         excludeTags?: string[];
@@ -191,7 +189,7 @@ export function createInvestigationTools({
         zeroDataRetention?: boolean;
         scrapeOptions?: Record<string, unknown>;
       }): Promise<unknown> => {
-        await notifyToolStart("firecrawlScrape");
+        await notifyToolStart('firecrawlScrape');
         return firecrawlScrapeStep({
           ...base,
           ...(scrapeOptions ?? {}),
@@ -199,13 +197,13 @@ export function createInvestigationTools({
       },
     },
     webSearch02: {
-      description: "Search web/indexes via Firecrawl for research content.",
+      description: 'Search web/indexes via Firecrawl for research content.',
       inputSchema: z.object({
         query: z.string(),
         limit: z.number().int().min(1).optional(),
         country: z.string().optional(),
         location: z.string().optional(),
-        categories: z.array(z.enum(["pdf", "research", "github"])).optional(),
+        categories: z.array(z.enum(['pdf', 'research', 'github'])).optional(),
         tbs: z.string().optional(),
         scrapeOptions: z.record(z.string(), z.unknown()).optional(),
         extraParams: z.record(z.string(), z.unknown()).optional(),
@@ -218,12 +216,12 @@ export function createInvestigationTools({
         limit?: number;
         country?: string;
         location?: string;
-        categories?: Array<"pdf" | "research" | "github">;
+        categories?: Array<'pdf' | 'research' | 'github'>;
         tbs?: string;
         scrapeOptions?: Record<string, unknown>;
         extraParams?: Record<string, unknown>;
       }) => {
-        await notifyToolStart("firecrawlSearch");
+        await notifyToolStart('firecrawlSearch');
         if (base.limit != null) base.limit = Math.min(50, base.limit);
         return firecrawlSearchStep({
           ...base,
@@ -232,15 +230,15 @@ export function createInvestigationTools({
       },
     },
     webSearch03: {
-      description: "Fetch top media event clusters for geopolitical context.",
+      description: 'Fetch top media event clusters for geopolitical context.',
       inputSchema: z.object({
         days: z.number().int().min(1).optional(),
         date: z.string().optional(),
         limit: z.number().int().min(1).optional(),
         offset: z.number().int().min(0).optional(),
-        detail: z.enum(["summary", "standard", "full"]).optional(),
+        detail: z.enum(['summary', 'standard', 'full']).optional(),
         category: z.string().optional(),
-        scope: z.enum(["local", "national", "global"]).optional(),
+        scope: z.enum(['local', 'national', 'global']).optional(),
         actor_country: z.string().optional(),
         event_type: z.string().optional(),
         country: z.string().optional(),
@@ -251,7 +249,7 @@ export function createInvestigationTools({
         goldstein_max: z.number().optional(),
         tone_min: z.number().optional(),
         tone_max: z.number().optional(),
-        quad_class: z.enum(["1", "2", "3", "4"]).optional(),
+        quad_class: z.enum(['1', '2', '3', '4']).optional(),
         search: z.string().optional(),
         extraParams: z
           .record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
@@ -266,9 +264,9 @@ export function createInvestigationTools({
         date?: string;
         limit?: number;
         offset?: number;
-        detail?: "summary" | "standard" | "full";
+        detail?: 'summary' | 'standard' | 'full';
         category?: string;
-        scope?: "local" | "national" | "global";
+        scope?: 'local' | 'national' | 'global';
         actor_country?: string;
         event_type?: string;
         country?: string;
@@ -279,24 +277,22 @@ export function createInvestigationTools({
         goldstein_max?: number;
         tone_min?: number;
         tone_max?: number;
-        quad_class?: "1" | "2" | "3" | "4";
+        quad_class?: '1' | '2' | '3' | '4';
         search?: string;
         extraParams?: Record<string, string | number | boolean>;
       }) => {
-        await notifyToolStart("gdeltTopMediaEvents");
+        await notifyToolStart('gdeltTopMediaEvents');
         if (base.days != null) base.days = Math.min(30, base.days);
         if (base.limit != null) base.limit = Math.min(50, base.limit);
         return gdeltTopMediaEventsStep({
           ...base,
-          ...(quad_class
-            ? { quad_class: Number(quad_class) as 1 | 2 | 3 | 4 }
-            : {}),
+          ...(quad_class ? {quad_class: Number(quad_class) as 1 | 2 | 3 | 4} : {}),
           ...(extraParams ?? {}),
         } satisfies GdeltMediaEventsParams);
       },
     },
     webSearch04: {
-      description: "Fetch top headlines from NewsAPI.",
+      description: 'Fetch top headlines from NewsAPI.',
       inputSchema: z.object({
         q: z.string().optional(),
         country: z.enum(NEWS_API_COUNTRIES).optional(),
@@ -322,7 +318,7 @@ export function createInvestigationTools({
         language?: NewsApiLanguage;
         extraParams?: Record<string, string | number | boolean>;
       }) => {
-        await notifyToolStart("newsTopHeadlines");
+        await notifyToolStart('newsTopHeadlines');
         if (base.pageSize != null) base.pageSize = Math.min(100, base.pageSize);
         return newsTopHeadlinesStep({
           ...base,
@@ -331,17 +327,17 @@ export function createInvestigationTools({
       },
     },
     webSearch05: {
-      description: "Search the complete NewsAPI corpus.",
+      description: 'Search the complete NewsAPI corpus.',
       inputSchema: z.object({
         q: z.string().optional(),
-        searchIn: z.enum(["title", "description", "content"]).optional(),
+        searchIn: z.enum(['title', 'description', 'content']).optional(),
         sources: z.string().optional(),
         domains: z.string().optional(),
         excludeDomains: z.string().optional(),
         from: z.string().optional(),
         to: z.string().optional(),
         language: z.enum(NEWS_API_LANGUAGES).optional(),
-        sortBy: z.enum(["relevancy", "popularity", "publishedAt"]).optional(),
+        sortBy: z.enum(['relevancy', 'popularity', 'publishedAt']).optional(),
         pageSize: z.number().int().min(1).optional(),
         page: z.number().int().min(1).optional(),
         extraParams: z
@@ -353,19 +349,19 @@ export function createInvestigationTools({
         ...base
       }: {
         q?: string;
-        searchIn?: "title" | "description" | "content";
+        searchIn?: 'title' | 'description' | 'content';
         sources?: string;
         domains?: string;
         excludeDomains?: string;
         from?: string;
         to?: string;
         language?: NewsApiLanguage;
-        sortBy?: "relevancy" | "popularity" | "publishedAt";
+        sortBy?: 'relevancy' | 'popularity' | 'publishedAt';
         pageSize?: number;
         page?: number;
         extraParams?: Record<string, string | number | boolean>;
       }) => {
-        await notifyToolStart("newsEverything");
+        await notifyToolStart('newsEverything');
         if (base.pageSize != null) base.pageSize = Math.min(100, base.pageSize);
         return newsEverythingStep({
           ...base,
@@ -374,7 +370,7 @@ export function createInvestigationTools({
       },
     },
     webSearch06: {
-      description: "Fetch source metadata from NewsAPI.",
+      description: 'Fetch source metadata from NewsAPI.',
       inputSchema: z.object({
         category: z.enum(NEWS_API_CATEGORIES).optional(),
         language: z.enum(NEWS_API_LANGUAGES).optional(),
@@ -392,7 +388,7 @@ export function createInvestigationTools({
         country?: NewsApiCountry;
         extraParams?: Record<string, string | number | boolean>;
       }) => {
-        await notifyToolStart("newsSources");
+        await notifyToolStart('newsSources');
         return newsSourcesStep({
           ...base,
           ...(extraParams ?? {}),

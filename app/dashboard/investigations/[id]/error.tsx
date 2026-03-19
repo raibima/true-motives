@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { Link } from "@/components/ui/Link";
+import {useEffect} from 'react';
+import {Link} from '@/components/ui/Link';
 
 export default function InvestigationDetailError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string };
+  error: Error & {digest?: string};
   reset: () => void;
 }) {
   useEffect(() => {
@@ -15,11 +15,11 @@ export default function InvestigationDetailError({
   }, [error]);
 
   return (
-    <div className="px-8 py-8 max-w-2xl">
+    <div className="max-w-2xl px-8 py-8">
       {/* Back link */}
       <Link
         href="/dashboard"
-        className="inline-flex items-center gap-1.5 text-sm text-(--tm-color-neutral-600) hover:text-(--tm-color-primary-900) transition-colors mb-8"
+        className="mb-8 inline-flex items-center gap-1.5 text-sm text-(--tm-color-neutral-600) transition-colors hover:text-(--tm-color-primary-900)"
       >
         <svg
           className="h-3.5 w-3.5"
@@ -37,7 +37,7 @@ export default function InvestigationDetailError({
         Investigations
       </Link>
 
-      <div className="flex flex-col items-center text-center py-12">
+      <div className="flex flex-col items-center py-12 text-center">
         <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-(--tm-color-danger-100)">
           <svg
             className="h-6 w-6 text-(--tm-color-danger-500)"
@@ -54,19 +54,19 @@ export default function InvestigationDetailError({
           </svg>
         </div>
 
-        <h2 className="font-serif text-xl font-semibold text-(--tm-color-primary-900) mb-2">
+        <h2 className="mb-2 font-serif text-xl font-semibold text-(--tm-color-primary-900)">
           Couldn&apos;t load this investigation
         </h2>
-        <p className="max-w-sm text-sm text-(--tm-color-neutral-600) leading-relaxed mb-6">
-          We ran into a problem fetching this investigation. Your data is safe — this
-          is likely a temporary issue.
+        <p className="mb-6 max-w-sm text-sm leading-relaxed text-(--tm-color-neutral-600)">
+          We ran into a problem fetching this investigation. Your data is safe — this is likely a
+          temporary issue.
         </p>
 
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={reset}
-            className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) px-4 py-2 text-sm font-semibold text-white transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-(--tm-color-primary-800)"
           >
             <svg
               className="h-4 w-4"
@@ -85,14 +85,14 @@ export default function InvestigationDetailError({
           </button>
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-lg border border-(--tm-color-neutral-100) bg-white px-4 py-2 text-sm font-medium text-(--tm-color-neutral-600) hover:bg-(--tm-color-neutral-50) transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-(--tm-color-neutral-100) bg-white px-4 py-2 text-sm font-medium text-(--tm-color-neutral-600) transition-colors hover:bg-(--tm-color-neutral-50)"
           >
             Back to investigations
           </Link>
         </div>
 
         {error.digest && (
-          <p className="mt-5 text-xs text-(--tm-color-neutral-300) font-mono">
+          <p className="mt-5 font-mono text-xs text-(--tm-color-neutral-300)">
             Error ID: {error.digest}
           </p>
         )}

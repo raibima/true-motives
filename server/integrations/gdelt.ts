@@ -1,6 +1,6 @@
-import "server-only";
+import 'server-only';
 
-const GDELT_API_BASE_URL = "https://gdeltcloud.com";
+const GDELT_API_BASE_URL = 'https://gdeltcloud.com';
 
 export class GdeltError extends Error {
   status: number;
@@ -8,7 +8,7 @@ export class GdeltError extends Error {
 
   constructor(message: string, status: number, code?: string) {
     super(message);
-    this.name = "GdeltError";
+    this.name = 'GdeltError';
     this.status = status;
     this.code = code;
   }
@@ -17,9 +17,7 @@ export class GdeltError extends Error {
 function getApiKey(): string {
   const key = process.env.GDELT_API_KEY;
   if (!key) {
-    throw new Error(
-      "Missing GDELT API key. Set GDELT_API_KEY in your environment.",
-    );
+    throw new Error('Missing GDELT API key. Set GDELT_API_KEY in your environment.');
   }
   return key;
 }
@@ -31,7 +29,7 @@ function sanitizeHeaders(headers?: HeadersInit): HeadersInit | undefined {
 
   const append = (k: string, v: string) => {
     const lower = k.toLowerCase();
-    if (lower === "authorization") {
+    if (lower === 'authorization') {
       // Never allow callers to override our auth header
       return;
     }
@@ -81,7 +79,7 @@ export interface GdeltMediaEventsParams {
   /**
    * Response detail level.
    */
-  detail?: "summary" | "standard" | "full";
+  detail?: 'summary' | 'standard' | 'full';
   /**
    * Topic category filter. Comma-separated list is allowed.
    */
@@ -89,7 +87,7 @@ export interface GdeltMediaEventsParams {
   /**
    * Geographic scope filter.
    */
-  scope?: "local" | "national" | "global";
+  scope?: 'local' | 'national' | 'global';
   /**
    * CAMEO ISO-3 country code for actor1 or actor2 (e.g. USA, GBR, CHN).
    */
@@ -159,7 +157,7 @@ export interface GdeltResolvedMetrics {
   avg_goldstein?: number | null;
   avg_tone?: number | null;
   primary_quad_class?: number | null;
-  top_entities?: { name: string; frequency: number }[];
+  top_entities?: {name: string; frequency: number}[];
   languages?: string[];
   resolution_article_count?: number;
   [key: string]: unknown;
@@ -170,7 +168,7 @@ export interface GdeltArticleItem {
   cluster_label?: string;
   article_weight?: number;
   category?: string;
-  scope?: "local" | "national" | "global";
+  scope?: 'local' | 'national' | 'global';
   avg_goldstein?: number;
   avg_tone?: number;
   quad_classes?: number[];
@@ -190,7 +188,7 @@ export interface GdeltArticleItem {
   linked_entities?: {
     name: string;
     canonical_name: string;
-    type: "person" | "organization";
+    type: 'person' | 'organization';
   }[];
   [key: string]: unknown;
 }
@@ -198,7 +196,7 @@ export interface GdeltArticleItem {
 export interface GdeltLinkedEntity {
   name: string;
   canonical_name: string;
-  type: "person" | "organization";
+  type: 'person' | 'organization';
   [key: string]: unknown;
 }
 
@@ -206,7 +204,7 @@ export interface GdeltResolvedCluster {
   cluster_id: string;
   cluster_label: string;
   category: string;
-  scope: "local" | "national" | "global";
+  scope: 'local' | 'national' | 'global';
   time_bucket: string;
   article_count: number;
   total_events: number;
@@ -249,15 +247,15 @@ async function gdeltRequest<TResponse>(
 
   const response = await fetch(url, {
     ...init,
-    method: "GET",
+    method: 'GET',
     headers: {
-      Accept: "application/json",
+      Accept: 'application/json',
       Authorization: `Bearer ${apiKey}`,
       ...sanitizeHeaders(init?.headers),
     },
   });
 
-  const text = await response.text().catch(() => "");
+  const text = await response.text().catch(() => '');
   let json: unknown;
   if (text) {
     try {
@@ -270,20 +268,16 @@ async function gdeltRequest<TResponse>(
   if (!response.ok) {
     const payload = (json || {}) as Partial<GdeltErrorResponse>;
     const message =
-      (payload && typeof payload.error === "string" && payload.error) ||
+      (payload && typeof payload.error === 'string' && payload.error) ||
       `GDELT API request to ${path} failed with status ${response.status}${
-        text ? `: ${text}` : ""
+        text ? `: ${text}` : ''
       }`;
-    const code =
-      payload && typeof payload.code === "string" ? payload.code : undefined;
+    const code = payload && typeof payload.code === 'string' ? payload.code : undefined;
     throw new GdeltError(message, response.status, code);
   }
 
-  if (!json || typeof json !== "object") {
-    throw new GdeltError(
-      "Unexpected GDELT API response shape.",
-      response.status,
-    );
+  if (!json || typeof json !== 'object') {
+    throw new GdeltError('Unexpected GDELT API response shape.', response.status);
   }
 
   return json as TResponse;
@@ -293,66 +287,53 @@ export async function getTopMediaEventClusters(
   params: GdeltMediaEventsParams = {},
   init?: RequestInit,
 ): Promise<GdeltMediaEventsResponse> {
-  if (!params || typeof params !== "object") {
-    throw new TypeError("getTopMediaEventClusters params must be an object.");
+  if (!params || typeof params !== 'object') {
+    throw new TypeError('getTopMediaEventClusters params must be an object.');
   }
 
   if (
     params.days !== undefined &&
-    (!Number.isInteger(params.days) ||
-      params.days < 1 ||
-      params.days > 30)
+    (!Number.isInteger(params.days) || params.days < 1 || params.days > 30)
   ) {
     throw new TypeError(
-      "getTopMediaEventClusters params.days must be an integer between 1 and 30.",
+      'getTopMediaEventClusters params.days must be an integer between 1 and 30.',
     );
   }
 
   if (
     params.limit !== undefined &&
-    (!Number.isInteger(params.limit) ||
-      params.limit < 1 ||
-      params.limit > 50)
+    (!Number.isInteger(params.limit) || params.limit < 1 || params.limit > 50)
   ) {
     throw new TypeError(
-      "getTopMediaEventClusters params.limit must be an integer between 1 and 50.",
+      'getTopMediaEventClusters params.limit must be an integer between 1 and 50.',
     );
   }
 
-  if (
-    params.offset !== undefined &&
-    (!Number.isInteger(params.offset) || params.offset < 0)
-  ) {
-    throw new TypeError(
-      "getTopMediaEventClusters params.offset must be a non-negative integer.",
-    );
+  if (params.offset !== undefined && (!Number.isInteger(params.offset) || params.offset < 0)) {
+    throw new TypeError('getTopMediaEventClusters params.offset must be a non-negative integer.');
   }
 
   if (
     params.goldstein_min !== undefined &&
-    (typeof params.goldstein_min !== "number" ||
+    (typeof params.goldstein_min !== 'number' ||
       params.goldstein_min < -10 ||
       params.goldstein_min > 10)
   ) {
     throw new TypeError(
-      "getTopMediaEventClusters params.goldstein_min must be a number between -10 and 10.",
+      'getTopMediaEventClusters params.goldstein_min must be a number between -10 and 10.',
     );
   }
 
   if (
     params.goldstein_max !== undefined &&
-    (typeof params.goldstein_max !== "number" ||
+    (typeof params.goldstein_max !== 'number' ||
       params.goldstein_max < -10 ||
       params.goldstein_max > 10)
   ) {
     throw new TypeError(
-      "getTopMediaEventClusters params.goldstein_max must be a number between -10 and 10.",
+      'getTopMediaEventClusters params.goldstein_max must be a number between -10 and 10.',
     );
   }
 
-  return gdeltRequest<GdeltMediaEventsResponse>(
-    "/api/v1/media-events",
-    params,
-    init,
-  );
+  return gdeltRequest<GdeltMediaEventsResponse>('/api/v1/media-events', params, init);
 }

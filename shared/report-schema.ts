@@ -1,13 +1,13 @@
-import { z } from "zod";
+import {z} from 'zod';
 
-const confidenceSchema = z.enum(["high", "medium", "low"]);
+const confidenceSchema = z.enum(['high', 'medium', 'low']);
 const categorySchema = z.enum([
-  "policy",
-  "regulation",
-  "corporate-decision",
-  "government-action",
-  "legislation",
-  "culture-and-society",
+  'policy',
+  'regulation',
+  'corporate-decision',
+  'government-action',
+  'legislation',
+  'culture-and-society',
 ]);
 
 export const reportSchema = z.object({

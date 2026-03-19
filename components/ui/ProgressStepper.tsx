@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Check, ChevronRight } from "lucide-react";
-import { twMerge } from "tailwind-merge";
+import {Check, ChevronRight} from 'lucide-react';
+import {twMerge} from 'tailwind-merge';
 
 export interface StepDefinition<K extends string = string> {
   key: K;
@@ -22,7 +22,7 @@ export function ProgressStepper<K extends string>({
   const currentIndex = steps.findIndex((s) => s.key === currentStep);
 
   return (
-    <nav aria-label="Progress" className={twMerge("font-sans", className)}>
+    <nav aria-label="Progress" className={twMerge('font-sans', className)}>
       <ol className="flex items-center">
         {steps.map((step, i) => {
           const isCompleted = i < currentIndex;
@@ -32,26 +32,22 @@ export function ProgressStepper<K extends string>({
             <li key={step.key} className="flex items-center">
               <div className="flex items-center gap-2.5">
                 <span
-                  aria-current={isActive ? "step" : undefined}
+                  aria-current={isActive ? 'step' : undefined}
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors ${
                     isCompleted || isActive
-                      ? "bg-(--tm-color-primary-900) text-white"
-                      : "border border-(--tm-color-neutral-300) text-(--tm-color-neutral-400)"
+                      ? 'bg-(--tm-color-primary-900) text-white'
+                      : 'border border-(--tm-color-neutral-300) text-(--tm-color-neutral-400)'
                   }`}
                 >
-                  {isCompleted ? (
-                    <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-                  ) : (
-                    i + 1
-                  )}
+                  {isCompleted ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : i + 1}
                 </span>
                 <span
                   className={`text-sm whitespace-nowrap ${
                     isActive
-                      ? "font-semibold text-(--tm-color-primary-900)"
+                      ? 'font-semibold text-(--tm-color-primary-900)'
                       : isCompleted
-                        ? "font-medium text-(--tm-color-primary-900)"
-                        : "text-(--tm-color-neutral-400)"
+                        ? 'font-medium text-(--tm-color-primary-900)'
+                        : 'text-(--tm-color-neutral-400)'
                   }`}
                 >
                   {step.label}
@@ -61,9 +57,7 @@ export function ProgressStepper<K extends string>({
                 <ChevronRight
                   aria-hidden="true"
                   className={`mx-3 h-4 w-4 shrink-0 ${
-                    isCompleted
-                      ? "text-(--tm-color-primary-900)"
-                      : "text-(--tm-color-neutral-300)"
+                    isCompleted ? 'text-(--tm-color-primary-900)' : 'text-(--tm-color-neutral-300)'
                   }`}
                   strokeWidth={2}
                 />

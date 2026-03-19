@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import Link from "next/link";
+import {useEffect} from 'react';
+import Link from 'next/link';
 
 export default function DashboardError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string };
+  error: Error & {digest?: string};
   reset: () => void;
 }) {
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function DashboardError({
   }, [error]);
 
   return (
-    <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
+    <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
       <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-(--tm-color-danger-100)">
         <svg
           className="h-7 w-7 text-(--tm-color-danger-500)"
@@ -32,10 +32,10 @@ export default function DashboardError({
         </svg>
       </div>
 
-      <h2 className="font-serif text-xl font-semibold text-(--tm-color-primary-900) mb-2">
+      <h2 className="mb-2 font-serif text-xl font-semibold text-(--tm-color-primary-900)">
         Something went wrong
       </h2>
-      <p className="max-w-sm text-sm text-(--tm-color-neutral-600) leading-relaxed mb-6">
+      <p className="mb-6 max-w-sm text-sm leading-relaxed text-(--tm-color-neutral-600)">
         We couldn&apos;t load your investigations. This is likely a temporary issue.
       </p>
 
@@ -43,7 +43,7 @@ export default function DashboardError({
         <button
           type="button"
           onClick={reset}
-          className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) hover:bg-(--tm-color-primary-800) px-4 py-2 text-sm font-semibold text-white transition-colors"
+          className="inline-flex items-center gap-2 rounded-lg bg-(--tm-color-primary-900) px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-(--tm-color-primary-800)"
         >
           <svg
             className="h-4 w-4"
@@ -62,14 +62,14 @@ export default function DashboardError({
         </button>
         <Link
           href="/"
-          className="inline-flex items-center gap-2 rounded-lg border border-(--tm-color-neutral-100) bg-white px-4 py-2 text-sm font-medium text-(--tm-color-neutral-600) hover:bg-(--tm-color-neutral-50) transition-colors"
+          className="inline-flex items-center gap-2 rounded-lg border border-(--tm-color-neutral-100) bg-white px-4 py-2 text-sm font-medium text-(--tm-color-neutral-600) transition-colors hover:bg-(--tm-color-neutral-50)"
         >
           Return home
         </Link>
       </div>
 
       {error.digest && (
-        <p className="mt-4 text-xs text-(--tm-color-neutral-300) font-mono">
+        <p className="mt-4 font-mono text-xs text-(--tm-color-neutral-300)">
           Error ID: {error.digest}
         </p>
       )}

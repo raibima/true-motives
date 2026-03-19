@@ -1,40 +1,53 @@
 'use client';
-import { CalendarIcon } from 'lucide-react';
+import {CalendarIcon} from 'lucide-react';
 import React from 'react';
 import {
   DateRangePicker as AriaDateRangePicker,
   DateRangePickerProps as AriaDateRangePickerProps,
   DateValue,
-  ValidationResult
+  ValidationResult,
 } from 'react-aria-components';
-import { DateInput } from '@/components/ui/DateField';
-import { Description, FieldError, FieldGroup, Label } from '@/components/ui/Field';
-import { Popover } from '@/components/ui/Popover';
-import { RangeCalendar } from '@/components/ui/RangeCalendar';
-import { composeTailwindRenderProps } from '@/client/react-aria-utils';
-import { FieldButton } from '@/components/ui/FieldButton';
+import {DateInput} from '@/components/ui/DateField';
+import {Description, FieldError, FieldGroup, Label} from '@/components/ui/Field';
+import {Popover} from '@/components/ui/Popover';
+import {RangeCalendar} from '@/components/ui/RangeCalendar';
+import {composeTailwindRenderProps} from '@/client/react-aria-utils';
+import {FieldButton} from '@/components/ui/FieldButton';
 
-export interface DateRangePickerProps<T extends DateValue>
-  extends AriaDateRangePickerProps<T> {
+export interface DateRangePickerProps<T extends DateValue> extends AriaDateRangePickerProps<T> {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
-export function DateRangePicker<T extends DateValue>(
-  { label, description, errorMessage, ...props }: DateRangePickerProps<T>
-) {
+export function DateRangePicker<T extends DateValue>({
+  label,
+  description,
+  errorMessage,
+  ...props
+}: DateRangePickerProps<T>) {
   return (
-    <AriaDateRangePicker {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1 font-sans max-w-full')}>
+    <AriaDateRangePicker
+      {...props}
+      className={composeTailwindRenderProps(
+        props.className,
+        'group flex flex-col gap-1 font-sans max-w-full',
+      )}
+    >
       {label && <Label>{label}</Label>}
-      <FieldGroup className="min-w-[208px] w-auto cursor-text disabled:cursor-default">
-        <div className="flex-1 w-fit flex items-center overflow-x-auto overflow-y-clip [scrollbar-width:none]">
+      <FieldGroup className="w-auto min-w-[208px] cursor-text disabled:cursor-default">
+        <div className="flex w-fit flex-1 items-center overflow-x-auto overflow-y-clip [scrollbar-width:none]">
           <DateInput slot="start" className="ps-3 pe-2 text-sm" />
-          <span aria-hidden="true" className="text-neutral-800 dark:text-neutral-200 forced-colors:text-[ButtonText] group-disabled:text-neutral-200 dark:group-disabled:text-neutral-600 forced-colors:group-disabled:text-[GrayText]">–</span>
+          <span
+            aria-hidden="true"
+            className="text-neutral-800 group-disabled:text-neutral-200 dark:text-neutral-200 dark:group-disabled:text-neutral-600 forced-colors:text-[ButtonText] forced-colors:group-disabled:text-[GrayText]"
+          >
+            –
+          </span>
           <DateInput slot="end" className="flex-1 ps-2 pe-3 text-sm" />
         </div>
-        <FieldButton className="w-6 mr-1 outline-offset-0">
-          <CalendarIcon aria-hidden className="w-4 h-4" />
+        <FieldButton className="mr-1 w-6 outline-offset-0">
+          <CalendarIcon aria-hidden className="h-4 w-4" />
         </FieldButton>
       </FieldGroup>
       {description && <Description>{description}</Description>}

@@ -1,19 +1,16 @@
-"use client";
+'use client';
 
-import { useSearchParams, useRouter } from "next/navigation";
-import { useCallback } from "react";
-import {
-  REPORT_FILTER_CATEGORIES,
-  REPORT_FILTER_GEOGRAPHIES,
-} from "@/shared/report-filters";
+import {useSearchParams, useRouter} from 'next/navigation';
+import {useCallback} from 'react';
+import {REPORT_FILTER_CATEGORIES, REPORT_FILTER_GEOGRAPHIES} from '@/shared/report-filters';
 
 export function ReportFilters() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const currentCategory = searchParams.get("category") ?? "";
-  const currentGeo = searchParams.get("geography") ?? "";
-  const currentQuery = searchParams.get("q") ?? "";
+  const currentCategory = searchParams.get('category') ?? '';
+  const currentGeo = searchParams.get('geography') ?? '';
+  const currentQuery = searchParams.get('q') ?? '';
 
   const updateParams = useCallback(
     (key: string, value: string) => {
@@ -25,7 +22,7 @@ export function ReportFilters() {
       }
       router.push(`/reports?${params.toString()}`);
     },
-    [searchParams, router]
+    [searchParams, router],
   );
 
   return (
@@ -33,7 +30,7 @@ export function ReportFilters() {
       {/* Search */}
       <div className="relative flex-1">
         <svg
-          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-(--tm-color-neutral-300)"
+          className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-(--tm-color-neutral-300)"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={2}
@@ -49,16 +46,16 @@ export function ReportFilters() {
           type="search"
           placeholder="Search by topic, keyword…"
           defaultValue={currentQuery}
-          onChange={(e) => updateParams("q", e.target.value)}
-          className="h-9 w-full rounded-lg border border-(--tm-color-neutral-100) bg-white pl-9 pr-3 text-sm text-(--tm-color-neutral-900) placeholder:text-(--tm-color-neutral-300) focus:border-(--tm-color-neutral-300) focus:outline-none focus:ring-2 focus:ring-(--tm-color-accent-400)/30 transition-shadow"
+          onChange={(e) => updateParams('q', e.target.value)}
+          className="h-9 w-full rounded-lg border border-(--tm-color-neutral-100) bg-white pr-3 pl-9 text-sm text-(--tm-color-neutral-900) transition-shadow placeholder:text-(--tm-color-neutral-300) focus:border-(--tm-color-neutral-300) focus:ring-2 focus:ring-(--tm-color-accent-400)/30 focus:outline-none"
         />
       </div>
 
       {/* Category */}
       <select
         value={currentCategory}
-        onChange={(e) => updateParams("category", e.target.value)}
-        className="h-9 rounded-lg border border-(--tm-color-neutral-100) bg-white px-3 text-sm text-(--tm-color-neutral-600) focus:border-(--tm-color-neutral-300) focus:outline-none focus:ring-2 focus:ring-(--tm-color-accent-400)/30 transition-shadow cursor-pointer"
+        onChange={(e) => updateParams('category', e.target.value)}
+        className="h-9 cursor-pointer rounded-lg border border-(--tm-color-neutral-100) bg-white px-3 text-sm text-(--tm-color-neutral-600) transition-shadow focus:border-(--tm-color-neutral-300) focus:ring-2 focus:ring-(--tm-color-accent-400)/30 focus:outline-none"
       >
         <option value="">All categories</option>
         {REPORT_FILTER_CATEGORIES.map((c) => (
@@ -71,8 +68,8 @@ export function ReportFilters() {
       {/* Geography */}
       <select
         value={currentGeo}
-        onChange={(e) => updateParams("geography", e.target.value)}
-        className="h-9 rounded-lg border border-(--tm-color-neutral-100) bg-white px-3 text-sm text-(--tm-color-neutral-600) focus:border-(--tm-color-neutral-300) focus:outline-none focus:ring-2 focus:ring-(--tm-color-accent-400)/30 transition-shadow cursor-pointer"
+        onChange={(e) => updateParams('geography', e.target.value)}
+        className="h-9 cursor-pointer rounded-lg border border-(--tm-color-neutral-100) bg-white px-3 text-sm text-(--tm-color-neutral-600) transition-shadow focus:border-(--tm-color-neutral-300) focus:ring-2 focus:ring-(--tm-color-accent-400)/30 focus:outline-none"
       >
         <option value="">All regions</option>
         {REPORT_FILTER_GEOGRAPHIES.map((g) => (

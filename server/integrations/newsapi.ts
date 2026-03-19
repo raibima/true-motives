@@ -1,89 +1,89 @@
-import "server-only";
+import 'server-only';
 
-const NEWS_API_ENDPOINT = "https://newsapi.org/v2";
+const NEWS_API_ENDPOINT = 'https://newsapi.org/v2';
 
 export type NewsApiLanguage =
-  | "ar"
-  | "de"
-  | "en"
-  | "es"
-  | "fr"
-  | "he"
-  | "it"
-  | "nl"
-  | "no"
-  | "pt"
-  | "ru"
-  | "se"
-  | "ud"
-  | "zh";
+  | 'ar'
+  | 'de'
+  | 'en'
+  | 'es'
+  | 'fr'
+  | 'he'
+  | 'it'
+  | 'nl'
+  | 'no'
+  | 'pt'
+  | 'ru'
+  | 'se'
+  | 'ud'
+  | 'zh';
 
 export type NewsApiCountry =
-  | "ae"
-  | "ar"
-  | "at"
-  | "au"
-  | "be"
-  | "bg"
-  | "br"
-  | "ca"
-  | "ch"
-  | "cn"
-  | "co"
-  | "cu"
-  | "cz"
-  | "de"
-  | "eg"
-  | "fr"
-  | "gb"
-  | "gr"
-  | "hk"
-  | "hu"
-  | "id"
-  | "ie"
-  | "il"
-  | "in"
-  | "it"
-  | "jp"
-  | "kr"
-  | "lt"
-  | "lv"
-  | "ma"
-  | "mx"
-  | "my"
-  | "ng"
-  | "nl"
-  | "no"
-  | "nz"
-  | "ph"
-  | "pl"
-  | "pt"
-  | "ro"
-  | "rs"
-  | "ru"
-  | "sa"
-  | "se"
-  | "sg"
-  | "si"
-  | "sk"
-  | "th"
-  | "tr"
-  | "tw"
-  | "ua"
-  | "us"
-  | "ve"
-  | "za";
+  | 'ae'
+  | 'ar'
+  | 'at'
+  | 'au'
+  | 'be'
+  | 'bg'
+  | 'br'
+  | 'ca'
+  | 'ch'
+  | 'cn'
+  | 'co'
+  | 'cu'
+  | 'cz'
+  | 'de'
+  | 'eg'
+  | 'fr'
+  | 'gb'
+  | 'gr'
+  | 'hk'
+  | 'hu'
+  | 'id'
+  | 'ie'
+  | 'il'
+  | 'in'
+  | 'it'
+  | 'jp'
+  | 'kr'
+  | 'lt'
+  | 'lv'
+  | 'ma'
+  | 'mx'
+  | 'my'
+  | 'ng'
+  | 'nl'
+  | 'no'
+  | 'nz'
+  | 'ph'
+  | 'pl'
+  | 'pt'
+  | 'ro'
+  | 'rs'
+  | 'ru'
+  | 'sa'
+  | 'se'
+  | 'sg'
+  | 'si'
+  | 'sk'
+  | 'th'
+  | 'tr'
+  | 'tw'
+  | 'ua'
+  | 'us'
+  | 've'
+  | 'za';
 
 export type NewsApiCategory =
-  | "business"
-  | "entertainment"
-  | "general"
-  | "health"
-  | "science"
-  | "sports"
-  | "technology";
+  | 'business'
+  | 'entertainment'
+  | 'general'
+  | 'health'
+  | 'science'
+  | 'sports'
+  | 'technology';
 
-export type NewsApiSortBy = "relevancy" | "popularity" | "publishedAt";
+export type NewsApiSortBy = 'relevancy' | 'popularity' | 'publishedAt';
 
 export interface NewsApiSourceRef {
   id: string | null;
@@ -114,18 +114,16 @@ export interface NewsApiSource {
 }
 
 export interface NewsApiOkBase {
-  status: "ok";
+  status: 'ok';
 }
 
 export interface NewsApiErrorBase {
-  status: "error";
+  status: 'error';
   code: string;
   message: string;
 }
 
-export type NewsApiResponse<T> =
-  | (NewsApiOkBase & T)
-  | NewsApiErrorBase;
+export type NewsApiResponse<T> = (NewsApiOkBase & T) | NewsApiErrorBase;
 
 export interface TopHeadlinesParams {
   q?: string;
@@ -140,7 +138,7 @@ export interface TopHeadlinesParams {
 
 export interface EverythingParams {
   q?: string;
-  searchIn?: "title" | "description" | "content";
+  searchIn?: 'title' | 'description' | 'content';
   sources?: string;
   domains?: string;
   excludeDomains?: string;
@@ -179,7 +177,7 @@ export class NewsApiError extends Error {
   code?: string;
   constructor(message: string, status: number, code?: string) {
     super(message);
-    this.name = "NewsApiError";
+    this.name = 'NewsApiError';
     this.status = status;
     this.code = code;
   }
@@ -188,19 +186,21 @@ export class NewsApiError extends Error {
 function getApiKey(): string {
   const key = process.env.NEWS_API_KEY;
   if (!key) {
-    throw new Error(
-      "Missing NewsAPI API key. Set NEWS_API_KEY in your environment.",
-    );
+    throw new Error('Missing NewsAPI API key. Set NEWS_API_KEY in your environment.');
   }
   return key;
 }
 
-function buildUrl(path: string, params: Record<string, string | number | boolean | undefined>): string {
-  const url = new URL(path, NEWS_API_ENDPOINT + "/");
+function buildUrl(
+  path: string,
+  params: Record<string, string | number | boolean | undefined>,
+): string {
+  const url = new URL(path, NEWS_API_ENDPOINT + '/');
 
-  const entries = Object.entries(params).filter(
-    ([, value]) => value !== undefined,
-  ) as [string, string | number | boolean][];
+  const entries = Object.entries(params).filter(([, value]) => value !== undefined) as [
+    string,
+    string | number | boolean,
+  ][];
 
   for (const [key, value] of entries) {
     url.searchParams.set(key, String(value));
@@ -219,11 +219,11 @@ async function request<TBody>(
 
   const response = await fetch(url, {
     ...init,
-    method: "GET",
+    method: 'GET',
     headers: {
       ...(init?.headers ?? {}),
-      Accept: "application/json",
-      "X-Api-Key": apiKey,
+      Accept: 'application/json',
+      'X-Api-Key': apiKey,
     },
   });
 
@@ -231,31 +231,23 @@ async function request<TBody>(
 
   if (!response.ok) {
     const maybeError = data as Partial<NewsApiErrorBase> | null;
-    const message =
-      maybeError?.message ||
-      `NewsAPI request failed with status ${response.status}`;
+    const message = maybeError?.message || `NewsAPI request failed with status ${response.status}`;
     const code = maybeError?.code;
     throw new NewsApiError(message, response.status, code);
   }
 
-  if (!data || typeof data !== "object") {
-    throw new NewsApiError(
-      "Unexpected NewsAPI response shape.",
-      response.status,
-    );
+  if (!data || typeof data !== 'object') {
+    throw new NewsApiError('Unexpected NewsAPI response shape.', response.status);
   }
 
   const typed = data as NewsApiResponse<TBody>;
 
-  if (typed.status === "error") {
+  if (typed.status === 'error') {
     throw new NewsApiError(typed.message, response.status, typed.code);
   }
 
-  if (typed.status !== "ok") {
-    throw new NewsApiError(
-      "Unexpected NewsAPI status value.",
-      response.status,
-    );
+  if (typed.status !== 'ok') {
+    throw new NewsApiError('Unexpected NewsAPI status value.', response.status);
   }
 
   return typed;
@@ -271,19 +263,19 @@ export async function fetchTopHeadlines(
     );
   }
 
-  return request<TopHeadlinesResponseBody>("top-headlines", params, init);
+  return request<TopHeadlinesResponseBody>('top-headlines', params, init);
 }
 
 export async function fetchEverything(
   params: EverythingParams,
   init?: RequestInit,
 ): Promise<NewsApiOkBase & EverythingResponseBody> {
-  return request<EverythingResponseBody>("everything", params, init);
+  return request<EverythingResponseBody>('everything', params, init);
 }
 
 export async function fetchSources(
   params: SourcesParams = {},
   init?: RequestInit,
 ): Promise<NewsApiOkBase & SourcesResponseBody> {
-  return request<SourcesResponseBody>("top-headlines/sources", params, init);
+  return request<SourcesResponseBody>('top-headlines/sources', params, init);
 }
