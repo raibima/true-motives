@@ -6,7 +6,10 @@ import {useTransition} from 'react';
 import {useImmerReducer} from 'use-immer';
 import {useRouter} from 'next/navigation';
 import {generatePlan, startInvestigation} from '@/client/investigations/api';
-import type {InvestigationWorkflowInput} from '@/shared/investigations/schema';
+import {
+  DEFAULT_REPORT_LANGUAGE,
+  type InvestigationWorkflowInput,
+} from '@/shared/investigations/schema';
 
 export type Step = 'prompt' | 'review' | 'launch';
 
@@ -118,7 +121,11 @@ export function useNewInvestigation() {
       const plan = await generatePlan(trimmed);
       dispatch({
         type: 'PLAN_GENERATED',
-        payload: {...plan, geography: plan.geography || 'Global'},
+        payload: {
+          ...plan,
+          geography: plan.geography || 'Global',
+          reportLanguage: plan.reportLanguage || DEFAULT_REPORT_LANGUAGE,
+        },
       });
     } catch (error) {
       dispatch({
@@ -142,6 +149,7 @@ export function useNewInvestigation() {
           description: plannedInput.description ?? '',
           category: plannedInput.category,
           geography: plannedInput.geography || 'Global',
+          reportLanguage: plannedInput.reportLanguage || DEFAULT_REPORT_LANGUAGE,
           phases: plannedInput.phases,
         });
         router.push(`/dashboard/investigations/${runId}`);

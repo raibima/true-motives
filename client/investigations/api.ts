@@ -28,6 +28,7 @@ export type StartInvestigationInput = {
   description: string;
   category: InvestigationWorkflowInput['category'];
   geography: string;
+  reportLanguage: string;
   phases?: Array<{id: string; label: string; description: string}>;
 };
 

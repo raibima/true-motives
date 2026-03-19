@@ -11,9 +11,9 @@ Title: Testing Infra POC
 Description: Verify we can intercept the provider fetch.
 Category: policy
 Geography: Indonesia
+Report language: English
 
-Research phases planned for this investigation:
-1. Plan ",
+Research phases planned for thi",
       "responseFormat": {
         "name": "response",
         "type": "json_schema",
@@ -77,9 +77,9 @@ Title: Testing Infra POC
 Description: Verify the investigation workflow test harness.
 Category: policy
 Geography: Indonesia
+Report language: English
 
-Research phases planned for this investigation:
-1. P",
+Research phases planned for",
       "responseFormat": {
         "name": "response",
         "type": "json_schema",
@@ -135,9 +135,9 @@ Title: Testing Infra POC
 Description: Verify the investigation workflow test harness.
 Category: policy
 Geography: Indonesia
+Report language: English
 
-Research phases planned for this investigation:
-1. P",
+Research phases planned for",
       "responseFormat": {
         "name": "response",
         "type": "json_schema",

@@ -17,11 +17,14 @@ export const plannedPhaseSchema = z.object({
 
 export type PlannedPhase = z.infer<typeof plannedPhaseSchema>;
 
+export const DEFAULT_REPORT_LANGUAGE = 'English';
+
 export const investigationInputSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
   category: reportCategorySchema,
   geography: z.string().default('Global'),
+  reportLanguage: z.string().trim().min(1).default(DEFAULT_REPORT_LANGUAGE),
   phases: z.array(plannedPhaseSchema).min(2).max(8).optional(),
 });
 

@@ -5,6 +5,7 @@ import {openai} from '@ai-sdk/openai';
 import {z} from 'zod';
 
 import {
+  DEFAULT_REPORT_LANGUAGE,
   investigationInputSchema,
   plannedPhaseSchema,
   reportCategorySchema,
@@ -17,6 +18,7 @@ const planningSchema = z.object({
   description: z.string(),
   category: reportCategorySchema,
   geography: z.string(),
+  reportLanguage: z.string().trim().min(1),
   phases: z.array(plannedPhaseSchema).min(2).max(8),
 });
 
@@ -42,6 +44,7 @@ export async function planInvestigationFromPrompt(
     description: planned.description.trim(),
     category: planned.category,
     geography: planned.geography.trim() || 'Global',
+    reportLanguage: planned.reportLanguage.trim() || DEFAULT_REPORT_LANGUAGE,
     phases: planned.phases,
   };
 

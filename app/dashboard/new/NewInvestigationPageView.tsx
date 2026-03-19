@@ -12,7 +12,10 @@ import {Form} from '@/components/ui/Form';
 import {Label} from '@/components/ui/Field';
 import {TextField as AriaTextField, TextArea as AriaTextArea} from 'react-aria-components';
 import {useNewInvestigation, type Step} from '@/client/hooks/use-new-investigation';
-import type {InvestigationWorkflowInput} from '@/shared/investigations/schema';
+import {
+  DEFAULT_REPORT_LANGUAGE,
+  type InvestigationWorkflowInput,
+} from '@/shared/investigations/schema';
 
 const STEPS: ReadonlyArray<{key: Step; label: string}> = [
   {key: 'prompt', label: 'Describe'},
@@ -30,6 +33,19 @@ const CATEGORIES = [
     value: 'culture-and-society',
     label: 'Culture, sports & public narratives',
   },
+];
+
+const REPORT_LANGUAGES = [
+  {value: 'English', label: 'English'},
+  {value: 'Bahasa Indonesia', label: 'Bahasa Indonesia'},
+  {value: 'Español', label: 'Spanish'},
+  {value: 'Français', label: 'French'},
+  {value: 'Deutsch', label: 'German'},
+  {value: 'Português', label: 'Portuguese'},
+  {value: 'العربية', label: 'Arabic'},
+  {value: '日本語', label: 'Japanese'},
+  {value: '한국어', label: 'Korean'},
+  {value: '中文', label: 'Chinese'},
 ];
 
 const PROMPT_PLACEHOLDER =
@@ -223,6 +239,21 @@ export function NewInvestigationPageView() {
                   onChange={(value) => editPlan({geography: value})}
                 />
               </div>
+
+              <Select
+                label="Report language"
+                description="AI inferred this from your prompt. Change it here if you want the final report in another language."
+                selectedKey={plannedInput.reportLanguage}
+                onSelectionChange={(key) =>
+                  editPlan({reportLanguage: String(key ?? DEFAULT_REPORT_LANGUAGE)})
+                }
+              >
+                {REPORT_LANGUAGES.map((language) => (
+                  <SelectItem key={language.value} id={language.value}>
+                    {language.label}
+                  </SelectItem>
+                ))}
+              </Select>
             </div>
           </div>
 
@@ -294,6 +325,9 @@ export function NewInvestigationPageView() {
               </span>
               <span className="inline-flex items-center rounded-md bg-(--tm-color-neutral-50) px-2.5 py-1 font-medium text-(--tm-color-neutral-600) ring-1 ring-(--tm-color-neutral-100) ring-inset">
                 {plannedInput.geography || 'Global'}
+              </span>
+              <span className="inline-flex items-center rounded-md bg-(--tm-color-neutral-50) px-2.5 py-1 font-medium text-(--tm-color-neutral-600) ring-1 ring-(--tm-color-neutral-100) ring-inset">
+                {plannedInput.reportLanguage || DEFAULT_REPORT_LANGUAGE}
               </span>
             </div>
 

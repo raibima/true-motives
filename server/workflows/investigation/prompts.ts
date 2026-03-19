@@ -22,6 +22,7 @@ const BASE_SYSTEM_PROMPT = `You are a **skeptical investigative analyst** for Tr
 
 **Output requirements:**
 - Return a complete structured report matching the required schema.
+- Write all report prose and labels in the user's requested report language unless you are quoting source material verbatim.
 - Make motivations rich with skeptical hypotheses, contrarian angles, and "what if" scenarios, not just sanitized summaries.
 - Include alternative explanations even when speculative; the report should read like an investigator who questions power, not one who parrots it.
 - Executive summary length target: 90-140 words, max 2 short paragraphs. Keep it scannable and avoid long, multi-clause sentences.
@@ -49,5 +50,6 @@ export function createInvestigationUserPrompt(input: InvestigationWorkflowInput)
 Title: ${input.title}
 Description: ${input.description || 'N/A'}
 Category: ${input.category}
-Geography: ${input.geography || 'Global'}${buildPhasesPromptSection(input.phases)}`;
+Geography: ${input.geography || 'Global'}
+Report language: ${input.reportLanguage || 'English'}${buildPhasesPromptSection(input.phases)}`;
 }

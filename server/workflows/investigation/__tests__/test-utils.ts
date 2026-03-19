@@ -8,6 +8,7 @@ export function createTestInvestigationInput(
     description: 'Verify the investigation workflow test harness.',
     category: 'policy',
     geography: 'Indonesia',
+    reportLanguage: 'English',
     phases: [
       {
         id: 'plan',
