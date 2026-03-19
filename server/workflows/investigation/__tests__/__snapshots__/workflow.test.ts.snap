@@ -1,0 +1,182 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`investigationWorkflow provider-boundary smoke test > calls the OpenAI responses endpoint with the workflow prompt and parses the streamed result 1`] = `
+[
+  {
+    "bodyPreview": {
+      "model": "gpt-5.4",
+      "promptPreview": "Investigate the following topic with a skeptical, critical lens. Question official narratives and dig for hidden motives.
+
+Title: Testing Infra POC
+Description: Verify we can intercept the provider fetch.
+Category: policy
+Geography: Indonesia
+
+Research phases planned for this investigation:
+1. Plan ",
+      "responseFormat": {
+        "name": "response",
+        "type": "json_schema",
+      },
+      "stream": true,
+      "tools": [
+        {
+          "name": "webSearch01",
+          "type": "function",
+        },
+        {
+          "name": "webFetch",
+          "type": "function",
+        },
+        {
+          "name": "webSearch02",
+          "type": "function",
+        },
+        {
+          "name": "webSearch03",
+          "type": "function",
+        },
+        {
+          "name": "webSearch04",
+          "type": "function",
+        },
+        {
+          "name": "webSearch05",
+          "type": "function",
+        },
+        {
+          "name": "webSearch06",
+          "type": "function",
+        },
+      ],
+    },
+    "hostname": "api.openai.com",
+    "method": "POST",
+    "path": "/v1/responses",
+  },
+]
+`;
+
+exports[`investigationWorkflow provider-boundary smoke test > clamps gdelt tool params before hitting the downstream provider 1`] = `
+{
+  "bodyPreview": undefined,
+  "hostname": "gdeltcloud.com",
+  "method": "GET",
+  "path": "/api/v1/media-events",
+}
+`;
+
+exports[`investigationWorkflow provider-boundary smoke test > emits phase progress updates when the workflow executes a research tool 1`] = `
+[
+  {
+    "bodyPreview": {
+      "model": "gpt-5.4",
+      "promptPreview": "Investigate the following topic with a skeptical, critical lens. Question official narratives and dig for hidden motives.
+
+Title: Testing Infra POC
+Description: Verify the investigation workflow test harness.
+Category: policy
+Geography: Indonesia
+
+Research phases planned for this investigation:
+1. P",
+      "responseFormat": {
+        "name": "response",
+        "type": "json_schema",
+      },
+      "stream": true,
+      "tools": [
+        {
+          "name": "webSearch01",
+          "type": "function",
+        },
+        {
+          "name": "webFetch",
+          "type": "function",
+        },
+        {
+          "name": "webSearch02",
+          "type": "function",
+        },
+        {
+          "name": "webSearch03",
+          "type": "function",
+        },
+        {
+          "name": "webSearch04",
+          "type": "function",
+        },
+        {
+          "name": "webSearch05",
+          "type": "function",
+        },
+        {
+          "name": "webSearch06",
+          "type": "function",
+        },
+      ],
+    },
+    "hostname": "api.openai.com",
+    "method": "POST",
+    "path": "/v1/responses",
+  },
+  {
+    "bodyPreview": undefined,
+    "hostname": "api.search.brave.com",
+    "method": "GET",
+    "path": "/res/v1/web/search",
+  },
+  {
+    "bodyPreview": {
+      "model": "gpt-5.4",
+      "promptPreview": "Investigate the following topic with a skeptical, critical lens. Question official narratives and dig for hidden motives.
+
+Title: Testing Infra POC
+Description: Verify the investigation workflow test harness.
+Category: policy
+Geography: Indonesia
+
+Research phases planned for this investigation:
+1. P",
+      "responseFormat": {
+        "name": "response",
+        "type": "json_schema",
+      },
+      "stream": true,
+      "tools": [
+        {
+          "name": "webSearch01",
+          "type": "function",
+        },
+        {
+          "name": "webFetch",
+          "type": "function",
+        },
+        {
+          "name": "webSearch02",
+          "type": "function",
+        },
+        {
+          "name": "webSearch03",
+          "type": "function",
+        },
+        {
+          "name": "webSearch04",
+          "type": "function",
+        },
+        {
+          "name": "webSearch05",
+          "type": "function",
+        },
+        {
+          "name": "webSearch06",
+          "type": "function",
+        },
+      ],
+    },
+    "hostname": "api.openai.com",
+    "method": "POST",
+    "path": "/v1/responses",
+  },
+]
+`;
